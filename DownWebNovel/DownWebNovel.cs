@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,10 +39,17 @@ namespace DownWebNovel
 
 		private void DownWebNovel_Load(object sender, EventArgs e)
 		{
-			tbName.Text = "圣手邪医";
-			tbUrl.Text = "http://www.biquge.la/book/5474/";
-			tbStartPara.Text = "3184584.html";
-			tbEndPara.Text = "book/5474/"; 
+            //tbName.Text = "圣手邪医";
+            //tbUrl.Text = "http://www.biquge.la/book/5474/";
+            //tbStartPara.Text = "3184584.html";
+            //tbEndPara.Text = "book/5474/";
+
+            tbName.Text = "超级兵王在都市";
+            tbUrl.Text = "http://www.exiaoshuo.com";
+            tbStartPara.Text = "/chaojibingwangzaidoushi/4175388/";
+            tbEndPara.Text = "/chaojibingwangzaidoushi/";
+
+		    tbDir.Text = @"D:\";
 			LoadRules();
 		}
 
@@ -49,21 +57,37 @@ namespace DownWebNovel
 		{
 			_rules = new List<Rule>();
 
-			var rule = new Rule
-			{
-				WebSite = "笔趣阁",
-				TitleStartTagList = new List<string> {"<h1>"},
-				TitleEndTagList = new List<string> {"</h1>"},
-				ConetentStartTagList = new List<string> {"<div id=\"content\"><script>readx();</script>"},
-				ContentEndTagList = new List<string> {"</div>"},
-				NextParaStartTagList = new List<string> {"章节列表</a> &rarr; <a href=\""},
-				NextParaEndTagList = new List<string> {"\">下一章</a>"},
-				ReplaceTagList = new List<KeyValuePair<string, string>>
+            //var rule = new Rule
+            //{
+            //    WebSite = "笔趣阁",
+            //    TitleStartTagList = new List<string> {"<h1>"},
+            //    TitleEndTagList = new List<string> {"</h1>"},
+            //    ConetentStartTagList = new List<string> {"<div id=\"content\"><script>readx();</script>"},
+            //    ContentEndTagList = new List<string> {"</div>"},
+            //    NextParaStartTagList = new List<string> {"章节列表</a> &rarr; <a href=\""},
+            //    NextParaEndTagList = new List<string> {"\">下一章</a>"},
+            //    ReplaceTagList = new List<KeyValuePair<string, string>>
+            //    {
+            //        new KeyValuePair<string, string>("&nbsp;", " "),
+            //        new KeyValuePair<string, string>("<br /><br />", "\r\n")
+            //    }
+            //};
+
+            var rule = new Rule
+            {
+                WebSite = "E小说",
+                TitleStartTagList = new List<string> { "<h1>" },
+                TitleEndTagList = new List<string> { "</h1>" },
+                ConetentStartTagList = new List<string> { "<div id=\"content\">" },
+                ContentEndTagList = new List<string> { "</div>" },
+                NextParaStartTagList = new List<string> { "章节目录</a> &rarr; <a href=\"" },
+                NextParaEndTagList = new List<string> { "\">下一章</a>" },
+                ReplaceTagList = new List<KeyValuePair<string, string>>
 				{
 					new KeyValuePair<string, string>("&nbsp;", " "),
 					new KeyValuePair<string, string>("<br /><br />", "\r\n")
 				}
-			};
+            };
 
 			_rules.Add(rule);
 
@@ -149,5 +173,38 @@ namespace DownWebNovel
 				SetText(novelName, curPara, nextPara);
 			}
 		}
+
+        private void btSelectDir_Click(object sender, EventArgs e)
+        {
+            //var dialog = new FolderBrowserDialog {Description = "请选择文件路径"};
+            //dialog.SelectedPath = tbDir.Text;
+
+            //if (dialog.ShowDialog() != DialogResult.OK) 
+            //    return;
+
+            //tbDir.Text = dialog.SelectedPath; 
+
+            var mywebclient = new WebClient();
+            //for (int i = 0; i < 38; i ++)
+            //{
+            //    var url = string.Format("http://mm.xmeise.com//uploads/allimg/151221/1-1512211113{0}.jpg", i+25);
+            //    var filepath = string.Format("D:\\pic{0}.jpg", i);
+
+            //    try
+            //    {
+            //        mywebclient.DownloadFile(url, filepath); 
+            //    }
+            //    catch (Exception)
+            //    {
+
+            //    }
+               
+            //}
+
+            //_webNovelPuller.DownloadPicturesByUrl("http://www.renti114.com", "/html/35/3504.html");
+
+            _webNovelPuller.DownloadPicturesByUrl("http://www.renti114.com", "/html/36/3632.html");
+
+        }
 	}
 }

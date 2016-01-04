@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Configuration;
 using System.Threading;
 
 namespace DownWebNovel
@@ -141,5 +142,61 @@ namespace DownWebNovel
 
 			return true;
 		}
+
+        public bool DownloadPicturesByUrl(string rootUrl, string curImageFile)
+        {
+            var nextImageFile = curImageFile;
+            while (nextImageFile != null)
+                nextImageFile = DownloadPictureByUrl(rootUrl, nextImageFile);
+            
+	        return true;
+	    }
+
+	    private string DownloadPictureByUrl(string rootUrl, string curImageFile)
+	    {
+            try
+            {
+                _webClient.Encoding = System.Text.Encoding.UTF8;
+                string text;
+                DownloadStringByUrl(rootUrl+curImageFile, out text);
+
+                var rule = new Rule
+                {
+                    WebSite = "114",
+                    TitleStartTagList = new List<string> { "<h1 class=\"h1-title\">" },
+                    TitleEndTagList = new List<string> { "</h1>" },
+                    ConetentStartTagList = new List<string> { "<img src=\"" },
+                    ContentEndTagList = new List<string> { "\"" },
+                    NextParaStartTagList = new List<string> { "class=\"picbox\"><a href=\"" },
+                    NextParaEndTagList = new List<string> { "\"" },
+                    ReplaceTagList = new List<KeyValuePair<string, string>>()
+                };
+
+
+                var title = ExtractIntrested(text, rule.TitleStartTagList, rule.TitleEndTagList);
+                var imageUrl = ExtractIntrested(text, rule.ConetentStartTagList, rule.ContentEndTagList);
+                var nextUrl = ExtractIntrested(text, rule.NextParaStartTagList, rule.NextParaEndTagList);
+
+                var curImageNumStartTagList = new List<string> { "<strong>" };
+                var curImageNumEndTagList = new List<string> { "</strong>" };
+                var curImageNum = ExtractIntrested(text, curImageNumStartTagList, curImageNumEndTagList);
+
+
+                var imageFile = string.Format("{0}{1}{2}.jpg", "D:\\TestOutput3\\", title, curImageNum);
+                _webClient.DownloadFile(imageUrl, imageFile);
+
+                if (_webNovelPullerUser != null)
+                {
+                    _webNovelPullerUser.OnFileDownloaded(title, imageFile, nextUrl);
+                }
+
+                return nextUrl;
+
+            }
+            catch (Exception ex)
+            {
+                return curImageFile;
+            } 
+	    }
 	}
 }
