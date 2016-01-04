@@ -15,6 +15,7 @@ namespace DownWebNovel
 {
 	public partial class DownWebNovel : Form, IWebNovelPullerUser
 	{
+		private List<DownloadTask> _downloadTasks; 
 		private List<Rule> _rules;
 		private readonly WebNovelPuller _webNovelPuller;
 
@@ -25,6 +26,7 @@ namespace DownWebNovel
 			InitializeComponent();
 
 			_webNovelPuller = new WebNovelPuller(this);
+			_downloadTasks = new List<DownloadTask>();
 		}
 
 		private void btDownloadFirstPara_Click(object sender, EventArgs e)
@@ -39,15 +41,15 @@ namespace DownWebNovel
 
 		private void DownWebNovel_Load(object sender, EventArgs e)
 		{
-            //tbName.Text = "圣手邪医";
-            //tbUrl.Text = "http://www.biquge.la/book/5474/";
-            //tbStartPara.Text = "3184584.html";
-            //tbEndPara.Text = "book/5474/";
+			tbName.Text = "圣手邪医";
+			tbUrl.Text = "http://www.biquge.la/book/5474/";
+			tbStartPara.Text = "3184584.html";
+			tbEndPara.Text = "book/5474/";
 
-            tbName.Text = "超级兵王在都市";
-            tbUrl.Text = "http://www.exiaoshuo.com";
-            tbStartPara.Text = "/chaojibingwangzaidoushi/4175388/";
-            tbEndPara.Text = "/chaojibingwangzaidoushi/";
+			//tbName.Text = "超级兵王在都市";
+			//tbUrl.Text = "http://www.exiaoshuo.com";
+			//tbStartPara.Text = "/chaojibingwangzaidoushi/4175388/";
+			//tbEndPara.Text = "/chaojibingwangzaidoushi/";
 
 		    tbDir.Text = @"D:\";
 			LoadRules();
@@ -57,37 +59,37 @@ namespace DownWebNovel
 		{
 			_rules = new List<Rule>();
 
-            //var rule = new Rule
-            //{
-            //    WebSite = "笔趣阁",
-            //    TitleStartTagList = new List<string> {"<h1>"},
-            //    TitleEndTagList = new List<string> {"</h1>"},
-            //    ConetentStartTagList = new List<string> {"<div id=\"content\"><script>readx();</script>"},
-            //    ContentEndTagList = new List<string> {"</div>"},
-            //    NextParaStartTagList = new List<string> {"章节列表</a> &rarr; <a href=\""},
-            //    NextParaEndTagList = new List<string> {"\">下一章</a>"},
-            //    ReplaceTagList = new List<KeyValuePair<string, string>>
-            //    {
-            //        new KeyValuePair<string, string>("&nbsp;", " "),
-            //        new KeyValuePair<string, string>("<br /><br />", "\r\n")
-            //    }
-            //};
+			var rule = new Rule
+			{
+				WebSite = "笔趣阁",
+				TitleStartTagList = new List<string> { "<h1>" },
+				TitleEndTagList = new List<string> { "</h1>" },
+				ConetentStartTagList = new List<string> { "<div id=\"content\"><script>readx();</script>" },
+				ContentEndTagList = new List<string> { "</div>" },
+				NextParaStartTagList = new List<string> { "章节列表</a> &rarr; <a href=\"" },
+				NextParaEndTagList = new List<string> { "\">下一章</a>" },
+				ReplaceTagList = new List<KeyValuePair<string, string>>
+			    {
+			        new KeyValuePair<string, string>("&nbsp;", " "),
+			        new KeyValuePair<string, string>("<br /><br />", "\r\n")
+			    }
+			};
 
-            var rule = new Rule
-            {
-                WebSite = "E小说",
-                TitleStartTagList = new List<string> { "<h1>" },
-                TitleEndTagList = new List<string> { "</h1>" },
-                ConetentStartTagList = new List<string> { "<div id=\"content\">" },
-                ContentEndTagList = new List<string> { "</div>" },
-                NextParaStartTagList = new List<string> { "章节目录</a> &rarr; <a href=\"" },
-                NextParaEndTagList = new List<string> { "\">下一章</a>" },
-                ReplaceTagList = new List<KeyValuePair<string, string>>
-				{
-					new KeyValuePair<string, string>("&nbsp;", " "),
-					new KeyValuePair<string, string>("<br /><br />", "\r\n")
-				}
-            };
+			//var rule = new Rule
+			//{
+			//	WebSite = "E小说",
+			//	TitleStartTagList = new List<string> { "<h1>" },
+			//	TitleEndTagList = new List<string> { "</h1>" },
+			//	ConetentStartTagList = new List<string> { "<div id=\"content\">" },
+			//	ContentEndTagList = new List<string> { "</div>" },
+			//	NextParaStartTagList = new List<string> { "章节目录</a> &rarr; <a href=\"" },
+			//	NextParaEndTagList = new List<string> { "\">下一章</a>" },
+			//	ReplaceTagList = new List<KeyValuePair<string, string>>
+			//	{
+			//		new KeyValuePair<string, string>("&nbsp;", " "),
+			//		new KeyValuePair<string, string>("<br /><br />", "\r\n")
+			//	}
+			//};
 
 			_rules.Add(rule);
 
@@ -119,6 +121,12 @@ namespace DownWebNovel
 
 		private void btDown_Click(object sender, EventArgs e)
 		{
+			if (FindDownloadTask(tbName.Text) != null)
+			{
+				MessageBox.Show("任务已存在");
+				return;
+			}
+
 			var task = new DownloadTask
 			{
 				Novel = new Novel
@@ -129,14 +137,18 @@ namespace DownWebNovel
 					EndPara = tbEndPara.Text
 				},
 				Rule = _rules.SingleOrDefault(rule => rule.WebSite == cbWebSite.Text),
-				Thread = new Thread(DownloadNovelThread)
+				Thread = new Thread(DownloadNovelThread),
+				WebNovelPuller = new WebNovelPuller(this) { Exit = false}
 			};
 
-			var lvi = new ListViewItem {Text = task.Novel.Name};
-			lvi.SubItems.Add("开始下载");
+			var lvi = new ListViewItem { Text = "下载中" };
+			lvi.SubItems.Add(task.Novel.Name);
+			lvi.SubItems.Add("");
+			lvi.SubItems.Add("");
 
 			lvDownloadingNovels.Items.Add(lvi);
 
+			_downloadTasks.Add(task);
 			task.Thread.Start(task);
 		}
 
@@ -144,16 +156,22 @@ namespace DownWebNovel
 		{
 			var task = para as DownloadTask;
 			if (task != null)
-				_webNovelPuller.DownloadNovel(task.Novel, task.Rule);
+				task.WebNovelPuller.DownloadNovel(task.Novel, task.Rule);
+		}
+
+		private DownloadTask FindDownloadTask(string novelName)
+		{
+			return _downloadTasks.FirstOrDefault(downloadTask => downloadTask.Novel.Name == novelName);
 		}
 
 		private void SetText(string novelName, string curPara, string nextPara)
 		{
 			for (var i = 0; i < lvDownloadingNovels.Items.Count; i ++)
 			{
-				if (lvDownloadingNovels.Items[i].Text == novelName)
+				if (lvDownloadingNovels.Items[i].SubItems[1].Text == novelName)
 				{
-					lvDownloadingNovels.Items[i].SubItems[1].Text = curPara;
+					lvDownloadingNovels.Items[i].SubItems[2].Text = curPara;
+					lvDownloadingNovels.Items[i].SubItems[3].Text = nextPara;
 					break;
 				}
 			}
@@ -206,5 +224,38 @@ namespace DownWebNovel
             _webNovelPuller.DownloadPicturesByUrl("http://www.renti114.com", "/html/36/3632.html");
 
         }
+
+		private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+			var novalName = lvDownloadingNovels.SelectedItems[0].SubItems[1].Text;
+			var task = FindDownloadTask(novalName);
+			if (task == null)
+				return;
+
+			if (contextMenuStrip1.Items[0].Text == "停止")
+			{
+				task.WebNovelPuller.Exit = true;
+				lvDownloadingNovels.SelectedItems[0].SubItems[0].Text = "停止";
+			}
+			else
+			{
+				lvDownloadingNovels.SelectedItems[0].SubItems[0].Text = "下载中";
+				task.WebNovelPuller.Exit = false;
+				task.Thread = new Thread(DownloadNovelThread);
+				task.Thread.Start(task);
+			}
+
+		}
+
+		private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+		{
+			if (lvDownloadingNovels.SelectedItems.Count == 0)
+			{
+				e.Cancel = true;
+				return;
+			}
+
+			contextMenuStrip1.Items[0].Text = lvDownloadingNovels.SelectedItems[0].Text == "下载中"? "停止" : "开始";
+		}
 	}
 }

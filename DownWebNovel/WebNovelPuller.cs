@@ -13,6 +13,7 @@ namespace DownWebNovel
 		public Novel Novel { get; set; }
 		public Rule Rule { get; set; }
 		public Thread Thread { get; set; }
+		public WebNovelPuller WebNovelPuller { get; set; }
 	}
 
 	public class Novel
@@ -45,6 +46,7 @@ namespace DownWebNovel
 	{
 		private readonly WebClient _webClient = new WebClient();
 		private readonly IWebNovelPullerUser _webNovelPullerUser;
+		public bool Exit { get; set; }
 
 		public WebNovelPuller(IWebNovelPullerUser webNovelPullerUser)
 		{
@@ -54,8 +56,10 @@ namespace DownWebNovel
 		public bool DownloadNovel(Novel novel, Rule rule)
 		{
 			var curFile = novel.StartPara;
-			while (curFile != novel.EndPara)
+			while (curFile != novel.EndPara && !Exit)
 				curFile = DownloadTextByUrl(novel.Name, novel.RootUrl, curFile, rule);
+
+			novel.StartPara = curFile;
 			return true;
 		}
 
