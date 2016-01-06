@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,14 +28,16 @@ namespace DownWebNovel
 	public class Rule
 	{
 		public string WebSite { get; set; }
-		public List<string> TitleStartTagList { get; set; }
-		public List<string> TitleEndTagList { get; set; }
-		public List<string> ConetentStartTagList { get; set; }
-		public List<string> ContentEndTagList { get; set; }
-		public List<string> NextParaStartTagList { get; set; }
-		public List<string> NextParaEndTagList { get; set; }
+		public Hashtable PositionTag { get; set; }
+		public Hashtable ReplaceTag { get; set; }
+		//public List<string> TitleStartTagList { get; set; }
+		//public List<string> TitleEndTagList { get; set; }
+		//public List<string> ConetentStartTagList { get; set; }
+		//public List<string> ContentEndTagList { get; set; }
+		//public List<string> NextParaStartTagList { get; set; }
+		//public List<string> NextParaEndTagList { get; set; }
 
-		public List<KeyValuePair<string, string>> ReplaceTagList { get; set; }
+		//public List<KeyValuePair<string, string>> ContentReplaceTagList { get; set; }
 	}
 
 	public interface IWebNovelPullerUser
@@ -63,7 +66,7 @@ namespace DownWebNovel
 			return true;
 		}
 
-		private static string ExtractIntrested(string content, IEnumerable<string> startTagList, IEnumerable<string> endTagList)
+		private static string ExtractIntrested(string content, IEnumerable<string> startTagList, IEnumerable<string> endTagList, IEnumerable<KeyValuePair<string, string>> replacePairs)
 		{
 			var startIndex = -1;
 			var startTagLen = 0;
@@ -98,12 +101,19 @@ namespace DownWebNovel
 
 			content = content.Substring(0, endIndex);
 
+			// Replace
+			content = Replace(content, replacePairs);
+
 			return content;
 		}
 
 		private static string Replace(string content, IEnumerable<KeyValuePair<string, string>> replacePairs)
 		{
-			return replacePairs.Aggregate(content, (current, replace) => current.Replace(replace.Key, replace.Value));
+			var translate = new Hashtable();
+			translate["[空格]"] = " ";
+			translate["[换行]"] = "\r\n";
+
+			return replacePairs.Aggregate(content, (current, replace) => current.Replace(replace.Key, (string)translate[replace.Value]));
 		}
 
 		private string DownloadTextByUrl(string novelName, string rootUrl, string fileName, Rule rule)
@@ -113,14 +123,13 @@ namespace DownWebNovel
 				return fileName;
 
 			// Biquge
-			var title = ExtractIntrested(downloadedString, rule.TitleStartTagList, rule.TitleEndTagList);
-			var content = ExtractIntrested(downloadedString, rule.ConetentStartTagList, rule.ContentEndTagList);
-			var nextUrl = ExtractIntrested(downloadedString, rule.NextParaStartTagList, rule.NextParaEndTagList);
+			var title = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["TitleStart"], (List<string>)rule.PositionTag["TitleEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["TitleReplace"]);
+			var content = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["ContentStart"], (List<string>)rule.PositionTag["ContentEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["ContentReplace"]);
+			var nextUrl = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["NextParaStart"], (List<string>)rule.PositionTag["NextParaEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["NextParaReplace"]);
 
 			var textWriter = File.AppendText("D:\\" + novelName + ".txt");
 
 			textWriter.WriteLine(title);
-			content = Replace(content, rule.ReplaceTagList);
 			textWriter.WriteLine(content);
 
 			if (_webNovelPullerUser != null)
@@ -158,49 +167,50 @@ namespace DownWebNovel
 
 	    private string DownloadPictureByUrl(string rootUrl, string curImageFile)
 	    {
-            try
-            {
-                _webClient.Encoding = System.Text.Encoding.UTF8;
-                string text;
-                DownloadStringByUrl(rootUrl+curImageFile, out text);
+		    return string.Empty;
+		    //try
+		    //{
+		    //	_webClient.Encoding = System.Text.Encoding.UTF8;
+		    //	string text;
+		    //	DownloadStringByUrl(rootUrl+curImageFile, out text);
 
-                var rule = new Rule
-                {
-                    WebSite = "114",
-                    TitleStartTagList = new List<string> { "<h1 class=\"h1-title\">" },
-                    TitleEndTagList = new List<string> { "</h1>" },
-                    ConetentStartTagList = new List<string> { "<img src=\"" },
-                    ContentEndTagList = new List<string> { "\"" },
-                    NextParaStartTagList = new List<string> { "class=\"picbox\"><a href=\"" },
-                    NextParaEndTagList = new List<string> { "\"" },
-                    ReplaceTagList = new List<KeyValuePair<string, string>>()
-                };
-
-
-                var title = ExtractIntrested(text, rule.TitleStartTagList, rule.TitleEndTagList);
-                var imageUrl = ExtractIntrested(text, rule.ConetentStartTagList, rule.ContentEndTagList);
-                var nextUrl = ExtractIntrested(text, rule.NextParaStartTagList, rule.NextParaEndTagList);
-
-                var curImageNumStartTagList = new List<string> { "<strong>" };
-                var curImageNumEndTagList = new List<string> { "</strong>" };
-                var curImageNum = ExtractIntrested(text, curImageNumStartTagList, curImageNumEndTagList);
+		    //	var rule = new Rule
+		    //	{
+		    //		WebSite = "114",
+		    //		TitleStartTagList = new List<string> { "<h1 class=\"h1-title\">" },
+		    //		TitleEndTagList = new List<string> { "</h1>" },
+		    //		ConetentStartTagList = new List<string> { "<img src=\"" },
+		    //		ContentEndTagList = new List<string> { "\"" },
+		    //		NextParaStartTagList = new List<string> { "class=\"picbox\"><a href=\"" },
+		    //		NextParaEndTagList = new List<string> { "\"" },
+		    //		ContentReplaceTagList = new List<KeyValuePair<string, string>>()
+		    //	};
 
 
-                var imageFile = string.Format("{0}{1}{2}.jpg", "D:\\TestOutput3\\", title, curImageNum);
-                _webClient.DownloadFile(imageUrl, imageFile);
+		    //	var title = ExtractIntrested(text, rule.TitleStartTagList, rule.TitleEndTagList);
+		    //	var imageUrl = ExtractIntrested(text, rule.ConetentStartTagList, rule.ContentEndTagList);
+		    //	var nextUrl = ExtractIntrested(text, rule.NextParaStartTagList, rule.NextParaEndTagList);
 
-                if (_webNovelPullerUser != null)
-                {
-                    _webNovelPullerUser.OnFileDownloaded(title, imageFile, nextUrl);
-                }
+		    //	var curImageNumStartTagList = new List<string> { "<strong>" };
+		    //	var curImageNumEndTagList = new List<string> { "</strong>" };
+		    //	var curImageNum = ExtractIntrested(text, curImageNumStartTagList, curImageNumEndTagList);
 
-                return nextUrl;
 
-            }
-            catch (Exception ex)
-            {
-                return curImageFile;
-            } 
+		    //	var imageFile = string.Format("{0}{1}{2}.jpg", "D:\\TestOutput3\\", title, curImageNum);
+		    //	_webClient.DownloadFile(imageUrl, imageFile);
+
+		    //	if (_webNovelPullerUser != null)
+		    //	{
+		    //		_webNovelPullerUser.OnFileDownloaded(title, imageFile, nextUrl);
+		    //	}
+
+		    //	return nextUrl;
+
+		    //}
+		    //catch (Exception ex)
+		    //{
+		    //	return curImageFile;
+		    //} 
 	    }
 	}
 }

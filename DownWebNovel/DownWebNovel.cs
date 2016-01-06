@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,13 +11,16 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DownWebNovel.DataAccess;
 
 namespace DownWebNovel
 {
 	public partial class DownWebNovel : Form, IWebNovelPullerUser
 	{
 		private List<DownloadTask> _downloadTasks; 
-		private List<Rule> _rules;
+		private Hashtable _rules;
+		private Hashtable _translateTags;
+		private Hashtable _translateReplace;
 		private readonly WebNovelPuller _webNovelPuller;
 
 		delegate void SetTextCallback(string novelName, string curPara, string strNextPara);
@@ -27,6 +31,19 @@ namespace DownWebNovel
 
 			_webNovelPuller = new WebNovelPuller(this);
 			_downloadTasks = new List<DownloadTask>();
+
+			_translateTags = new Hashtable();
+			_translateTags["标题开始"] = "TitleStart";
+			_translateTags["标题结束"] = "TitleEnd";
+			_translateTags["正文开始"] = "ContentStart";
+			_translateTags["正文结束"] = "ContentEnd";
+			_translateTags["下章地址开始"] = "NextParaStart";
+			_translateTags["下章地址结束"] = "NextParaEnd";
+
+			_translateReplace = new Hashtable();
+			_translateReplace["标题"] = "TitleReplace";
+			_translateReplace["正文"] = "ContentReplace";
+			_translateReplace["下章地址"] = "NextParaReplace";
 		}
 
 		private void btDownloadFirstPara_Click(object sender, EventArgs e)
@@ -51,72 +68,47 @@ namespace DownWebNovel
 			//tbStartPara.Text = "/chaojibingwangzaidoushi/4175388/";
 			//tbEndPara.Text = "/chaojibingwangzaidoushi/";
 
+			foreach (DictionaryEntry translate in _translateTags)
+			{
+				lbTagDefine.Items.Add(translate.Key);
+			}
+
+			foreach (DictionaryEntry translate in _translateReplace)
+			{
+				lbContentReplace.Items.Add(translate.Key);
+			}
+
 		    tbDir.Text = @"D:\";
 			LoadRules();
 		}
 
 		private void LoadRules()
 		{
-			_rules = new List<Rule>();
+			_rules = RuleDal.LoadAllRules();
 
-			var rule = new Rule
+			foreach (DictionaryEntry rule in _rules)
 			{
-				WebSite = "笔趣阁",
-				TitleStartTagList = new List<string> { "<h1>" },
-				TitleEndTagList = new List<string> { "</h1>" },
-				ConetentStartTagList = new List<string> { "<div id=\"content\"><script>readx();</script>" },
-				ContentEndTagList = new List<string> { "</div>" },
-				NextParaStartTagList = new List<string> { "章节列表</a> &rarr; <a href=\"" },
-				NextParaEndTagList = new List<string> { "\">下一章</a>" },
-				ReplaceTagList = new List<KeyValuePair<string, string>>
-			    {
-			        new KeyValuePair<string, string>("&nbsp;", " "),
-			        new KeyValuePair<string, string>("<br /><br />", "\r\n")
-			    }
-			};
-
-			//var rule = new Rule
-			//{
-			//	WebSite = "E小说",
-			//	TitleStartTagList = new List<string> { "<h1>" },
-			//	TitleEndTagList = new List<string> { "</h1>" },
-			//	ConetentStartTagList = new List<string> { "<div id=\"content\">" },
-			//	ContentEndTagList = new List<string> { "</div>" },
-			//	NextParaStartTagList = new List<string> { "章节目录</a> &rarr; <a href=\"" },
-			//	NextParaEndTagList = new List<string> { "\">下一章</a>" },
-			//	ReplaceTagList = new List<KeyValuePair<string, string>>
-			//	{
-			//		new KeyValuePair<string, string>("&nbsp;", " "),
-			//		new KeyValuePair<string, string>("<br /><br />", "\r\n")
-			//	}
-			//};
-
-			_rules.Add(rule);
-
-			cbWebSite.Items.Add(rule.WebSite);
+				cbWebSite.Items.Add(rule.Key);
+			}
 			cbWebSite.SelectedIndex = 0;
 		}
 
 		private void cbWebSite_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var selectedRule = _rules.SingleOrDefault(rule => rule.WebSite == cbWebSite.Text);
+			var selectedRule = _rules[cbWebSite.Text];
 
-			lvReplace.Items.Clear();
-			if (selectedRule != null)
-			{
-				foreach (var replace in selectedRule.ReplaceTagList)
-				{
-					var lvi = new ListViewItem {Text = replace.Key};
-					lvi.SubItems.Add(replace.Value);
-					lvReplace.Items.Add(lvi);
-				}
-			}
+			lbTagDefine.SelectedIndex = 0;
+			lbContentReplace.SelectedIndex = 2;
 		}
 
 		private void lbTagDefine_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			lbTagValue.Items.Clear();
+			lbTagValue.DataSource = null;
 
+			var selectedRule = (Rule)_rules[cbWebSite.Text];
+			var tags = (List<string>)selectedRule.PositionTag[_translateTags[lbTagDefine.SelectedItem]];
+
+			lbTagValue.DataSource = tags;
 		}
 
 		private void btDown_Click(object sender, EventArgs e)
@@ -136,7 +128,7 @@ namespace DownWebNovel
 					StartPara = tbStartPara.Text,
 					EndPara = tbEndPara.Text
 				},
-				Rule = _rules.SingleOrDefault(rule => rule.WebSite == cbWebSite.Text),
+				Rule = (Rule)_rules[cbWebSite.Text],
 				Thread = new Thread(DownloadNovelThread),
 				WebNovelPuller = new WebNovelPuller(this) { Exit = false}
 			};
@@ -256,6 +248,58 @@ namespace DownWebNovel
 			}
 
 			contextMenuStrip1.Items[0].Text = lvDownloadingNovels.SelectedItems[0].Text == "下载中"? "停止" : "开始";
+		}
+
+		private void lbTagValue_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			tbTagValue.Text = lbTagValue.SelectedItem as string;
+		}
+
+		private void btAddTag_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btDeleteTag_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void lbContentReplace_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			lvReplace.Items.Clear();
+
+			var selectedRule = (Rule)_rules[cbWebSite.Text];
+			var replaceList = (List<KeyValuePair<string, string>>)selectedRule.ReplaceTag[_translateReplace[lbContentReplace.SelectedItem]];
+
+			foreach (var replace in replaceList)
+			{
+				var lvi = new ListViewItem { Text = replace.Key };
+				lvi.SubItems.Add(replace.Value);
+				lvReplace.Items.Add(lvi);
+			}
+
+			lvReplace.Items[0].Selected = true;
+			lvReplace.Select();
+		}
+
+		private void lvReplace_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+		{
+			if (lvReplace.SelectedItems.Count != 1)
+				return;
+
+			tbReplaceFrom.Text = lvReplace.SelectedItems[0].SubItems[0].Text;
+			tbReplaceTo.Text = lvReplace.SelectedItems[0].SubItems[1].Text;
+		}
+
+		private void btAddReplacement_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btDeleteReplacement_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

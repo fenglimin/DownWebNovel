@@ -34,16 +34,17 @@
 			this.btDownloadFirstPara = new System.Windows.Forms.Button();
 			this.btDeleteReplacement = new System.Windows.Forms.Button();
 			this.tbReplaceTo = new System.Windows.Forms.TextBox();
-			this.btAddOrUpdateReplacement = new System.Windows.Forms.Button();
+			this.btAddReplacement = new System.Windows.Forms.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.tbReplaceFrom = new System.Windows.Forms.TextBox();
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.lvReplace = new System.Windows.Forms.ListView();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.lbContentReplace = new System.Windows.Forms.ListBox();
 			this.btDeleteTag = new System.Windows.Forms.Button();
-			this.btAddOrUpdateTag = new System.Windows.Forms.Button();
-			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.btAddTag = new System.Windows.Forms.Button();
+			this.tbTagValue = new System.Windows.Forms.TextBox();
 			this.lbTagValue = new System.Windows.Forms.ListBox();
 			this.lbTagDefine = new System.Windows.Forms.ListBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -59,6 +60,7 @@
 			this.btDown = new System.Windows.Forms.Button();
 			this.tbMessage = new System.Windows.Forms.TextBox();
 			this.lvDownloadingNovels = new System.Windows.Forms.ListView();
+			this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -68,7 +70,6 @@
 			this.btSelectDir = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.tbDir = new System.Windows.Forms.TextBox();
-			this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -106,33 +107,35 @@
 			// 
 			// btDeleteReplacement
 			// 
-			this.btDeleteReplacement.Location = new System.Drawing.Point(145, 160);
+			this.btDeleteReplacement.Location = new System.Drawing.Point(213, 160);
 			this.btDeleteReplacement.Name = "btDeleteReplacement";
 			this.btDeleteReplacement.Size = new System.Drawing.Size(93, 23);
 			this.btDeleteReplacement.TabIndex = 6;
 			this.btDeleteReplacement.Text = "删除";
 			this.btDeleteReplacement.UseVisualStyleBackColor = true;
+			this.btDeleteReplacement.Click += new System.EventHandler(this.btDeleteReplacement_Click);
 			// 
 			// tbReplaceTo
 			// 
-			this.tbReplaceTo.Location = new System.Drawing.Point(145, 131);
+			this.tbReplaceTo.Location = new System.Drawing.Point(213, 131);
 			this.tbReplaceTo.Name = "tbReplaceTo";
 			this.tbReplaceTo.Size = new System.Drawing.Size(93, 20);
 			this.tbReplaceTo.TabIndex = 9;
 			// 
-			// btAddOrUpdateReplacement
+			// btAddReplacement
 			// 
-			this.btAddOrUpdateReplacement.Location = new System.Drawing.Point(11, 160);
-			this.btAddOrUpdateReplacement.Name = "btAddOrUpdateReplacement";
-			this.btAddOrUpdateReplacement.Size = new System.Drawing.Size(93, 23);
-			this.btAddOrUpdateReplacement.TabIndex = 5;
-			this.btAddOrUpdateReplacement.Text = "增加/更改";
-			this.btAddOrUpdateReplacement.UseVisualStyleBackColor = true;
+			this.btAddReplacement.Location = new System.Drawing.Point(97, 160);
+			this.btAddReplacement.Name = "btAddReplacement";
+			this.btAddReplacement.Size = new System.Drawing.Size(93, 23);
+			this.btAddReplacement.TabIndex = 5;
+			this.btAddReplacement.Text = "增加";
+			this.btAddReplacement.UseVisualStyleBackColor = true;
+			this.btAddReplacement.Click += new System.EventHandler(this.btAddReplacement_Click);
 			// 
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(119, 133);
+			this.label5.Location = new System.Drawing.Point(192, 133);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(19, 13);
 			this.label5.TabIndex = 8;
@@ -140,7 +143,7 @@
 			// 
 			// tbReplaceFrom
 			// 
-			this.tbReplaceFrom.Location = new System.Drawing.Point(11, 131);
+			this.tbReplaceFrom.Location = new System.Drawing.Point(97, 131);
 			this.tbReplaceFrom.Name = "tbReplaceFrom";
 			this.tbReplaceFrom.Size = new System.Drawing.Size(93, 20);
 			this.tbReplaceFrom.TabIndex = 5;
@@ -162,85 +165,95 @@
             this.columnHeader2});
 			this.lvReplace.FullRowSelect = true;
 			this.lvReplace.GridLines = true;
-			this.lvReplace.Location = new System.Drawing.Point(11, 23);
+			this.lvReplace.Location = new System.Drawing.Point(97, 23);
+			this.lvReplace.MultiSelect = false;
 			this.lvReplace.Name = "lvReplace";
-			this.lvReplace.Size = new System.Drawing.Size(273, 95);
+			this.lvReplace.Size = new System.Drawing.Size(209, 95);
 			this.lvReplace.TabIndex = 0;
 			this.lvReplace.UseCompatibleStateImageBehavior = false;
 			this.lvReplace.View = System.Windows.Forms.View.Details;
+			this.lvReplace.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lvReplace_ItemSelectionChanged);
 			// 
 			// groupBox4
 			// 
+			this.groupBox4.Controls.Add(this.lbContentReplace);
 			this.groupBox4.Controls.Add(this.btDeleteReplacement);
 			this.groupBox4.Controls.Add(this.tbReplaceTo);
-			this.groupBox4.Controls.Add(this.btAddOrUpdateReplacement);
+			this.groupBox4.Controls.Add(this.btAddReplacement);
 			this.groupBox4.Controls.Add(this.label5);
 			this.groupBox4.Controls.Add(this.tbReplaceFrom);
 			this.groupBox4.Controls.Add(this.lvReplace);
-			this.groupBox4.Location = new System.Drawing.Point(622, 12);
+			this.groupBox4.Location = new System.Drawing.Point(600, 12);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(294, 192);
+			this.groupBox4.Size = new System.Drawing.Size(316, 192);
 			this.groupBox4.TabIndex = 16;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "替换";
 			// 
+			// lbContentReplace
+			// 
+			this.lbContentReplace.FormattingEnabled = true;
+			this.lbContentReplace.Location = new System.Drawing.Point(6, 23);
+			this.lbContentReplace.Name = "lbContentReplace";
+			this.lbContentReplace.Size = new System.Drawing.Size(82, 160);
+			this.lbContentReplace.Sorted = true;
+			this.lbContentReplace.TabIndex = 5;
+			this.lbContentReplace.SelectedIndexChanged += new System.EventHandler(this.lbContentReplace_SelectedIndexChanged);
+			// 
 			// btDeleteTag
 			// 
-			this.btDeleteTag.Location = new System.Drawing.Point(252, 160);
+			this.btDeleteTag.Location = new System.Drawing.Point(234, 160);
 			this.btDeleteTag.Name = "btDeleteTag";
-			this.btDeleteTag.Size = new System.Drawing.Size(49, 23);
+			this.btDeleteTag.Size = new System.Drawing.Size(67, 23);
 			this.btDeleteTag.TabIndex = 4;
 			this.btDeleteTag.Text = "删除";
 			this.btDeleteTag.UseVisualStyleBackColor = true;
+			this.btDeleteTag.Click += new System.EventHandler(this.btDeleteTag_Click);
 			// 
-			// btAddOrUpdateTag
+			// btAddTag
 			// 
-			this.btAddOrUpdateTag.Location = new System.Drawing.Point(152, 160);
-			this.btAddOrUpdateTag.Name = "btAddOrUpdateTag";
-			this.btAddOrUpdateTag.Size = new System.Drawing.Size(49, 23);
-			this.btAddOrUpdateTag.TabIndex = 3;
-			this.btAddOrUpdateTag.Text = "增加/更改";
-			this.btAddOrUpdateTag.UseVisualStyleBackColor = true;
+			this.btAddTag.Location = new System.Drawing.Point(132, 160);
+			this.btAddTag.Name = "btAddTag";
+			this.btAddTag.Size = new System.Drawing.Size(73, 23);
+			this.btAddTag.TabIndex = 3;
+			this.btAddTag.Text = "增加";
+			this.btAddTag.UseVisualStyleBackColor = true;
+			this.btAddTag.Click += new System.EventHandler(this.btAddTag_Click);
 			// 
-			// textBox1
+			// tbTagValue
 			// 
-			this.textBox1.Location = new System.Drawing.Point(152, 131);
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(150, 20);
-			this.textBox1.TabIndex = 2;
+			this.tbTagValue.Location = new System.Drawing.Point(132, 131);
+			this.tbTagValue.Name = "tbTagValue";
+			this.tbTagValue.Size = new System.Drawing.Size(170, 20);
+			this.tbTagValue.TabIndex = 2;
 			// 
 			// lbTagValue
 			// 
 			this.lbTagValue.FormattingEnabled = true;
-			this.lbTagValue.Location = new System.Drawing.Point(152, 23);
+			this.lbTagValue.Location = new System.Drawing.Point(132, 23);
 			this.lbTagValue.Name = "lbTagValue";
-			this.lbTagValue.Size = new System.Drawing.Size(150, 95);
+			this.lbTagValue.Size = new System.Drawing.Size(170, 95);
 			this.lbTagValue.TabIndex = 1;
+			this.lbTagValue.SelectedIndexChanged += new System.EventHandler(this.lbTagValue_SelectedIndexChanged);
 			// 
 			// lbTagDefine
 			// 
 			this.lbTagDefine.FormattingEnabled = true;
-			this.lbTagDefine.Items.AddRange(new object[] {
-            "标题开始",
-            "标题结束",
-            "正文开始",
-            "正文结束",
-            "下章地址开始",
-            "下章地址结束"});
 			this.lbTagDefine.Location = new System.Drawing.Point(11, 23);
 			this.lbTagDefine.Name = "lbTagDefine";
-			this.lbTagDefine.Size = new System.Drawing.Size(128, 160);
+			this.lbTagDefine.Size = new System.Drawing.Size(109, 160);
+			this.lbTagDefine.Sorted = true;
 			this.lbTagDefine.TabIndex = 0;
 			this.lbTagDefine.SelectedIndexChanged += new System.EventHandler(this.lbTagDefine_SelectedIndexChanged);
 			// 
 			// groupBox2
 			// 
 			this.groupBox2.Controls.Add(this.btDeleteTag);
-			this.groupBox2.Controls.Add(this.btAddOrUpdateTag);
-			this.groupBox2.Controls.Add(this.textBox1);
+			this.groupBox2.Controls.Add(this.btAddTag);
+			this.groupBox2.Controls.Add(this.tbTagValue);
 			this.groupBox2.Controls.Add(this.lbTagValue);
 			this.groupBox2.Controls.Add(this.lbTagDefine);
-			this.groupBox2.Location = new System.Drawing.Point(303, 12);
+			this.groupBox2.Location = new System.Drawing.Point(274, 12);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(313, 192);
 			this.groupBox2.TabIndex = 15;
@@ -310,7 +323,7 @@
 			this.groupBox1.Controls.Add(this.tbName);
 			this.groupBox1.Location = new System.Drawing.Point(12, 12);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(285, 192);
+			this.groupBox1.Size = new System.Drawing.Size(250, 192);
 			this.groupBox1.TabIndex = 14;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "小说";
@@ -367,6 +380,10 @@
 			this.lvDownloadingNovels.UseCompatibleStateImageBehavior = false;
 			this.lvDownloadingNovels.View = System.Windows.Forms.View.Details;
 			// 
+			// columnHeader6
+			// 
+			this.columnHeader6.Text = "状态";
+			// 
 			// columnHeader3
 			// 
 			this.columnHeader3.Text = "小说";
@@ -394,7 +411,7 @@
 			// 停止ToolStripMenuItem
 			// 
 			this.停止ToolStripMenuItem.Name = "停止ToolStripMenuItem";
-			this.停止ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.停止ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
 			this.停止ToolStripMenuItem.Text = "停止";
 			// 
 			// groupBox3
@@ -438,10 +455,6 @@
 			this.tbDir.Size = new System.Drawing.Size(385, 20);
 			this.tbDir.TabIndex = 15;
 			// 
-			// columnHeader6
-			// 
-			this.columnHeader6.Text = "状态";
-			// 
 			// DownWebNovel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -474,7 +487,7 @@
 		private System.Windows.Forms.Button btDownloadFirstPara;
 		private System.Windows.Forms.Button btDeleteReplacement;
 		private System.Windows.Forms.TextBox tbReplaceTo;
-		private System.Windows.Forms.Button btAddOrUpdateReplacement;
+		private System.Windows.Forms.Button btAddReplacement;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox tbReplaceFrom;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
@@ -482,8 +495,8 @@
 		private System.Windows.Forms.ListView lvReplace;
 		private System.Windows.Forms.GroupBox groupBox4;
 		private System.Windows.Forms.Button btDeleteTag;
-		private System.Windows.Forms.Button btAddOrUpdateTag;
-		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.Button btAddTag;
+		private System.Windows.Forms.TextBox tbTagValue;
 		private System.Windows.Forms.ListBox lbTagValue;
 		private System.Windows.Forms.ListBox lbTagDefine;
 		private System.Windows.Forms.GroupBox groupBox2;
@@ -509,6 +522,7 @@
 		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 停止ToolStripMenuItem;
 		private System.Windows.Forms.ColumnHeader columnHeader6;
+		private System.Windows.Forms.ListBox lbContentReplace;
 
 	}
 }
