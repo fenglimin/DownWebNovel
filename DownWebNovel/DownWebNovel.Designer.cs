@@ -29,8 +29,6 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.cbWebSite = new System.Windows.Forms.ComboBox();
-			this.label6 = new System.Windows.Forms.Label();
 			this.btDownloadFirstPara = new System.Windows.Forms.Button();
 			this.btDeleteReplacement = new System.Windows.Forms.Button();
 			this.tbReplaceTo = new System.Windows.Forms.TextBox();
@@ -70,6 +68,10 @@
 			this.btSelectDir = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.tbDir = new System.Windows.Forms.TextBox();
+			this.btDeleteWebSite = new System.Windows.Forms.Button();
+			this.tbWebSite = new System.Windows.Forms.TextBox();
+			this.lbWebSite = new System.Windows.Forms.ListBox();
+			this.btAddWebSite = new System.Windows.Forms.Button();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -77,27 +79,9 @@
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// cbWebSite
-			// 
-			this.cbWebSite.FormattingEnabled = true;
-			this.cbWebSite.Location = new System.Drawing.Point(43, 22);
-			this.cbWebSite.Name = "cbWebSite";
-			this.cbWebSite.Size = new System.Drawing.Size(191, 21);
-			this.cbWebSite.TabIndex = 13;
-			this.cbWebSite.SelectedIndexChanged += new System.EventHandler(this.cbWebSite_SelectedIndexChanged);
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(6, 26);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(31, 13);
-			this.label6.TabIndex = 12;
-			this.label6.Text = "网站";
-			// 
 			// btDownloadFirstPara
 			// 
-			this.btDownloadFirstPara.Location = new System.Drawing.Point(9, 160);
+			this.btDownloadFirstPara.Location = new System.Drawing.Point(9, 169);
 			this.btDownloadFirstPara.Name = "btDownloadFirstPara";
 			this.btDownloadFirstPara.Size = new System.Drawing.Size(225, 23);
 			this.btDownloadFirstPara.TabIndex = 10;
@@ -147,6 +131,7 @@
 			this.tbReplaceFrom.Name = "tbReplaceFrom";
 			this.tbReplaceFrom.Size = new System.Drawing.Size(93, 20);
 			this.tbReplaceFrom.TabIndex = 5;
+			this.tbReplaceFrom.TextChanged += new System.EventHandler(this.tbReplaceFrom_TextChanged);
 			// 
 			// columnHeader2
 			// 
@@ -202,7 +187,7 @@
 			// 
 			// btDeleteTag
 			// 
-			this.btDeleteTag.Location = new System.Drawing.Point(234, 160);
+			this.btDeleteTag.Location = new System.Drawing.Point(239, 160);
 			this.btDeleteTag.Name = "btDeleteTag";
 			this.btDeleteTag.Size = new System.Drawing.Size(67, 23);
 			this.btDeleteTag.TabIndex = 4;
@@ -212,7 +197,7 @@
 			// 
 			// btAddTag
 			// 
-			this.btAddTag.Location = new System.Drawing.Point(132, 160);
+			this.btAddTag.Location = new System.Drawing.Point(137, 160);
 			this.btAddTag.Name = "btAddTag";
 			this.btAddTag.Size = new System.Drawing.Size(73, 23);
 			this.btAddTag.TabIndex = 3;
@@ -222,15 +207,16 @@
 			// 
 			// tbTagValue
 			// 
-			this.tbTagValue.Location = new System.Drawing.Point(132, 131);
+			this.tbTagValue.Location = new System.Drawing.Point(137, 131);
 			this.tbTagValue.Name = "tbTagValue";
 			this.tbTagValue.Size = new System.Drawing.Size(170, 20);
 			this.tbTagValue.TabIndex = 2;
+			this.tbTagValue.TextChanged += new System.EventHandler(this.tbTagValue_TextChanged);
 			// 
 			// lbTagValue
 			// 
 			this.lbTagValue.FormattingEnabled = true;
-			this.lbTagValue.Location = new System.Drawing.Point(132, 23);
+			this.lbTagValue.Location = new System.Drawing.Point(137, 23);
 			this.lbTagValue.Name = "lbTagValue";
 			this.lbTagValue.Size = new System.Drawing.Size(170, 95);
 			this.lbTagValue.TabIndex = 1;
@@ -249,10 +235,10 @@
 			// groupBox2
 			// 
 			this.groupBox2.Controls.Add(this.btDeleteTag);
-			this.groupBox2.Controls.Add(this.btAddTag);
+			this.groupBox2.Controls.Add(this.lbTagDefine);
 			this.groupBox2.Controls.Add(this.tbTagValue);
 			this.groupBox2.Controls.Add(this.lbTagValue);
-			this.groupBox2.Controls.Add(this.lbTagDefine);
+			this.groupBox2.Controls.Add(this.btAddTag);
 			this.groupBox2.Location = new System.Drawing.Point(274, 12);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(313, 192);
@@ -263,7 +249,7 @@
 			// label4
 			// 
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(6, 134);
+			this.label4.Location = new System.Drawing.Point(6, 108);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(31, 13);
 			this.label4.TabIndex = 6;
@@ -271,7 +257,7 @@
 			// 
 			// tbEndPara
 			// 
-			this.tbEndPara.Location = new System.Drawing.Point(43, 131);
+			this.tbEndPara.Location = new System.Drawing.Point(43, 105);
 			this.tbEndPara.Name = "tbEndPara";
 			this.tbEndPara.Size = new System.Drawing.Size(191, 20);
 			this.tbEndPara.TabIndex = 7;
@@ -279,7 +265,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(6, 108);
+			this.label3.Location = new System.Drawing.Point(6, 82);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(31, 13);
 			this.label3.TabIndex = 4;
@@ -287,7 +273,7 @@
 			// 
 			// tbUrl
 			// 
-			this.tbUrl.Location = new System.Drawing.Point(43, 77);
+			this.tbUrl.Location = new System.Drawing.Point(43, 51);
 			this.tbUrl.Name = "tbUrl";
 			this.tbUrl.Size = new System.Drawing.Size(191, 20);
 			this.tbUrl.TabIndex = 5;
@@ -295,7 +281,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(6, 82);
+			this.label2.Location = new System.Drawing.Point(6, 56);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(31, 13);
 			this.label2.TabIndex = 2;
@@ -303,35 +289,28 @@
 			// 
 			// tbStartPara
 			// 
-			this.tbStartPara.Location = new System.Drawing.Point(43, 104);
+			this.tbStartPara.Location = new System.Drawing.Point(43, 78);
 			this.tbStartPara.Name = "tbStartPara";
 			this.tbStartPara.Size = new System.Drawing.Size(191, 20);
 			this.tbStartPara.TabIndex = 3;
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Controls.Add(this.cbWebSite);
-			this.groupBox1.Controls.Add(this.label6);
-			this.groupBox1.Controls.Add(this.btDownloadFirstPara);
-			this.groupBox1.Controls.Add(this.label4);
-			this.groupBox1.Controls.Add(this.tbEndPara);
-			this.groupBox1.Controls.Add(this.label3);
-			this.groupBox1.Controls.Add(this.tbUrl);
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.tbStartPara);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.tbName);
+			this.groupBox1.Controls.Add(this.btDeleteWebSite);
+			this.groupBox1.Controls.Add(this.lbWebSite);
+			this.groupBox1.Controls.Add(this.tbWebSite);
+			this.groupBox1.Controls.Add(this.btAddWebSite);
 			this.groupBox1.Location = new System.Drawing.Point(12, 12);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(250, 192);
+			this.groupBox1.Size = new System.Drawing.Size(234, 192);
 			this.groupBox1.TabIndex = 14;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "小说";
+			this.groupBox1.Text = "网站";
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(6, 54);
+			this.label1.Location = new System.Drawing.Point(6, 28);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(31, 13);
 			this.label1.TabIndex = 0;
@@ -339,16 +318,16 @@
 			// 
 			// tbName
 			// 
-			this.tbName.Location = new System.Drawing.Point(43, 50);
+			this.tbName.Location = new System.Drawing.Point(43, 24);
 			this.tbName.Name = "tbName";
 			this.tbName.Size = new System.Drawing.Size(191, 20);
 			this.tbName.TabIndex = 1;
 			// 
 			// btDown
 			// 
-			this.btDown.Location = new System.Drawing.Point(521, 26);
+			this.btDown.Location = new System.Drawing.Point(762, 22);
 			this.btDown.Name = "btDown";
-			this.btDown.Size = new System.Drawing.Size(373, 27);
+			this.btDown.Size = new System.Drawing.Size(132, 27);
 			this.btDown.TabIndex = 17;
 			this.btDown.Text = "开始下载";
 			this.btDown.UseVisualStyleBackColor = true;
@@ -373,9 +352,9 @@
 			this.lvDownloadingNovels.ContextMenuStrip = this.contextMenuStrip1;
 			this.lvDownloadingNovels.FullRowSelect = true;
 			this.lvDownloadingNovels.GridLines = true;
-			this.lvDownloadingNovels.Location = new System.Drawing.Point(9, 67);
+			this.lvDownloadingNovels.Location = new System.Drawing.Point(262, 55);
 			this.lvDownloadingNovels.Name = "lvDownloadingNovels";
-			this.lvDownloadingNovels.Size = new System.Drawing.Size(885, 125);
+			this.lvDownloadingNovels.Size = new System.Drawing.Size(632, 137);
 			this.lvDownloadingNovels.TabIndex = 10;
 			this.lvDownloadingNovels.UseCompatibleStateImageBehavior = false;
 			this.lvDownloadingNovels.View = System.Windows.Forms.View.Details;
@@ -392,7 +371,7 @@
 			// columnHeader4
 			// 
 			this.columnHeader4.Text = "当前下载章节";
-			this.columnHeader4.Width = 557;
+			this.columnHeader4.Width = 335;
 			// 
 			// columnHeader5
 			// 
@@ -418,10 +397,19 @@
 			// 
 			this.groupBox3.Controls.Add(this.btSelectDir);
 			this.groupBox3.Controls.Add(this.label7);
+			this.groupBox3.Controls.Add(this.btDownloadFirstPara);
 			this.groupBox3.Controls.Add(this.tbMessage);
+			this.groupBox3.Controls.Add(this.label4);
 			this.groupBox3.Controls.Add(this.tbDir);
+			this.groupBox3.Controls.Add(this.tbEndPara);
 			this.groupBox3.Controls.Add(this.lvDownloadingNovels);
+			this.groupBox3.Controls.Add(this.label3);
 			this.groupBox3.Controls.Add(this.btDown);
+			this.groupBox3.Controls.Add(this.tbUrl);
+			this.groupBox3.Controls.Add(this.tbStartPara);
+			this.groupBox3.Controls.Add(this.label2);
+			this.groupBox3.Controls.Add(this.tbName);
+			this.groupBox3.Controls.Add(this.label1);
 			this.groupBox3.Location = new System.Drawing.Point(12, 216);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(904, 447);
@@ -431,9 +419,9 @@
 			// 
 			// btSelectDir
 			// 
-			this.btSelectDir.Location = new System.Drawing.Point(436, 25);
+			this.btSelectDir.Location = new System.Drawing.Point(685, 22);
 			this.btSelectDir.Name = "btSelectDir";
-			this.btSelectDir.Size = new System.Drawing.Size(56, 27);
+			this.btSelectDir.Size = new System.Drawing.Size(56, 25);
 			this.btSelectDir.TabIndex = 20;
 			this.btSelectDir.Text = "...";
 			this.btSelectDir.UseVisualStyleBackColor = true;
@@ -442,7 +430,7 @@
 			// label7
 			// 
 			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(9, 28);
+			this.label7.Location = new System.Drawing.Point(259, 24);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(31, 13);
 			this.label7.TabIndex = 14;
@@ -450,10 +438,48 @@
 			// 
 			// tbDir
 			// 
-			this.tbDir.Location = new System.Drawing.Point(45, 25);
+			this.tbDir.Location = new System.Drawing.Point(297, 22);
 			this.tbDir.Name = "tbDir";
-			this.tbDir.Size = new System.Drawing.Size(385, 20);
+			this.tbDir.Size = new System.Drawing.Size(350, 20);
 			this.tbDir.TabIndex = 15;
+			// 
+			// btDeleteWebSite
+			// 
+			this.btDeleteWebSite.Location = new System.Drawing.Point(154, 160);
+			this.btDeleteWebSite.Name = "btDeleteWebSite";
+			this.btDeleteWebSite.Size = new System.Drawing.Size(67, 23);
+			this.btDeleteWebSite.TabIndex = 8;
+			this.btDeleteWebSite.Text = "删除";
+			this.btDeleteWebSite.UseVisualStyleBackColor = true;
+			this.btDeleteWebSite.Click += new System.EventHandler(this.btDeleteWebSite_Click);
+			// 
+			// tbWebSite
+			// 
+			this.tbWebSite.Location = new System.Drawing.Point(9, 131);
+			this.tbWebSite.Name = "tbWebSite";
+			this.tbWebSite.Size = new System.Drawing.Size(212, 20);
+			this.tbWebSite.TabIndex = 6;
+			this.tbWebSite.TextChanged += new System.EventHandler(this.tbWebSite_TextChanged);
+			// 
+			// lbWebSite
+			// 
+			this.lbWebSite.FormattingEnabled = true;
+			this.lbWebSite.Location = new System.Drawing.Point(9, 23);
+			this.lbWebSite.Name = "lbWebSite";
+			this.lbWebSite.Size = new System.Drawing.Size(212, 95);
+			this.lbWebSite.TabIndex = 5;
+			this.lbWebSite.SelectedIndexChanged += new System.EventHandler(this.lbWebSite_SelectedIndexChanged);
+			// 
+			// btAddWebSite
+			// 
+			this.btAddWebSite.Enabled = false;
+			this.btAddWebSite.Location = new System.Drawing.Point(9, 160);
+			this.btAddWebSite.Name = "btAddWebSite";
+			this.btAddWebSite.Size = new System.Drawing.Size(73, 23);
+			this.btAddWebSite.TabIndex = 7;
+			this.btAddWebSite.Text = "增加";
+			this.btAddWebSite.UseVisualStyleBackColor = true;
+			this.btAddWebSite.Click += new System.EventHandler(this.btAddWebSite_Click);
 			// 
 			// DownWebNovel
 			// 
@@ -482,8 +508,6 @@
 
 		#endregion
 
-		private System.Windows.Forms.ComboBox cbWebSite;
-		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Button btDownloadFirstPara;
 		private System.Windows.Forms.Button btDeleteReplacement;
 		private System.Windows.Forms.TextBox tbReplaceTo;
@@ -523,6 +547,10 @@
         private System.Windows.Forms.ToolStripMenuItem 停止ToolStripMenuItem;
 		private System.Windows.Forms.ColumnHeader columnHeader6;
 		private System.Windows.Forms.ListBox lbContentReplace;
+		private System.Windows.Forms.Button btDeleteWebSite;
+		private System.Windows.Forms.ListBox lbWebSite;
+		private System.Windows.Forms.TextBox tbWebSite;
+		private System.Windows.Forms.Button btAddWebSite;
 
 	}
 }

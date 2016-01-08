@@ -67,5 +67,52 @@ namespace DownWebNovel.DataAccess
 			reader.Close();
 			return allRules;
 		}
+
+		public static void AddRuleItem(string webSite, string key, string value1, string value2)
+		{
+			var strSql = string.Format("INSERT INTO Rule (WebSite,[Key],Value1,Value2) VALUES('{0}', '{1}', '{2}', '{3}')",
+				webSite, key, value1, value2);
+
+			var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
+			comm.ExecuteNonQuery();
+		}
+
+		public static void DeleteRuleItem(string webSite, string key, string value1)
+		{
+			var strSql = string.Format("DELETE FROM Rule WHERE ( WebSite = '{0}' AND [Key] = '{1}' AND Value1 = '{2}')",
+				webSite, key, value1);
+
+			var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
+			comm.ExecuteNonQuery();
+		}
+
+		public static void CopyRule(string newWebSite, Rule rule)
+		{
+			foreach (DictionaryEntry positionTag in rule.PositionTag)
+			{
+				var tags = (List<string>)positionTag.Value;
+				foreach (var tag in tags)
+				{
+					AddRuleItem(newWebSite, positionTag.Key.ToString(), tag, string.Empty);
+				}
+			}
+
+			foreach (DictionaryEntry replaceTag in rule.ReplaceTag)
+			{
+				var tags = (List<KeyValuePair<string, string>>)replaceTag.Value;
+				foreach (var tag in tags)
+				{
+					AddRuleItem(newWebSite, replaceTag.Key.ToString(), tag.Key, tag.Value);
+				}
+			}
+		}
+
+		public static void DeleteRule(string webSite)
+		{
+			var strSql = string.Format("DELETE FROM Rule WHERE ( WebSite = '{0}')", webSite);
+
+			var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
+			comm.ExecuteNonQuery();
+		}
 	}
 }

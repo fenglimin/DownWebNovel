@@ -88,27 +88,9 @@ namespace DownWebNovel
 
 			foreach (DictionaryEntry rule in _rules)
 			{
-				cbWebSite.Items.Add(rule.Key);
+				lbWebSite.Items.Add(rule.Key);
 			}
-			cbWebSite.SelectedIndex = 0;
-		}
-
-		private void cbWebSite_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var selectedRule = _rules[cbWebSite.Text];
-
-			lbTagDefine.SelectedIndex = 0;
-			lbContentReplace.SelectedIndex = 2;
-		}
-
-		private void lbTagDefine_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			lbTagValue.DataSource = null;
-
-			var selectedRule = (Rule)_rules[cbWebSite.Text];
-			var tags = (List<string>)selectedRule.PositionTag[_translateTags[lbTagDefine.SelectedItem]];
-
-			lbTagValue.DataSource = tags;
+			lbWebSite.SelectedIndex = 0;
 		}
 
 		private void btDown_Click(object sender, EventArgs e)
@@ -128,7 +110,7 @@ namespace DownWebNovel
 					StartPara = tbStartPara.Text,
 					EndPara = tbEndPara.Text
 				},
-				Rule = (Rule)_rules[cbWebSite.Text],
+				Rule = (Rule)_rules[lbWebSite.SelectedItem],
 				Thread = new Thread(DownloadNovelThread),
 				WebNovelPuller = new WebNovelPuller(this) { Exit = false}
 			};
@@ -250,26 +232,143 @@ namespace DownWebNovel
 			contextMenuStrip1.Items[0].Text = lvDownloadingNovels.SelectedItems[0].Text == "下载中"? "停止" : "开始";
 		}
 
+		#region WebSite
+
+		private void RefershWebSiteButtons()
+		{
+			var contain = lbWebSite.Items.Contains(tbWebSite.Text);
+			btAddWebSite.Enabled = !contain && tbWebSite.Text != string.Empty;
+			btDeleteWebSite.Enabled = contain && tbWebSite.Text != string.Empty;
+		}
+
+		private void lbWebSite_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (lbWebSite.SelectedItem == null)
+				return;
+
+			var selectedRule = _rules[lbWebSite.SelectedItem];
+
+			tbWebSite.Text = lbWebSite.SelectedItem.ToString();
+
+			lbTagDefine.SelectedIndex = 0;
+			lbContentReplace.SelectedIndex = 2;
+		}
+
+		private void tbWebSite_TextChanged(object sender, EventArgs e)
+		{
+			RefershWebSiteButtons();
+		}
+
+		private void btAddWebSite_Click(object sender, EventArgs e)
+		{
+			var index = lbWebSite.Items.Add(tbWebSite.Text);
+
+			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
+			RuleDal.CopyRule(tbWebSite.Text, selectedRule);
+
+			lbWebSite.SelectedIndex = index;
+
+			RefershWebSiteButtons();
+		}
+
+		private void btDeleteWebSite_Click(object sender, EventArgs e)
+		{
+			var value = tbWebSite.Text;
+			lbWebSite.Items.Remove(value);
+
+			RuleDal.DeleteRule(value);
+
+			if (lbWebSite.Items.Count > 0)
+				lbWebSite.SelectedIndex = 0;
+
+			RefershWebSiteButtons();
+		}
+
+		#endregion
+
+		#region	Tag
+
+		private void RefershTagButtons()
+		{
+			var contain = lbTagValue.Items.Contains(tbTagValue.Text);
+			btAddTag.Enabled = !contain && tbTagValue.Text != string.Empty;
+			btDeleteTag.Enabled = contain && tbTagValue.Text != string.Empty;
+		}
+
+		private void lbTagDefine_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			lbTagValue.Items.Clear();
+
+			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
+			var tags = (List<string>)selectedRule.PositionTag[_translateTags[lbTagDefine.SelectedItem]];
+
+			foreach (var tag in tags)
+			{
+				lbTagValue.Items.Add(tag);
+			}
+
+			if (lbTagValue.Items.Count > 0)
+				lbTagValue.SelectedIndex = 0;
+		}
+
 		private void lbTagValue_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			tbTagValue.Text = lbTagValue.SelectedItem as string;
 		}
 
+		private void tbTagValue_TextChanged(object sender, EventArgs e)
+		{
+			RefershTagButtons();
+		}
+
 		private void btAddTag_Click(object sender, EventArgs e)
 		{
+			var index = lbTagValue.Items.Add(tbTagValue.Text);
 
+
+			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
+			var tags = (List<string>)selectedRule.PositionTag[_translateTags[lbTagDefine.SelectedItem]];
+			tags.Add(tbTagValue.Text);
+
+			RuleDal.AddRuleItem(tbWebSite.Text, _translateTags[lbTagDefine.SelectedItem].ToString(), tbTagValue.Text, string.Empty);
+
+			lbTagValue.SelectedIndex = index;
+
+			RefershTagButtons();
 		}
 
 		private void btDeleteTag_Click(object sender, EventArgs e)
 		{
+			var value = tbTagValue.Text;
+			lbTagValue.Items.Remove(value);
 
+			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
+			var tags = (List<string>)selectedRule.PositionTag[_translateTags[lbTagDefine.SelectedItem]];
+			tags.Remove(tbTagValue.Text);
+
+			RuleDal.DeleteRuleItem(tbWebSite.Text, _translateTags[lbTagDefine.SelectedItem].ToString(), value);
+
+			if (lbTagValue.Items.Count > 0)
+				lbTagValue.SelectedIndex = 0;
+
+			RefershTagButtons();
+		}
+		#endregion
+
+		#region	Replace
+
+		private void RefershRepalceButtons()
+		{
+			var contain = lvReplace.Items.Cast<ListViewItem>().Any(item => item.Text == tbReplaceFrom.Text);
+			btAddReplacement.Enabled = !contain && tbReplaceFrom.Text != string.Empty && tbReplaceTo.Text != string.Empty;
+			btDeleteReplacement.Enabled = contain && tbReplaceFrom.Text != string.Empty && tbReplaceTo.Text != string.Empty;
 		}
 
 		private void lbContentReplace_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			lvReplace.Items.Clear();
 
-			var selectedRule = (Rule)_rules[cbWebSite.Text];
+			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
 			var replaceList = (List<KeyValuePair<string, string>>)selectedRule.ReplaceTag[_translateReplace[lbContentReplace.SelectedItem]];
 
 			foreach (var replace in replaceList)
@@ -279,8 +378,17 @@ namespace DownWebNovel
 				lvReplace.Items.Add(lvi);
 			}
 
-			lvReplace.Items[0].Selected = true;
-			lvReplace.Select();
+			if (lvReplace.Items.Count > 0)
+			{
+				lvReplace.Items[0].Selected = true;
+				lvReplace.Select();
+			}
+			else
+			{
+				tbReplaceFrom.Text = string.Empty;
+				tbReplaceTo.Text = string.Empty;
+				RefershRepalceButtons();
+			}
 		}
 
 		private void lvReplace_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -290,16 +398,59 @@ namespace DownWebNovel
 
 			tbReplaceFrom.Text = lvReplace.SelectedItems[0].SubItems[0].Text;
 			tbReplaceTo.Text = lvReplace.SelectedItems[0].SubItems[1].Text;
+
+			RefershRepalceButtons();
+		}
+
+		private void tbReplaceFrom_TextChanged(object sender, EventArgs e)
+		{
+			RefershRepalceButtons();
 		}
 
 		private void btAddReplacement_Click(object sender, EventArgs e)
 		{
+			var lvi = new ListViewItem { Text = tbReplaceFrom.Text };
+			lvi.SubItems.Add(tbReplaceTo.Text);
+			lvReplace.Items.Add(lvi);
+			lvi.Selected = true;
 
+			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
+			var replaceList = (List<KeyValuePair<string, string>>)selectedRule.ReplaceTag[_translateReplace[lbContentReplace.SelectedItem]];
+			replaceList.Add(new KeyValuePair<string, string>(tbReplaceFrom.Text, tbReplaceTo.Text));
+
+			RuleDal.AddRuleItem(tbWebSite.Text, _translateReplace[lbContentReplace.SelectedItem].ToString(), tbReplaceFrom.Text, tbReplaceTo.Text);
+
+			RefershRepalceButtons();
 		}
 
 		private void btDeleteReplacement_Click(object sender, EventArgs e)
 		{
+			if (lvReplace.SelectedItems.Count == 0)
+				return;
 
+			var from = tbReplaceFrom.Text;
+			var to = tbReplaceTo.Text;
+
+			lvReplace.Items.Remove(lvReplace.SelectedItems[0]);
+
+			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
+			var replaceList = (List<KeyValuePair<string, string>>)selectedRule.ReplaceTag[_translateReplace[lbContentReplace.SelectedItem]];
+			replaceList.Remove(new KeyValuePair<string, string>(from, to));
+
+			RuleDal.DeleteRuleItem(tbWebSite.Text, _translateReplace[lbContentReplace.SelectedItem].ToString(), from);
+
+			if (lvReplace.Items.Count > 0)
+			{
+				lvReplace.Items[0].Selected = true;
+				lvReplace.Select();
+			}
+
+			RefershRepalceButtons();
 		}
+
+		#endregion
+
+
+
 	}
 }
