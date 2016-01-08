@@ -9,20 +9,18 @@ using System.Threading;
 
 namespace DownWebNovel
 {
-	public class DownloadTask
+	public class Task
 	{
-		public Novel Novel { get; set; }
+		public string TaskName { get; set; }
+		public string RootUrl { get; set; }
+		public string ParaStart { get; set; }
+		public string ParaEnd { get; set; }
+		public string TaskDir { get; set; }
+		public string RuleName { get; set; }
+
 		public Rule Rule { get; set; }
 		public Thread Thread { get; set; }
 		public WebNovelPuller WebNovelPuller { get; set; }
-	}
-
-	public class Novel
-	{
-		public string Name { get; set; }
-		public string RootUrl { get; set; }
-		public string StartPara { get; set; }
-		public string EndPara { get; set; }
 	}
 
 	public class Rule
@@ -30,14 +28,11 @@ namespace DownWebNovel
 		public string WebSite { get; set; }
 		public Hashtable PositionTag { get; set; }
 		public Hashtable ReplaceTag { get; set; }
-		//public List<string> TitleStartTagList { get; set; }
-		//public List<string> TitleEndTagList { get; set; }
-		//public List<string> ConetentStartTagList { get; set; }
-		//public List<string> ContentEndTagList { get; set; }
-		//public List<string> NextParaStartTagList { get; set; }
-		//public List<string> NextParaEndTagList { get; set; }
 
-		//public List<KeyValuePair<string, string>> ContentReplaceTagList { get; set; }
+		public Rule Clone()
+		{
+			return (Rule) this.MemberwiseClone();
+		}
 	}
 
 	public interface IWebNovelPullerUser
@@ -56,13 +51,13 @@ namespace DownWebNovel
 			_webNovelPullerUser = webNovelPullerUser;
 		}
 
-		public bool DownloadNovel(Novel novel, Rule rule)
+		public bool DownloadNovel(Task task)
 		{
-			var curFile = novel.StartPara;
-			while (curFile != novel.EndPara && !Exit)
-				curFile = DownloadTextByUrl(novel.Name, novel.RootUrl, curFile, rule);
+			var curFile = task.ParaStart;
+			while (curFile != task.ParaEnd && !Exit)
+				curFile = DownloadTextByUrl(task.TaskName, task.RootUrl, curFile, task.Rule);
 
-			novel.StartPara = curFile;
+			task.ParaStart = curFile;
 			return true;
 		}
 

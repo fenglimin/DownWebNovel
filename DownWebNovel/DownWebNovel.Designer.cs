@@ -53,6 +53,10 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.tbStartPara = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.btDeleteWebSite = new System.Windows.Forms.Button();
+			this.lbWebSite = new System.Windows.Forms.ListBox();
+			this.tbWebSite = new System.Windows.Forms.TextBox();
+			this.btAddWebSite = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tbName = new System.Windows.Forms.TextBox();
 			this.btDown = new System.Windows.Forms.Button();
@@ -62,16 +66,15 @@
 			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.停止ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.btSelectDir = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.tbDir = new System.Windows.Forms.TextBox();
-			this.btDeleteWebSite = new System.Windows.Forms.Button();
-			this.tbWebSite = new System.Windows.Forms.TextBox();
-			this.lbWebSite = new System.Windows.Forms.ListBox();
-			this.btAddWebSite = new System.Windows.Forms.Button();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -307,6 +310,44 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "网站";
 			// 
+			// btDeleteWebSite
+			// 
+			this.btDeleteWebSite.Location = new System.Drawing.Point(154, 160);
+			this.btDeleteWebSite.Name = "btDeleteWebSite";
+			this.btDeleteWebSite.Size = new System.Drawing.Size(67, 23);
+			this.btDeleteWebSite.TabIndex = 8;
+			this.btDeleteWebSite.Text = "删除";
+			this.btDeleteWebSite.UseVisualStyleBackColor = true;
+			this.btDeleteWebSite.Click += new System.EventHandler(this.btDeleteWebSite_Click);
+			// 
+			// lbWebSite
+			// 
+			this.lbWebSite.FormattingEnabled = true;
+			this.lbWebSite.Location = new System.Drawing.Point(9, 23);
+			this.lbWebSite.Name = "lbWebSite";
+			this.lbWebSite.Size = new System.Drawing.Size(212, 95);
+			this.lbWebSite.TabIndex = 5;
+			this.lbWebSite.SelectedIndexChanged += new System.EventHandler(this.lbWebSite_SelectedIndexChanged);
+			// 
+			// tbWebSite
+			// 
+			this.tbWebSite.Location = new System.Drawing.Point(9, 131);
+			this.tbWebSite.Name = "tbWebSite";
+			this.tbWebSite.Size = new System.Drawing.Size(212, 20);
+			this.tbWebSite.TabIndex = 6;
+			this.tbWebSite.TextChanged += new System.EventHandler(this.tbWebSite_TextChanged);
+			// 
+			// btAddWebSite
+			// 
+			this.btAddWebSite.Enabled = false;
+			this.btAddWebSite.Location = new System.Drawing.Point(9, 160);
+			this.btAddWebSite.Name = "btAddWebSite";
+			this.btAddWebSite.Size = new System.Drawing.Size(73, 23);
+			this.btAddWebSite.TabIndex = 7;
+			this.btAddWebSite.Text = "增加";
+			this.btAddWebSite.UseVisualStyleBackColor = true;
+			this.btAddWebSite.Click += new System.EventHandler(this.btAddWebSite_Click);
+			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
@@ -348,7 +389,10 @@
             this.columnHeader6,
             this.columnHeader3,
             this.columnHeader4,
-            this.columnHeader5});
+            this.columnHeader5,
+            this.columnHeader7,
+            this.columnHeader8,
+            this.columnHeader9});
 			this.lvDownloadingNovels.ContextMenuStrip = this.contextMenuStrip1;
 			this.lvDownloadingNovels.FullRowSelect = true;
 			this.lvDownloadingNovels.GridLines = true;
@@ -362,21 +406,36 @@
 			// columnHeader6
 			// 
 			this.columnHeader6.Text = "状态";
+			this.columnHeader6.Width = 49;
 			// 
 			// columnHeader3
 			// 
-			this.columnHeader3.Text = "小说";
-			this.columnHeader3.Width = 106;
+			this.columnHeader3.Text = "任务";
+			this.columnHeader3.Width = 127;
 			// 
 			// columnHeader4
 			// 
-			this.columnHeader4.Text = "当前下载章节";
-			this.columnHeader4.Width = 335;
+			this.columnHeader4.Text = "网站";
+			this.columnHeader4.Width = 62;
 			// 
 			// columnHeader5
 			// 
-			this.columnHeader5.Text = "下一章地址";
-			this.columnHeader5.Width = 100;
+			this.columnHeader5.Text = "路径";
+			this.columnHeader5.Width = 77;
+			// 
+			// columnHeader7
+			// 
+			this.columnHeader7.Text = "Url";
+			this.columnHeader7.Width = 137;
+			// 
+			// columnHeader8
+			// 
+			this.columnHeader8.Text = "首章";
+			this.columnHeader8.Width = 114;
+			// 
+			// columnHeader9
+			// 
+			this.columnHeader9.Text = "终章";
 			// 
 			// contextMenuStrip1
 			// 
@@ -442,44 +501,6 @@
 			this.tbDir.Name = "tbDir";
 			this.tbDir.Size = new System.Drawing.Size(350, 20);
 			this.tbDir.TabIndex = 15;
-			// 
-			// btDeleteWebSite
-			// 
-			this.btDeleteWebSite.Location = new System.Drawing.Point(154, 160);
-			this.btDeleteWebSite.Name = "btDeleteWebSite";
-			this.btDeleteWebSite.Size = new System.Drawing.Size(67, 23);
-			this.btDeleteWebSite.TabIndex = 8;
-			this.btDeleteWebSite.Text = "删除";
-			this.btDeleteWebSite.UseVisualStyleBackColor = true;
-			this.btDeleteWebSite.Click += new System.EventHandler(this.btDeleteWebSite_Click);
-			// 
-			// tbWebSite
-			// 
-			this.tbWebSite.Location = new System.Drawing.Point(9, 131);
-			this.tbWebSite.Name = "tbWebSite";
-			this.tbWebSite.Size = new System.Drawing.Size(212, 20);
-			this.tbWebSite.TabIndex = 6;
-			this.tbWebSite.TextChanged += new System.EventHandler(this.tbWebSite_TextChanged);
-			// 
-			// lbWebSite
-			// 
-			this.lbWebSite.FormattingEnabled = true;
-			this.lbWebSite.Location = new System.Drawing.Point(9, 23);
-			this.lbWebSite.Name = "lbWebSite";
-			this.lbWebSite.Size = new System.Drawing.Size(212, 95);
-			this.lbWebSite.TabIndex = 5;
-			this.lbWebSite.SelectedIndexChanged += new System.EventHandler(this.lbWebSite_SelectedIndexChanged);
-			// 
-			// btAddWebSite
-			// 
-			this.btAddWebSite.Enabled = false;
-			this.btAddWebSite.Location = new System.Drawing.Point(9, 160);
-			this.btAddWebSite.Name = "btAddWebSite";
-			this.btAddWebSite.Size = new System.Drawing.Size(73, 23);
-			this.btAddWebSite.TabIndex = 7;
-			this.btAddWebSite.Text = "增加";
-			this.btAddWebSite.UseVisualStyleBackColor = true;
-			this.btAddWebSite.Click += new System.EventHandler(this.btAddWebSite_Click);
 			// 
 			// DownWebNovel
 			// 
@@ -551,6 +572,9 @@
 		private System.Windows.Forms.ListBox lbWebSite;
 		private System.Windows.Forms.TextBox tbWebSite;
 		private System.Windows.Forms.Button btAddWebSite;
+		private System.Windows.Forms.ColumnHeader columnHeader7;
+		private System.Windows.Forms.ColumnHeader columnHeader8;
+		private System.Windows.Forms.ColumnHeader columnHeader9;
 
 	}
 }

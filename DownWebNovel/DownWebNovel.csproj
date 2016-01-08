@@ -49,6 +49,7 @@
     <Compile Include="DataAccess\Common.cs" />
     <Compile Include="DataAccess\DbManager.cs" />
     <Compile Include="DataAccess\RuleDal.cs" />
+    <Compile Include="DataAccess\TaskDal.cs" />
     <Compile Include="DownWebNovel.cs">
       <SubType>Form</SubType>
     </Compile>

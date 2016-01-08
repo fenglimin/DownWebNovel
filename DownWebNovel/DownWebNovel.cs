@@ -17,7 +17,7 @@ namespace DownWebNovel
 {
 	public partial class DownWebNovel : Form, IWebNovelPullerUser
 	{
-		private List<DownloadTask> _downloadTasks; 
+		private List<Task> _downloadTasks; 
 		private Hashtable _rules;
 		private Hashtable _translateTags;
 		private Hashtable _translateReplace;
@@ -30,7 +30,6 @@ namespace DownWebNovel
 			InitializeComponent();
 
 			_webNovelPuller = new WebNovelPuller(this);
-			_downloadTasks = new List<DownloadTask>();
 
 			_translateTags = new Hashtable();
 			_translateTags["标题开始"] = "TitleStart";
@@ -58,16 +57,6 @@ namespace DownWebNovel
 
 		private void DownWebNovel_Load(object sender, EventArgs e)
 		{
-			tbName.Text = "圣手邪医";
-			tbUrl.Text = "http://www.biquge.la/book/5474/";
-			tbStartPara.Text = "3184584.html";
-			tbEndPara.Text = "book/5474/";
-
-			//tbName.Text = "超级兵王在都市";
-			//tbUrl.Text = "http://www.exiaoshuo.com";
-			//tbStartPara.Text = "/chaojibingwangzaidoushi/4175388/";
-			//tbEndPara.Text = "/chaojibingwangzaidoushi/";
-
 			foreach (DictionaryEntry translate in _translateTags)
 			{
 				lbTagDefine.Items.Add(translate.Key);
@@ -80,6 +69,7 @@ namespace DownWebNovel
 
 		    tbDir.Text = @"D:\";
 			LoadRules();
+			LoadTasks();
 		}
 
 		private void LoadRules()
@@ -93,62 +83,79 @@ namespace DownWebNovel
 			lbWebSite.SelectedIndex = 0;
 		}
 
+		private void LoadTasks()
+		{
+			_downloadTasks = TaskDal.LoadAllTasks();
+
+			foreach (var downloadTask in _downloadTasks)
+			{
+				var lvi = new ListViewItem { Text = "停止" };
+				lvi.SubItems.Add(downloadTask.TaskName);
+				lvi.SubItems.Add(downloadTask.RuleName);
+				lvi.SubItems.Add(downloadTask.TaskDir);
+				lvi.SubItems.Add(downloadTask.RootUrl);
+				lvi.SubItems.Add(downloadTask.ParaStart);
+				lvi.SubItems.Add(downloadTask.ParaEnd);
+				lvDownloadingNovels.Items.Add(lvi);
+			}
+		}
+
 		private void btDown_Click(object sender, EventArgs e)
 		{
-			if (FindDownloadTask(tbName.Text) != null)
-			{
-				MessageBox.Show("任务已存在");
-				return;
-			}
+			//if (FindDownloadTask(tbName.Text) != null)
+			//{
+			//	MessageBox.Show("任务已存在");
+			//	return;
+			//}
 
-			var task = new DownloadTask
-			{
-				Novel = new Novel
-				{
-					Name = tbName.Text,
-					RootUrl = tbUrl.Text,
-					StartPara = tbStartPara.Text,
-					EndPara = tbEndPara.Text
-				},
-				Rule = (Rule)_rules[lbWebSite.SelectedItem],
-				Thread = new Thread(DownloadNovelThread),
-				WebNovelPuller = new WebNovelPuller(this) { Exit = false}
-			};
+			//var task = new DownloadTask
+			//{
+			//	Task = new Task
+			//	{
+			//		TaskName = tbName.Text,
+			//		RootUrl = tbUrl.Text,
+			//		ParaStart = tbStartPara.Text,
+			//		ParaEnd = tbEndPara.Text
+			//	},
+			//	Rule = (Rule)_rules[lbWebSite.SelectedItem],
+			//	Thread = new Thread(DownloadNovelThread),
+			//	WebNovelPuller = new WebNovelPuller(this) { Exit = false}
+			//};
 
-			var lvi = new ListViewItem { Text = "下载中" };
-			lvi.SubItems.Add(task.Novel.Name);
-			lvi.SubItems.Add("");
-			lvi.SubItems.Add("");
+			//var lvi = new ListViewItem { Text = "下载中" };
+			//lvi.SubItems.Add(task.Task.TaskName);
+			//lvi.SubItems.Add("");
+			//lvi.SubItems.Add("");
 
-			lvDownloadingNovels.Items.Add(lvi);
+			//lvDownloadingNovels.Items.Add(lvi);
 
-			_downloadTasks.Add(task);
-			task.Thread.Start(task);
+			//_downloadTasks.Add(task);
+			//task.Thread.Start(task);
 		}
 
 		private void DownloadNovelThread(object para)
 		{
-			var task = para as DownloadTask;
+			var task = para as Task;
 			if (task != null)
-				task.WebNovelPuller.DownloadNovel(task.Novel, task.Rule);
+				task.WebNovelPuller.DownloadNovel(task);
 		}
 
-		private DownloadTask FindDownloadTask(string novelName)
+		private Task FindDownloadTask(string novelName)
 		{
-			return _downloadTasks.FirstOrDefault(downloadTask => downloadTask.Novel.Name == novelName);
+			return _downloadTasks.FirstOrDefault(downloadTask => downloadTask.TaskName == novelName);
 		}
 
 		private void SetText(string novelName, string curPara, string nextPara)
 		{
-			for (var i = 0; i < lvDownloadingNovels.Items.Count; i ++)
-			{
-				if (lvDownloadingNovels.Items[i].SubItems[1].Text == novelName)
-				{
-					lvDownloadingNovels.Items[i].SubItems[2].Text = curPara;
-					lvDownloadingNovels.Items[i].SubItems[3].Text = nextPara;
-					break;
-				}
-			}
+			//for (var i = 0; i < lvDownloadingNovels.Items.Count; i ++)
+			//{
+			//	if (lvDownloadingNovels.Items[i].SubItems[1].Text == novelName)
+			//	{
+			//		lvDownloadingNovels.Items[i].SubItems[2].Text = curPara;
+			//		lvDownloadingNovels.Items[i].SubItems[3].Text = nextPara;
+			//		break;
+			//	}
+			//}
 
 			tbMessage.AppendText(novelName + " " + curPara + "， 下一章节 " + nextPara + "\r\n");
 		}
@@ -214,7 +221,16 @@ namespace DownWebNovel
 			else
 			{
 				lvDownloadingNovels.SelectedItems[0].SubItems[0].Text = "下载中";
-				task.WebNovelPuller.Exit = false;
+				if (task.WebNovelPuller == null)
+				{
+					task.WebNovelPuller = new WebNovelPuller(this) {Exit = false};
+				}
+				else
+				{
+					task.WebNovelPuller.Exit = false;
+				}
+				
+				task.Rule = (Rule)_rules[task.RuleName];
 				task.Thread = new Thread(DownloadNovelThread);
 				task.Thread.Start(task);
 			}
@@ -246,11 +262,13 @@ namespace DownWebNovel
 			if (lbWebSite.SelectedItem == null)
 				return;
 
-			var selectedRule = _rules[lbWebSite.SelectedItem];
-
 			tbWebSite.Text = lbWebSite.SelectedItem.ToString();
 
-			lbTagDefine.SelectedIndex = 0;
+			if (lbTagDefine.SelectedIndex == 0)
+				OnTagDefineSelectedIndexChanged();
+			else
+				lbTagDefine.SelectedIndex = 0;
+
 			lbContentReplace.SelectedIndex = 2;
 		}
 
@@ -266,6 +284,8 @@ namespace DownWebNovel
 			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
 			RuleDal.CopyRule(tbWebSite.Text, selectedRule);
 
+			_rules[tbWebSite.Text] = selectedRule.Clone();
+
 			lbWebSite.SelectedIndex = index;
 
 			RefershWebSiteButtons();
@@ -275,6 +295,8 @@ namespace DownWebNovel
 		{
 			var value = tbWebSite.Text;
 			lbWebSite.Items.Remove(value);
+
+			_rules.Remove(value);
 
 			RuleDal.DeleteRule(value);
 
@@ -295,7 +317,7 @@ namespace DownWebNovel
 			btDeleteTag.Enabled = contain && tbTagValue.Text != string.Empty;
 		}
 
-		private void lbTagDefine_SelectedIndexChanged(object sender, EventArgs e)
+		private void OnTagDefineSelectedIndexChanged()
 		{
 			lbTagValue.Items.Clear();
 
@@ -309,6 +331,11 @@ namespace DownWebNovel
 
 			if (lbTagValue.Items.Count > 0)
 				lbTagValue.SelectedIndex = 0;
+		}
+
+		private void lbTagDefine_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			OnTagDefineSelectedIndexChanged();
 		}
 
 		private void lbTagValue_SelectedIndexChanged(object sender, EventArgs e)
@@ -344,7 +371,7 @@ namespace DownWebNovel
 
 			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
 			var tags = (List<string>)selectedRule.PositionTag[_translateTags[lbTagDefine.SelectedItem]];
-			tags.Remove(tbTagValue.Text);
+			tags.Remove(value);
 
 			RuleDal.DeleteRuleItem(tbWebSite.Text, _translateTags[lbTagDefine.SelectedItem].ToString(), value);
 
