@@ -35,5 +35,25 @@ namespace DownWebNovel.DataAccess
 			reader.Close();
 			return allTasks;
 		}
+
+	    public static void AddTask(Task task)
+	    {
+	        var strSql =
+	            string.Format(
+	                "INSERT INTO Task (TaskName, TaskDir, RootUrl, ParaStart, ParaEnd, RuleName) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')",
+	                task.TaskName, task.TaskDir, task.RootUrl, task.ParaStart, task.ParaEnd, task.RuleName);
+
+            var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
+            comm.ExecuteNonQuery(); 
+	    }
+
+	    public static void DeleteTask(string taskName)
+	    {
+            var strSql = string.Format("DELETE FROM Task WHERE ( TaskName = '{0}')", taskName);
+
+            var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
+            comm.ExecuteNonQuery();
+	    }
+
 	}
 }

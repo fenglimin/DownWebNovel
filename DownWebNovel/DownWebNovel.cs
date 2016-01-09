@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using DownWebNovel.DataAccess;
 
 namespace DownWebNovel
@@ -23,7 +24,9 @@ namespace DownWebNovel
 		private Hashtable _translateReplace;
 		private readonly WebNovelPuller _webNovelPuller;
 
-		delegate void SetTextCallback(string novelName, string curPara, string strNextPara);
+		delegate void FileDownloadedCallback(string novelName, string curPara, string strNextPara);
+
+	    delegate void TaskStoppedCallback(Task task);
 
 		public DownWebNovel()
 		{
@@ -67,6 +70,7 @@ namespace DownWebNovel
 				lbContentReplace.Items.Add(translate.Key);
 			}
 
+		    tbUrl.Text = "http://mm.xmeise.com/rufang/meixiong/5497.html";
 		    tbDir.Text = @"D:\";
 			LoadRules();
 			LoadTasks();
@@ -102,35 +106,36 @@ namespace DownWebNovel
 
 		private void btDown_Click(object sender, EventArgs e)
 		{
-			//if (FindDownloadTask(tbName.Text) != null)
-			//{
-			//	MessageBox.Show("任务已存在");
-			//	return;
-			//}
+            if (FindTaskInMemory(tbName.Text) != null)
+            {
+                MessageBox.Show("任务已存在");
+                return;
+            }
 
-			//var task = new DownloadTask
-			//{
-			//	Task = new Task
-			//	{
-			//		TaskName = tbName.Text,
-			//		RootUrl = tbUrl.Text,
-			//		ParaStart = tbStartPara.Text,
-			//		ParaEnd = tbEndPara.Text
-			//	},
-			//	Rule = (Rule)_rules[lbWebSite.SelectedItem],
-			//	Thread = new Thread(DownloadNovelThread),
-			//	WebNovelPuller = new WebNovelPuller(this) { Exit = false}
-			//};
+            var downloadTask = new Task
+            {
+                TaskName = tbName.Text,
+                RootUrl = tbUrl.Text,
+                TaskDir = tbDir.Text,
+                ParaStart = tbStartPara.Text,
+                ParaEnd = tbEndPara.Text,
+                RuleName = lbWebSite.SelectedItem.ToString()
+            };
 
-			//var lvi = new ListViewItem { Text = "下载中" };
-			//lvi.SubItems.Add(task.Task.TaskName);
-			//lvi.SubItems.Add("");
-			//lvi.SubItems.Add("");
+            var lvi = new ListViewItem { Text = "停止" };
+            lvi.SubItems.Add(downloadTask.TaskName);
+            lvi.SubItems.Add(downloadTask.RuleName);
+            lvi.SubItems.Add(downloadTask.TaskDir);
+            lvi.SubItems.Add(downloadTask.RootUrl);
+            lvi.SubItems.Add(downloadTask.ParaStart);
+            lvi.SubItems.Add(downloadTask.ParaEnd);
+            lvDownloadingNovels.Items.Add(lvi);
 
-			//lvDownloadingNovels.Items.Add(lvi);
+            _downloadTasks.Add(downloadTask);
 
-			//_downloadTasks.Add(task);
-			//task.Thread.Start(task);
+            TaskDal.AddTask(downloadTask);
+
+            StartTaskInTheList(downloadTask.TaskName);
 		}
 
 		private void DownloadNovelThread(object para)
@@ -140,112 +145,167 @@ namespace DownWebNovel
 				task.WebNovelPuller.DownloadNovel(task);
 		}
 
-		private Task FindDownloadTask(string novelName)
+		private Task FindTaskInMemory(string novelName)
 		{
 			return _downloadTasks.FirstOrDefault(downloadTask => downloadTask.TaskName == novelName);
 		}
 
-		private void SetText(string novelName, string curPara, string nextPara)
-		{
-			//for (var i = 0; i < lvDownloadingNovels.Items.Count; i ++)
-			//{
-			//	if (lvDownloadingNovels.Items[i].SubItems[1].Text == novelName)
-			//	{
-			//		lvDownloadingNovels.Items[i].SubItems[2].Text = curPara;
-			//		lvDownloadingNovels.Items[i].SubItems[3].Text = nextPara;
-			//		break;
-			//	}
-			//}
+	    private int FindTaskItemItemInTheList(string taskName)
+	    {
+            var item = -1;
+            for (var i = 0; i < lvDownloadingNovels.Items.Count; i++)
+            {
+                if (lvDownloadingNovels.Items[i].SubItems[1].Text == taskName)
+                {
+                    item = i;
+                }
+            }
 
-			tbMessage.AppendText(novelName + " " + curPara + "， 下一章节 " + nextPara + "\r\n");
+	        return item;
+	    }
+
+		private void FileDownloaded(string taskName, string curPara, string nextPara)
+		{
+			tbMessage.AppendText(taskName + " " + curPara + "， 下一章节 " + nextPara + "\r\n");
+
+            var item = FindTaskItemItemInTheList(taskName);
+            if (item == -1)
+                return;
+
+            lvDownloadingNovels.Items[item].SubItems[5].Text = nextPara;
 		}
 
 		public void OnFileDownloaded(string novelName, string curPara, string nextPara)
 		{
 			if (tbMessage.InvokeRequired)
 			{
-				var d = new SetTextCallback(SetText);
+				var d = new FileDownloadedCallback(FileDownloaded);
 				Invoke(d, new object[] { novelName, curPara, nextPara });
 			}
 			else
 			{
-				SetText(novelName, curPara, nextPara);
+				FileDownloaded(novelName, curPara, nextPara);
 			}
 		}
 
-        private void btSelectDir_Click(object sender, EventArgs e)
+	    private void TaskStopped(Task task)
+	    {
+            tbMessage.AppendText(task.TaskName + " " + "下载已停止！" + "\r\n");
+
+            TaskDal.DeleteTask(task.TaskName);
+            TaskDal.AddTask(task);
+
+            var item = FindTaskItemItemInTheList(task.TaskName);
+            if (item == -1)
+                return;
+
+            lvDownloadingNovels.Items[item].SubItems[0].Text = "停止";
+
+            
+	    }
+
+	    public void OnTaskStopped(Task task)
+	    {
+	        if (lvDownloadingNovels.InvokeRequired)
+	        {
+	            var d = new TaskStoppedCallback(TaskStopped);
+	            Invoke(d, new object[] {task});
+	        }
+	        else
+	        {
+	            TaskStopped(task);
+	        }
+	    }
+
+	    private void btSelectDir_Click(object sender, EventArgs e)
         {
-            //var dialog = new FolderBrowserDialog {Description = "请选择文件路径"};
-            //dialog.SelectedPath = tbDir.Text;
+            var dialog = new FolderBrowserDialog { Description = "请选择文件路径" };
+            dialog.SelectedPath = tbDir.Text;
 
-            //if (dialog.ShowDialog() != DialogResult.OK) 
-            //    return;
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
 
-            //tbDir.Text = dialog.SelectedPath; 
-
-            var mywebclient = new WebClient();
-            //for (int i = 0; i < 38; i ++)
-            //{
-            //    var url = string.Format("http://mm.xmeise.com//uploads/allimg/151221/1-1512211113{0}.jpg", i+25);
-            //    var filepath = string.Format("D:\\pic{0}.jpg", i);
-
-            //    try
-            //    {
-            //        mywebclient.DownloadFile(url, filepath); 
-            //    }
-            //    catch (Exception)
-            //    {
-
-            //    }
-               
-            //}
-
-            //_webNovelPuller.DownloadPicturesByUrl("http://www.renti114.com", "/html/35/3504.html");
-
-            _webNovelPuller.DownloadPicturesByUrl("http://www.renti114.com", "/html/36/3632.html");
-
+            tbDir.Text = dialog.SelectedPath; 
         }
 
 		private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
 		{
-			var novalName = lvDownloadingNovels.SelectedItems[0].SubItems[1].Text;
-			var task = FindDownloadTask(novalName);
-			if (task == null)
-				return;
-
-			if (contextMenuStrip1.Items[0].Text == "停止")
-			{
-				task.WebNovelPuller.Exit = true;
-				lvDownloadingNovels.SelectedItems[0].SubItems[0].Text = "停止";
-			}
-			else
-			{
-				lvDownloadingNovels.SelectedItems[0].SubItems[0].Text = "下载中";
-				if (task.WebNovelPuller == null)
-				{
-					task.WebNovelPuller = new WebNovelPuller(this) {Exit = false};
-				}
-				else
-				{
-					task.WebNovelPuller.Exit = false;
-				}
-				
-				task.Rule = (Rule)_rules[task.RuleName];
-				task.Thread = new Thread(DownloadNovelThread);
-				task.Thread.Start(task);
-			}
 
 		}
 
+	    private void StartTaskInTheList(string taskName)
+	    {
+            var item = FindTaskItemItemInTheList(taskName);
+            if (item == -1)
+                return;
+
+	        if (lvDownloadingNovels.Items[item].SubItems[0].Text == "下载中")
+	            return;
+
+	        var task = FindTaskInMemory(taskName);
+	        if (task == null)
+	            return;
+
+            lvDownloadingNovels.Items[item].SubItems[0].Text = "下载中";
+            if (task.WebNovelPuller == null)
+            {
+                task.WebNovelPuller = new WebNovelPuller(this) { Exit = false };
+            }
+            else
+            {
+                task.WebNovelPuller.Exit = false;
+            }
+
+            task.Rule = (Rule)_rules[task.RuleName];
+            task.Thread = new Thread(DownloadNovelThread);
+            task.Thread.Start(task);
+	    }
+
+	    private void StopTaskInTheList(string taskName)
+	    {
+            var item = FindTaskItemItemInTheList(taskName);
+            if (item == -1)
+                return;
+
+	        if (lvDownloadingNovels.Items[item].SubItems[0].Text.StartsWith("停止"))
+	            return;
+
+            var task = FindTaskInMemory(taskName);
+            if (task == null)
+                return;
+
+            if (task.WebNovelPuller != null)
+                task.WebNovelPuller.Exit = true;
+            lvDownloadingNovels.Items[item].SubItems[0].Text = "停止中";
+	    }
+
+	    private void DeleteTaskInTheList(string taskName)
+	    {
+            var task = FindTaskInMemory(taskName);
+            if (task == null)
+                return;
+
+            var item = FindTaskItemItemInTheList(taskName);
+            if (item == -1)
+                return;
+
+	        _downloadTasks.Remove(task);
+            lvDownloadingNovels.Items.RemoveAt(item);
+            TaskDal.DeleteTask(taskName);
+	    }
+
 		private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
 		{
-			if (lvDownloadingNovels.SelectedItems.Count == 0)
-			{
-				e.Cancel = true;
-				return;
-			}
+		    var visible = lvDownloadingNovels.SelectedItems.Count != 0;
+		    var downloading = true;
+		    
+            if (visible)
+                downloading = lvDownloadingNovels.SelectedItems[0].Text == "下载中";
 
-			contextMenuStrip1.Items[0].Text = lvDownloadingNovels.SelectedItems[0].Text == "下载中"? "停止" : "开始";
+            contextMenuStrip1.Items[0].Visible = visible && !downloading;
+            contextMenuStrip1.Items[1].Visible = visible && downloading;
+            contextMenuStrip1.Items[2].Visible = visible && !downloading;
+            contextMenuStrip1.Items[3].Visible = visible;
 		}
 
 		#region WebSite
@@ -477,6 +537,58 @@ namespace DownWebNovel
 
 		#endregion
 
+        private void lvDownloadingNovels_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lvDownloadingNovels.SelectedItems.Count == 0)
+                return;
+
+            var subItems = lvDownloadingNovels.SelectedItems[0].SubItems;
+            tbName.Text = subItems[1].Text;
+            tbDir.Text = subItems[3].Text;
+            tbUrl.Text = subItems[4].Text;
+            tbStartPara.Text = subItems[5].Text;
+            tbEndPara.Text = subItems[6].Text;
+
+        }
+
+	    private string GetSelectTaskName()
+	    {
+	        return lvDownloadingNovels.SelectedItems.Count == 0 ? string.Empty : lvDownloadingNovels.SelectedItems[0].SubItems[1].Text;
+	    }
+
+	    private void startMenuItem_Click(object sender, EventArgs e)
+	    {
+	        var taskName = GetSelectTaskName();
+            StartTaskInTheList(taskName);
+	    }
+
+        private void stopMenuItem_Click(object sender, EventArgs e)
+        {
+            var taskName = GetSelectTaskName();
+            StopTaskInTheList(taskName);
+        }
+
+        private void deleteMenuItem_Click(object sender, EventArgs e)
+        {
+            var taskName = GetSelectTaskName();
+            DeleteTaskInTheList(taskName);
+        }
+
+        private void startAllMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lvDownloadingNovels.Items)
+            {
+                StartTaskInTheList(item.SubItems[1].Text);
+            }
+        }
+
+        private void stopAllMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lvDownloadingNovels.Items)
+            {
+                StopTaskInTheList(item.SubItems[1].Text);
+            }
+        }
 
 
 	}

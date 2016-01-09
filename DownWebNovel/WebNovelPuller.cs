@@ -5,10 +5,23 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Configuration;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
+using DownWebNovel;
 
 namespace DownWebNovel
 {
+    public class XWebClient : WebClient 
+    {
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            var request = base.GetWebRequest(address) as HttpWebRequest;
+            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+            return request;
+        }
+    }  
+
 	public class Task
 	{
 		public string TaskName { get; set; }
@@ -31,18 +44,37 @@ namespace DownWebNovel
 
 		public Rule Clone()
 		{
-			return (Rule) this.MemberwiseClone();
+		    var rule = new Rule {WebSite = WebSite, PositionTag = new Hashtable(), ReplaceTag = new Hashtable()};
+
+		    foreach (DictionaryEntry dictionaryEntry in PositionTag)
+		    {
+		        var originalItems = (List<string>) dictionaryEntry.Value;
+		        var items = originalItems.Select(originalItem => originalItem.Clone().ToString()).ToList();
+		        rule.PositionTag[dictionaryEntry.Key] = items;
+		    }
+
+            
+		    foreach (DictionaryEntry dictionaryEntry in ReplaceTag)
+		    {
+		        var originalItems = (List<KeyValuePair<string, string>>) dictionaryEntry.Value;
+		        var items = originalItems.Select(originalItem => new KeyValuePair<string, string>(originalItem.Key, originalItem.Value)).ToList();
+		        rule.ReplaceTag[dictionaryEntry.Key] = items;
+		    }
+
+		    return rule;
+
 		}
 	}
 
 	public interface IWebNovelPullerUser
 	{
 		void OnFileDownloaded(string novelName, string curPara, string nextPara);
+	    void OnTaskStopped(Task task);
 	}
 
 	public class WebNovelPuller
 	{
-		private readonly WebClient _webClient = new WebClient();
+		private readonly XWebClient _webClient = new XWebClient();
 		private readonly IWebNovelPullerUser _webNovelPullerUser;
 		public bool Exit { get; set; }
 
@@ -55,9 +87,12 @@ namespace DownWebNovel
 		{
 			var curFile = task.ParaStart;
 			while (curFile != task.ParaEnd && !Exit)
-				curFile = DownloadTextByUrl(task.TaskName, task.RootUrl, curFile, task.Rule);
+				curFile = DownloadNovelByUrl(task.TaskName, task.RootUrl, curFile, task.Rule, task.TaskDir);
 
 			task.ParaStart = curFile;
+            if (_webNovelPullerUser != null)
+                _webNovelPullerUser.OnTaskStopped(task);
+
 			return true;
 		}
 
@@ -76,7 +111,7 @@ namespace DownWebNovel
 			}
 
 			if (startIndex == -1)
-				return "Error finding start tag" + startTagList.ToString();
+				return "Error finding start tag " + startTagList.ToString();
 
 			content = content.Substring(startIndex + startTagLen);
 
@@ -92,7 +127,7 @@ namespace DownWebNovel
 			}
 
 			if (endIndex == -1)
-				return "Error finding end tag" + endTagList.ToString();
+				return "Error finding end tag " + endTagList.ToString();
 
 			content = content.Substring(0, endIndex);
 
@@ -111,7 +146,7 @@ namespace DownWebNovel
 			return replacePairs.Aggregate(content, (current, replace) => current.Replace(replace.Key, (string)translate[replace.Value]));
 		}
 
-		private string DownloadTextByUrl(string novelName, string rootUrl, string fileName, Rule rule)
+		private string DownloadNovelByUrl(string novelName, string rootUrl, string fileName, Rule rule, string taskDir)
 		{
 			string downloadedString;
 			if (!DownloadStringByUrl(rootUrl + fileName, out downloadedString))
@@ -122,7 +157,7 @@ namespace DownWebNovel
 			var content = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["ContentStart"], (List<string>)rule.PositionTag["ContentEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["ContentReplace"]);
 			var nextUrl = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["NextParaStart"], (List<string>)rule.PositionTag["NextParaEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["NextParaReplace"]);
 
-			var textWriter = File.AppendText("D:\\" + novelName + ".txt");
+			var textWriter = File.AppendText(taskDir + novelName + ".txt");
 
 			textWriter.WriteLine(title);
 			textWriter.WriteLine(content);
@@ -140,7 +175,7 @@ namespace DownWebNovel
 		{
 			try
 			{
-				content = _webClient.DownloadString(url);
+                content = _webClient.DownloadString(url);
 			}
 			catch (Exception ex)
 			{
