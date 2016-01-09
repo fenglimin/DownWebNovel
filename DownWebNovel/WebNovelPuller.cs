@@ -68,7 +68,7 @@ namespace DownWebNovel
 
 	public interface IWebNovelPullerUser
 	{
-		void OnFileDownloaded(string novelName, string curPara, string nextPara);
+		void OnFileDownloaded(bool hasError, string novelName, string curPara, string nextPara);
 	    void OnTaskStopped(Task task);
 	}
 
@@ -96,6 +96,52 @@ namespace DownWebNovel
 			return true;
 		}
 
+	    private static string ExtractIntrested(string content, Rule rule, string key)
+	    {
+	        var startTagList = (List<string>) rule.PositionTag[key + "Start"];
+            var endTagList = (List<string>)rule.PositionTag[key + "End"];
+            var replacePairs = (List<KeyValuePair<string, string>>)rule.ReplaceTag[key + "Replace"];
+
+            var startIndex = -1;
+            var startTagLen = 0;
+            foreach (var startTag in startTagList)
+            {
+                startIndex = content.IndexOf(startTag, StringComparison.Ordinal);
+                if (startIndex != -1)
+                {
+                    startTagLen = startTag.Length;
+                    break;
+                }
+            }
+
+            if (startIndex == -1)
+                throw new Exception("Error finding start tag of " + key);
+
+            content = content.Substring(startIndex + startTagLen);
+
+
+            var endIndex = -1;
+            foreach (var endTag in endTagList)
+            {
+                endIndex = content.IndexOf(endTag, StringComparison.Ordinal);
+                if (endIndex != -1)
+                {
+                    break;
+                }
+            }
+
+            if (endIndex == -1)
+                throw new Exception("Error finding end tag of " + key);
+
+            content = content.Substring(0, endIndex);
+
+            // Replace
+            content = Replace(content, replacePairs);
+
+            return content;
+
+	    }
+
 		private static string ExtractIntrested(string content, IEnumerable<string> startTagList, IEnumerable<string> endTagList, IEnumerable<KeyValuePair<string, string>> replacePairs)
 		{
 			var startIndex = -1;
@@ -111,7 +157,7 @@ namespace DownWebNovel
 			}
 
 			if (startIndex == -1)
-				return "Error finding start tag " + startTagList.ToString();
+				throw new Exception("Error finding start tag " + startTagList.ToString());
 
 			content = content.Substring(startIndex + startTagLen);
 
@@ -127,7 +173,7 @@ namespace DownWebNovel
 			}
 
 			if (endIndex == -1)
-				return "Error finding end tag " + endTagList.ToString();
+				throw new Exception("Error finding end tag " + endTagList.ToString());
 
 			content = content.Substring(0, endIndex);
 
@@ -149,26 +195,48 @@ namespace DownWebNovel
 		private string DownloadNovelByUrl(string novelName, string rootUrl, string fileName, Rule rule, string taskDir)
 		{
 			string downloadedString;
-			if (!DownloadStringByUrl(rootUrl + fileName, out downloadedString))
-				return fileName;
+		    if (!DownloadStringByUrl(rootUrl + fileName, out downloadedString))
+		    {
+                if (_webNovelPullerUser != null)
+                {
+                    _webNovelPullerUser.OnFileDownloaded(true, novelName, "下载错误", downloadedString);
+                }
+                return fileName;
+		    }
 
-			// Biquge
-			var title = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["TitleStart"], (List<string>)rule.PositionTag["TitleEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["TitleReplace"]);
-			var content = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["ContentStart"], (List<string>)rule.PositionTag["ContentEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["ContentReplace"]);
-			var nextUrl = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["NextParaStart"], (List<string>)rule.PositionTag["NextParaEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["NextParaReplace"]);
+		    try
+		    {
+                //var title = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["TitleStart"], (List<string>)rule.PositionTag["TitleEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["TitleReplace"]);
+                //var content = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["ContentStart"], (List<string>)rule.PositionTag["ContentEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["ContentReplace"]);
+                //var nextUrl = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["NextParaStart"], (List<string>)rule.PositionTag["NextParaEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["NextParaReplace"]);
 
-			var textWriter = File.AppendText(taskDir + novelName + ".txt");
+                var title = ExtractIntrested(downloadedString, rule, "Title");
+                var content = ExtractIntrested(downloadedString, rule, "Content");
+                var nextUrl = ExtractIntrested(downloadedString, rule, "NextPara");
 
-			textWriter.WriteLine(title);
-			textWriter.WriteLine(content);
 
-			if (_webNovelPullerUser != null)
-			{
-				_webNovelPullerUser.OnFileDownloaded(novelName, title, nextUrl);
-			}
+                var textWriter = File.AppendText(taskDir + novelName + ".txt");
 
-			textWriter.Close();
-			return nextUrl;
+                textWriter.WriteLine(title);
+                textWriter.WriteLine(content);
+
+                if (_webNovelPullerUser != null)
+                {
+                    _webNovelPullerUser.OnFileDownloaded(false, novelName, title, nextUrl);
+                }
+
+                textWriter.Close();
+                return nextUrl;
+		    }
+		    catch (Exception ex)
+		    {
+                if (_webNovelPullerUser != null)
+                {
+                    _webNovelPullerUser.OnFileDownloaded(true, novelName, "解析错误", ex.Message);
+                }
+		        return fileName;
+		    }
+
 		}
 
 		public bool DownloadStringByUrl(string url, out string content)

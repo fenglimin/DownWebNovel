@@ -24,7 +24,7 @@ namespace DownWebNovel
 		private Hashtable _translateReplace;
 		private readonly WebNovelPuller _webNovelPuller;
 
-		delegate void FileDownloadedCallback(string novelName, string curPara, string strNextPara);
+		delegate void FileDownloadedCallback(bool hasError, string novelName, string curPara, string strNextPara);
 
 	    delegate void TaskStoppedCallback(Task task);
 
@@ -164,27 +164,34 @@ namespace DownWebNovel
 	        return item;
 	    }
 
-		private void FileDownloaded(string taskName, string curPara, string nextPara)
+        private void FileDownloaded(bool hasError, string taskName, string curPara, string nextPara)
 		{
-			tbMessage.AppendText(taskName + " " + curPara + "， 下一章节 " + nextPara + "\r\n");
+            if (hasError)
+            {
+                tbMessage.AppendText(taskName + " " + curPara + "  " + nextPara + "\r\n");
+            }
+            else
+            {
+                tbMessage.AppendText(taskName + " " + curPara + "， 下一章节 " + nextPara + "\r\n");
 
-            var item = FindTaskItemItemInTheList(taskName);
-            if (item == -1)
-                return;
+                var item = FindTaskItemItemInTheList(taskName);
+                if (item == -1)
+                    return;
 
-            lvDownloadingNovels.Items[item].SubItems[5].Text = nextPara;
+                lvDownloadingNovels.Items[item].SubItems[5].Text = nextPara;
+            }
 		}
 
-		public void OnFileDownloaded(string novelName, string curPara, string nextPara)
+        public void OnFileDownloaded(bool hasError, string novelName, string curPara, string nextPara)
 		{
 			if (tbMessage.InvokeRequired)
 			{
 				var d = new FileDownloadedCallback(FileDownloaded);
-				Invoke(d, new object[] { novelName, curPara, nextPara });
+				Invoke(d, new object[] { hasError, novelName, curPara, nextPara });
 			}
 			else
 			{
-				FileDownloaded(novelName, curPara, nextPara);
+				FileDownloaded(hasError, novelName, curPara, nextPara);
 			}
 		}
 
