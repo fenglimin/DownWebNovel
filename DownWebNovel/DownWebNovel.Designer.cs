@@ -70,6 +70,8 @@
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.startMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.startAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,8 +80,6 @@
             this.btSelectDir = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.tbDir = new System.Windows.Forms.TextBox();
-            this.stopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.startMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -421,7 +421,7 @@
             // columnHeader3
             // 
             this.columnHeader3.Text = "任务";
-            this.columnHeader3.Width = 127;
+            this.columnHeader3.Width = 99;
             // 
             // columnHeader4
             // 
@@ -431,17 +431,17 @@
             // columnHeader5
             // 
             this.columnHeader5.Text = "路径";
-            this.columnHeader5.Width = 77;
+            this.columnHeader5.Width = 61;
             // 
             // columnHeader7
             // 
             this.columnHeader7.Text = "Url";
-            this.columnHeader7.Width = 137;
+            this.columnHeader7.Width = 155;
             // 
             // columnHeader8
             // 
             this.columnHeader8.Text = "首章";
-            this.columnHeader8.Width = 114;
+            this.columnHeader8.Width = 141;
             // 
             // columnHeader9
             // 
@@ -457,33 +457,47 @@
             this.startAllMenuItem,
             this.stopAllMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 142);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 120);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
+            // 
+            // startMenuItem
+            // 
+            this.startMenuItem.Name = "startMenuItem";
+            this.startMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.startMenuItem.Text = "开始";
+            this.startMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
+            // 
+            // stopMenuItem
+            // 
+            this.stopMenuItem.Name = "stopMenuItem";
+            this.stopMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.stopMenuItem.Text = "停止";
+            this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
             // 
             // deleteMenuItem
             // 
             this.deleteMenuItem.Name = "deleteMenuItem";
-            this.deleteMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteMenuItem.Size = new System.Drawing.Size(124, 22);
             this.deleteMenuItem.Text = "删除";
             this.deleteMenuItem.Click += new System.EventHandler(this.deleteMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(121, 6);
             // 
             // startAllMenuItem
             // 
             this.startAllMenuItem.Name = "startAllMenuItem";
-            this.startAllMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.startAllMenuItem.Size = new System.Drawing.Size(124, 22);
             this.startAllMenuItem.Text = "全部开始";
             this.startAllMenuItem.Click += new System.EventHandler(this.startAllMenuItem_Click);
             // 
             // stopAllMenuItem
             // 
             this.stopAllMenuItem.Name = "stopAllMenuItem";
-            this.stopAllMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.stopAllMenuItem.Size = new System.Drawing.Size(124, 22);
             this.stopAllMenuItem.Text = "全部停止";
             this.stopAllMenuItem.Click += new System.EventHandler(this.stopAllMenuItem_Click);
             // 
@@ -536,20 +550,6 @@
             this.tbDir.Name = "tbDir";
             this.tbDir.Size = new System.Drawing.Size(350, 21);
             this.tbDir.TabIndex = 15;
-            // 
-            // stopMenuItem
-            // 
-            this.stopMenuItem.Name = "stopMenuItem";
-            this.stopMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.stopMenuItem.Text = "停止";
-            this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
-            // 
-            // startMenuItem
-            // 
-            this.startMenuItem.Name = "startMenuItem";
-            this.startMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.startMenuItem.Text = "开始";
-            this.startMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
             // 
             // DownWebNovel
             // 

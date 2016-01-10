@@ -58,7 +58,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebNovelPuller.cs" />
+    <Compile Include="WebNovelPuller.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="DownWebNovel.resx">
       <DependentUpon>DownWebNovel.cs</DependentUpon>
     </EmbeddedResource>

@@ -8,6 +8,7 @@ using System.Net.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using DownWebNovel;
 
 namespace DownWebNovel
@@ -102,38 +103,35 @@ namespace DownWebNovel
             var endTagList = (List<string>)rule.PositionTag[key + "End"];
             var replacePairs = (List<KeyValuePair<string, string>>)rule.ReplaceTag[key + "Replace"];
 
-            var startIndex = -1;
-            var startTagLen = 0;
-            foreach (var startTag in startTagList)
-            {
-                startIndex = content.IndexOf(startTag, StringComparison.Ordinal);
-                if (startIndex != -1)
-                {
-                    startTagLen = startTag.Length;
-                    break;
-                }
-            }
+	        var startIndex = FindIndex(content, startTagList, false);
+            
 
-            if (startIndex == -1)
+	        if (startIndex != -1)
+	        {
+                content = content.Substring(startIndex);
+
+                var endIndex = FindIndex(content, endTagList, true);
+                if (endIndex == -1)
+                    throw new Exception("Error finding end tag of " + key);
+
+                content = content.Substring(0, endIndex);
+
+	            while (true)
+	            {
+	                var reallyStartIndex = FindIndex(content, startTagList, false);
+	                if (reallyStartIndex == -1)
+	                    break;
+
+	                content = content.Substring(reallyStartIndex);
+	            }
+
+                
+	        }
+	        else
+	        {
                 throw new Exception("Error finding start tag of " + key);
-
-            content = content.Substring(startIndex + startTagLen);
-
-
-            var endIndex = -1;
-            foreach (var endTag in endTagList)
-            {
-                endIndex = content.IndexOf(endTag, StringComparison.Ordinal);
-                if (endIndex != -1)
-                {
-                    break;
-                }
-            }
-
-            if (endIndex == -1)
-                throw new Exception("Error finding end tag of " + key);
-
-            content = content.Substring(0, endIndex);
+	        }
+                
 
             // Replace
             content = Replace(content, replacePairs);
@@ -142,46 +140,83 @@ namespace DownWebNovel
 
 	    }
 
-		private static string ExtractIntrested(string content, IEnumerable<string> startTagList, IEnumerable<string> endTagList, IEnumerable<KeyValuePair<string, string>> replacePairs)
-		{
-			var startIndex = -1;
-			var startTagLen = 0;
-			foreach (var startTag in startTagList)
-			{
-				startIndex = content.IndexOf(startTag, StringComparison.Ordinal);
-				if (startIndex != -1)
-				{
-					startTagLen = startTag.Length;
-					break;
-				}
-			}
+	    private static int FindIndex(string content, IEnumerable<string> tagSequences, bool forEnd)
+	    {
+            var startIndex = -1;
+            foreach (var tagSequence in tagSequences)
+            {
+                startIndex = IndexOf(content, tagSequence, forEnd);
+                if (startIndex != -1)
+                {
+                    break;
+                }
+            }
 
-			if (startIndex == -1)
-				throw new Exception("Error finding start tag " + startTagList.ToString());
+	        return startIndex;
+	    }
 
-			content = content.Substring(startIndex + startTagLen);
+        private static int IndexOf(string content, string tagSequence, bool forEnd)
+	    {
+	        var index = 0;
+	        var tags = tagSequence.Split( new string[] { " => "}, StringSplitOptions.RemoveEmptyEntries);
+	        foreach (var tag in tags)
+	        {
+                index = content.IndexOf(tag, index, StringComparison.Ordinal);
+	            if (index == -1)
+	                return -1;
+
+	            index += tag.Length;
+	        }
+
+            if (forEnd)
+            {
+                index -= tags[tags.Count() - 1].Length;
+            }
+
+	        return index;
+	    }
+
+        //private static string ExtractIntrested(string content, IEnumerable<string> startTagList, IEnumerable<string> endTagList, IEnumerable<KeyValuePair<string, string>> replacePairs)
+        //{
+        //    var startIndex = -1;
+        //    var startTagLen = 0;
+        //    foreach (var startTag in startTagList)
+        //    {
+        //        //startIndex = content.IndexOf(startTag, StringComparison.Ordinal);
+        //        startIndex = IndexOf(content, startTag);
+        //        if (startIndex != -1)
+        //        {
+        //            //startTagLen = startTag.Length;
+        //            break;
+        //        }
+        //    }
+
+        //    if (startIndex == -1)
+        //        throw new Exception("Error finding start tag " + startTagList.ToString());
+
+        //    content = content.Substring(startIndex + startTagLen);
 
 
-			var endIndex = -1;
-			foreach (var endTag in endTagList)
-			{
-				endIndex = content.IndexOf(endTag, StringComparison.Ordinal);
-				if (endIndex != -1)
-				{
-					break;
-				}
-			}
+        //    var endIndex = -1;
+        //    foreach (var endTag in endTagList)
+        //    {
+        //        endIndex = content.IndexOf(endTag, StringComparison.Ordinal);
+        //        if (endIndex != -1)
+        //        {
+        //            break;
+        //        }
+        //    }
 
-			if (endIndex == -1)
-				throw new Exception("Error finding end tag " + endTagList.ToString());
+        //    if (endIndex == -1)
+        //        throw new Exception("Error finding end tag " + endTagList.ToString());
 
-			content = content.Substring(0, endIndex);
+        //    content = content.Substring(0, endIndex);
 
-			// Replace
-			content = Replace(content, replacePairs);
+        //    // Replace
+        //    content = Replace(content, replacePairs);
 
-			return content;
-		}
+        //    return content;
+        //}
 
 		private static string Replace(string content, IEnumerable<KeyValuePair<string, string>> replacePairs)
 		{

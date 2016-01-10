@@ -71,7 +71,7 @@ namespace DownWebNovel.DataAccess
 		public static void AddRuleItem(string webSite, string key, string value1, string value2)
 		{
 			var strSql = string.Format("INSERT INTO Rule (WebSite,[Key],Value1,Value2) VALUES('{0}', '{1}', '{2}', '{3}')",
-				webSite, key, value1, value2);
+				webSite, key, value1.Replace("'", "''"), value2);
 
 			var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
 			comm.ExecuteNonQuery();
