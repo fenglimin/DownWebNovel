@@ -80,7 +80,7 @@ namespace DownWebNovel.DataAccess
 		public static void DeleteRuleItem(string webSite, string key, string value1)
 		{
 			var strSql = string.Format("DELETE FROM Rule WHERE ( WebSite = '{0}' AND [Key] = '{1}' AND Value1 = '{2}')",
-				webSite, key, value1);
+				webSite, key, value1.Replace("'", "''"));
 
 			var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
 			comm.ExecuteNonQuery();

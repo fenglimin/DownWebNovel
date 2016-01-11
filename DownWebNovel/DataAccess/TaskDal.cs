@@ -19,15 +19,7 @@ namespace DownWebNovel.DataAccess
 
 			while (reader.Read())
 			{
-				var task = new Task
-				{
-					TaskName = Common.GetSafeString(reader, 1),
-					TaskDir = Common.GetSafeString(reader, 2),
-					RootUrl = Common.GetSafeString(reader, 3),
-					ParaStart = Common.GetSafeString(reader, 4),
-					ParaEnd = Common.GetSafeString(reader, 5),
-					RuleName = Common.GetSafeString(reader, 6)
-				};
+				var task = FillTask(reader);
 
 				allTasks.Add(task);
 			}
@@ -36,12 +28,42 @@ namespace DownWebNovel.DataAccess
 			return allTasks;
 		}
 
+		private static Task FillTask(OleDbDataReader reader)
+		{
+			var task = new Task
+			{
+				TaskName = Common.GetSafeString(reader, 1),
+				TaskDir = Common.GetSafeString(reader, 2),
+				RootUrl = Common.GetSafeString(reader, 3),
+				ParaStart = Common.GetSafeString(reader, 4),
+				ParaEnd = Common.GetSafeString(reader, 5),
+				RuleName = Common.GetSafeString(reader, 6),
+				IsPicture = reader.GetBoolean(7),
+				PictureUrlPrefix = Common.GetSafeString(reader, 8)
+			};
+
+			return task;
+		}
+
+		public static Task GetSampleTaskByRule(string ruleName)
+		{
+			var strSql = string.Format("SELECT * from Task WHERE RuleName = '{0}'", ruleName);
+			var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
+			var reader = comm.ExecuteReader();
+			if (reader == null) return null;
+			if (!reader.Read()) return null;
+
+			var task = FillTask(reader);
+			reader.Close();
+			return task;
+		}
+
 	    public static void AddTask(Task task)
 	    {
 	        var strSql =
 	            string.Format(
-	                "INSERT INTO Task (TaskName, TaskDir, RootUrl, ParaStart, ParaEnd, RuleName) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')",
-	                task.TaskName, task.TaskDir, task.RootUrl, task.ParaStart, task.ParaEnd, task.RuleName);
+	                "INSERT INTO Task (TaskName, TaskDir, RootUrl, ParaStart, ParaEnd, RuleName, IsPicture, PictureUrlPrefix) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', {6}, '{7}')",
+	                task.TaskName, task.TaskDir, task.RootUrl, task.ParaStart, task.ParaEnd, task.RuleName, task.IsPicture, task.PictureUrlPrefix);
 
             var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
             comm.ExecuteNonQuery(); 

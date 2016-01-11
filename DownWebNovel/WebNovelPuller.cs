@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DownWebNovel;
+using DownWebNovel.DataAccess;
 
 namespace DownWebNovel
 {
@@ -31,6 +32,8 @@ namespace DownWebNovel
 		public string ParaEnd { get; set; }
 		public string TaskDir { get; set; }
 		public string RuleName { get; set; }
+		public bool IsPicture { get; set; }
+		public string PictureUrlPrefix { get; set; }
 
 		public Rule Rule { get; set; }
 		public Thread Thread { get; set; }
@@ -84,17 +87,161 @@ namespace DownWebNovel
 			_webNovelPullerUser = webNovelPullerUser;
 		}
 
-		public bool DownloadNovel(Task task)
-		{
-			var curFile = task.ParaStart;
-			while (curFile != task.ParaEnd && !Exit)
-				curFile = DownloadNovelByUrl(task.TaskName, task.RootUrl, curFile, task.Rule, task.TaskDir);
+		//public bool DownloadNovel(Task task)
+		//{
+		//	var curFile = task.ParaStart;
+		//	while (curFile != task.ParaEnd && !Exit)
+		//		curFile = DownloadNovelByUrl(task.TaskName, task.RootUrl, curFile, task.Rule, task.TaskDir);
 
-			task.ParaStart = curFile;
-            if (_webNovelPullerUser != null)
-                _webNovelPullerUser.OnTaskStopped(task);
+		//	task.ParaStart = curFile;
+		//	if (_webNovelPullerUser != null)
+		//		_webNovelPullerUser.OnTaskStopped(task);
+
+		//	return true;
+		//}
+
+		public bool RunTask(Task task)
+		{
+			while (task.ParaStart != task.ParaEnd && !Exit)
+			{
+				task.ParaStart = task.RuleName.StartsWith("task_") ? CreateTaskFromTask(task) : DownloadCurrentPage(task);
+			}
+
+			if (_webNovelPullerUser != null)
+				_webNovelPullerUser.OnTaskStopped(task);
 
 			return true;
+		}
+
+		private string CreateTaskFromTask(Task task)
+		{
+			string downloadedString;
+			if (!DownloadStringByUrl(task.RootUrl + task.ParaStart, out downloadedString))
+			{
+				if (_webNovelPullerUser != null)
+				{
+					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "下载错误", downloadedString);
+				}
+				return task.ParaStart;
+			}
+
+			var newTaskRule = task.RuleName.Substring(5);
+			var sampleTask = TaskDal.GetSampleTaskByRule(newTaskRule);
+
+			var taskUrlList = ExtractIntrestedList(downloadedString, task.Rule, "Content");
+			foreach (var taskUrl in taskUrlList)
+			{
+				var subTask = new Task()
+				{
+					TaskName = task.TaskName + "__" + Guid.NewGuid(),
+					IsPicture = true,
+					ParaEnd = sampleTask.ParaEnd,
+					ParaStart = taskUrl,
+					PictureUrlPrefix = sampleTask.PictureUrlPrefix,
+					RootUrl = task.PictureUrlPrefix,
+					RuleName = newTaskRule,
+					TaskDir = task.TaskDir
+				};
+
+				TaskDal.AddTask(subTask);
+			}
+
+			var nextUrl = ExtractIntrested(downloadedString, task.Rule, "NextPara");
+
+			return nextUrl;
+		}
+
+		private string DownloadCurrentPage(Task task)
+		{
+			string downloadedString;
+			if (!DownloadStringByUrl(task.RootUrl + task.ParaStart, out downloadedString))
+			{
+				if (_webNovelPullerUser != null)
+				{
+					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "下载错误", downloadedString);
+				}
+				return task.ParaStart;
+			}
+
+			try
+			{
+				var title = ExtractIntrested(downloadedString, task.Rule, "Title");
+				var content = ExtractIntrested(downloadedString, task.Rule, "Content");
+				var nextUrl = ExtractIntrested(downloadedString, task.Rule, "NextPara");
+
+				if (task.IsPicture)
+				{
+					var pictureUrl = task.PictureUrlPrefix + content;
+					var part = content.Split('/');
+					var fileName = part[part.Count() - 1];
+					fileName = task.TaskDir + title + "_" + fileName;
+					_webClient.DownloadFile(pictureUrl, fileName);
+				}
+				else
+				{
+					var textWriter = File.AppendText(task.TaskDir + task.TaskName + ".txt");
+					textWriter.WriteLine(title);
+					textWriter.WriteLine(content);
+					textWriter.Close();
+				}
+
+				if (_webNovelPullerUser != null)
+				{
+					_webNovelPullerUser.OnFileDownloaded(false, task.TaskName, title, nextUrl);
+				}
+
+				return nextUrl;
+			}
+			catch (Exception ex)
+			{
+				if (_webNovelPullerUser != null)
+				{
+					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "解析错误", ex.Message);
+				}
+				return task.ParaStart;
+			}
+		}
+
+		private static List<string> ExtractIntrestedList(string content, Rule rule, string key)
+		{
+			var startTagList = (List<string>)rule.PositionTag[key + "Start"];
+			var endTagList = (List<string>)rule.PositionTag[key + "End"];
+			var replacePairs = (List<KeyValuePair<string, string>>)rule.ReplaceTag[key + "Replace"];
+
+			var intrestedList = new List<string>();
+			
+			while (true)
+			{
+				var startIndex = FindIndex(content, startTagList, false);
+				if (startIndex == -1)
+					break;
+
+				content = content.Substring(startIndex);
+
+				var endIndex = FindIndex(content, endTagList, true);
+				if (endIndex == -1)
+					throw new Exception("Error finding end tag of " + key);
+
+				var remainingContent = content.Substring(endIndex);
+				content = content.Substring(0, endIndex);
+
+				while (true)
+				{
+					var reallyStartIndex = FindIndex(content, startTagList, false);
+					if (reallyStartIndex == -1)
+						break;
+
+					content = content.Substring(reallyStartIndex);
+				}
+
+				// Replace
+				content = Replace(content, replacePairs);
+				intrestedList.Add(content);
+
+				content = remainingContent;
+			}
+
+			return intrestedList;
 		}
 
 	    private static string ExtractIntrested(string content, Rule rule, string key)

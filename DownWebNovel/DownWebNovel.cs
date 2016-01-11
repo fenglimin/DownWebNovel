@@ -87,19 +87,28 @@ namespace DownWebNovel
 			lbWebSite.SelectedIndex = 0;
 		}
 
+		private ListViewItem FillListViewItemWithTask(Task task)
+		{
+			var lvi = new ListViewItem { Text = "停止" };
+			lvi.SubItems.Add(task.TaskName);
+			lvi.SubItems.Add(task.RuleName);
+			lvi.SubItems.Add(task.TaskDir);
+			lvi.SubItems.Add(task.RootUrl);
+			lvi.SubItems.Add(task.ParaStart);
+			lvi.SubItems.Add(task.ParaEnd);
+			lvi.SubItems.Add(task.IsPicture ? "是" : "否");
+			lvi.SubItems.Add(task.PictureUrlPrefix);
+
+			return lvi;
+		}
+
 		private void LoadTasks()
 		{
 			_downloadTasks = TaskDal.LoadAllTasks();
 
 			foreach (var downloadTask in _downloadTasks)
 			{
-				var lvi = new ListViewItem { Text = "停止" };
-				lvi.SubItems.Add(downloadTask.TaskName);
-				lvi.SubItems.Add(downloadTask.RuleName);
-				lvi.SubItems.Add(downloadTask.TaskDir);
-				lvi.SubItems.Add(downloadTask.RootUrl);
-				lvi.SubItems.Add(downloadTask.ParaStart);
-				lvi.SubItems.Add(downloadTask.ParaEnd);
+				var lvi = FillListViewItemWithTask(downloadTask);
 				lvDownloadingNovels.Items.Add(lvi);
 			}
 		}
@@ -119,16 +128,12 @@ namespace DownWebNovel
                 TaskDir = tbDir.Text,
                 ParaStart = tbStartPara.Text,
                 ParaEnd = tbEndPara.Text,
-                RuleName = lbWebSite.SelectedItem.ToString()
+                RuleName = lbWebSite.SelectedItem.ToString(),
+				IsPicture = cbIsPicture.Checked,
+				PictureUrlPrefix = tbPictureUrlPrefix.Text
             };
 
-            var lvi = new ListViewItem { Text = "停止" };
-            lvi.SubItems.Add(downloadTask.TaskName);
-            lvi.SubItems.Add(downloadTask.RuleName);
-            lvi.SubItems.Add(downloadTask.TaskDir);
-            lvi.SubItems.Add(downloadTask.RootUrl);
-            lvi.SubItems.Add(downloadTask.ParaStart);
-            lvi.SubItems.Add(downloadTask.ParaEnd);
+			var lvi = FillListViewItemWithTask(downloadTask);
             lvDownloadingNovels.Items.Add(lvi);
 
             _downloadTasks.Add(downloadTask);
@@ -142,7 +147,7 @@ namespace DownWebNovel
 		{
 			var task = para as Task;
 			if (task != null)
-				task.WebNovelPuller.DownloadNovel(task);
+				task.WebNovelPuller.RunTask(task);
 		}
 
 		private Task FindTaskInMemory(string novelName)
@@ -336,7 +341,10 @@ namespace DownWebNovel
 			else
 				lbTagDefine.SelectedIndex = 0;
 
-			lbContentReplace.SelectedIndex = 2;
+			if (lbContentReplace.SelectedIndex == 2)
+				OnContentReplaceSelectedIndexChanged();
+			else
+				lbContentReplace.SelectedIndex = 2;
 		}
 
 		private void tbWebSite_TextChanged(object sender, EventArgs e)
@@ -458,7 +466,7 @@ namespace DownWebNovel
 			btDeleteReplacement.Enabled = contain && tbReplaceFrom.Text != string.Empty && tbReplaceTo.Text != string.Empty;
 		}
 
-		private void lbContentReplace_SelectedIndexChanged(object sender, EventArgs e)
+		private void OnContentReplaceSelectedIndexChanged()
 		{
 			lvReplace.Items.Clear();
 
@@ -483,6 +491,11 @@ namespace DownWebNovel
 				tbReplaceTo.Text = string.Empty;
 				RefershRepalceButtons();
 			}
+		}
+
+		private void lbContentReplace_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			OnContentReplaceSelectedIndexChanged();
 		}
 
 		private void lvReplace_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -555,6 +568,10 @@ namespace DownWebNovel
             tbUrl.Text = subItems[4].Text;
             tbStartPara.Text = subItems[5].Text;
             tbEndPara.Text = subItems[6].Text;
+	        cbIsPicture.Checked = subItems[7].Text == "是";
+			tbPictureUrlPrefix.Text = subItems[8].Text;
+
+	        lbWebSite.SelectedItem = subItems[2].Text;
 
         }
 
