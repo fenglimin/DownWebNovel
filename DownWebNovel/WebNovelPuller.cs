@@ -14,6 +14,15 @@ using DownWebNovel.DataAccess;
 
 namespace DownWebNovel
 {
+	public class ParseTagException : Exception
+	{
+		public ParseTagException(string message)
+			:base(message)
+		{
+			
+		}
+	}
+
     public class XWebClient : WebClient 
     {
         protected override WebRequest GetWebRequest(Uri address)
@@ -74,6 +83,7 @@ namespace DownWebNovel
 	{
 		void OnFileDownloaded(bool hasError, string novelName, string curPara, string nextPara);
 	    void OnTaskStopped(Task task);
+		void OnSubTaskCreated(Task task);
 	}
 
 	public class WebNovelPuller
@@ -125,30 +135,52 @@ namespace DownWebNovel
 				return task.ParaStart;
 			}
 
-			var newTaskRule = task.RuleName.Substring(5);
-			var sampleTask = TaskDal.GetSampleTaskByRule(newTaskRule);
-
-			var taskUrlList = ExtractIntrestedList(downloadedString, task.Rule, "Content");
-			foreach (var taskUrl in taskUrlList)
+			try
 			{
-				var subTask = new Task()
+				var newTaskRule = task.RuleName.Substring(5);
+				var sampleTask = TaskDal.GetSampleTaskByRule(newTaskRule);
+
+				var taskUrlList = ExtractIntrestedList(downloadedString, task.Rule, "Content");
+				foreach (var taskUrl in taskUrlList)
 				{
-					TaskName = task.TaskName + "__" + Guid.NewGuid(),
-					IsPicture = true,
-					ParaEnd = sampleTask.ParaEnd,
-					ParaStart = taskUrl,
-					PictureUrlPrefix = sampleTask.PictureUrlPrefix,
-					RootUrl = task.PictureUrlPrefix,
-					RuleName = newTaskRule,
-					TaskDir = task.TaskDir
-				};
+					var subTask = new Task()
+					{
+						TaskName = task.TaskName + "__" + Guid.NewGuid(),
+						IsPicture = true,
+						ParaEnd = sampleTask.ParaEnd,
+						ParaStart = taskUrl,
+						PictureUrlPrefix = sampleTask.PictureUrlPrefix,
+						RootUrl = task.PictureUrlPrefix,
+						RuleName = newTaskRule,
+						TaskDir = task.TaskDir
+					};
 
-				TaskDal.AddTask(subTask);
+					if (_webNovelPullerUser != null)
+					{
+						_webNovelPullerUser.OnSubTaskCreated(subTask);
+					}
+				}
+
+				var nextUrl = ExtractIntrested(downloadedString, task.Rule, "NextPara");
+
+				return nextUrl;
 			}
-
-			var nextUrl = ExtractIntrested(downloadedString, task.Rule, "NextPara");
-
-			return nextUrl;
+			catch (ParseTagException ex)
+			{
+				if (_webNovelPullerUser != null)
+				{
+					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "解析错误，任务终止！", ex.Message);
+				}
+				Exit = true;
+			}
+			catch (Exception ex)
+			{
+				if (_webNovelPullerUser != null)
+				{
+					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "错误，任务重试！", ex.Message);
+				}
+			}
+			return task.ParaStart;
 		}
 
 		private string DownloadCurrentPage(Task task)
@@ -192,17 +224,26 @@ namespace DownWebNovel
 
 				return nextUrl;
 			}
+			catch (ParseTagException ex)
+			{
+				if (_webNovelPullerUser != null)
+				{
+					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "解析错误，任务终止！", ex.Message);
+				}
+				Exit = true;
+			}
 			catch (Exception ex)
 			{
 				if (_webNovelPullerUser != null)
 				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "解析错误", ex.Message);
+					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "错误，任务重试！", ex.Message);
 				}
-				return task.ParaStart;
 			}
+
+			return task.ParaStart;
 		}
 
-		private static List<string> ExtractIntrestedList(string content, Rule rule, string key)
+		private static IEnumerable<string> ExtractIntrestedList(string content, Rule rule, string key)
 		{
 			var startTagList = (List<string>)rule.PositionTag[key + "Start"];
 			var endTagList = (List<string>)rule.PositionTag[key + "End"];
@@ -220,7 +261,7 @@ namespace DownWebNovel
 
 				var endIndex = FindIndex(content, endTagList, true);
 				if (endIndex == -1)
-					throw new Exception("Error finding end tag of " + key);
+					throw new ParseTagException("Error finding end tag of " + key);
 
 				var remainingContent = content.Substring(endIndex);
 				content = content.Substring(0, endIndex);
@@ -259,7 +300,7 @@ namespace DownWebNovel
 
                 var endIndex = FindIndex(content, endTagList, true);
                 if (endIndex == -1)
-                    throw new Exception("Error finding end tag of " + key);
+					throw new ParseTagException("Error finding end tag of " + key);
 
                 content = content.Substring(0, endIndex);
 
@@ -276,7 +317,7 @@ namespace DownWebNovel
 	        }
 	        else
 	        {
-                throw new Exception("Error finding start tag of " + key);
+				throw new ParseTagException("Error finding start tag of " + key);
 	        }
                 
 

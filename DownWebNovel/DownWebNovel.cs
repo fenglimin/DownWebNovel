@@ -25,8 +25,7 @@ namespace DownWebNovel
 		private readonly WebNovelPuller _webNovelPuller;
 
 		delegate void FileDownloadedCallback(bool hasError, string novelName, string curPara, string strNextPara);
-
-	    delegate void TaskStoppedCallback(Task task);
+	    delegate void TaskOperationCallback(Task task);
 
 		public DownWebNovel()
 		{
@@ -113,6 +112,17 @@ namespace DownWebNovel
 			}
 		}
 
+		private void AddTaskToViewAndMemoryAndDatabase(Task task)
+		{
+			var lvi = FillListViewItemWithTask(task);
+			lvDownloadingNovels.Items.Add(lvi);
+
+			_downloadTasks.Add(task);
+
+			TaskDal.AddTask(task);
+
+		}
+
 		private void btDown_Click(object sender, EventArgs e)
 		{
             if (FindTaskInMemory(tbName.Text) != null)
@@ -133,13 +143,7 @@ namespace DownWebNovel
 				PictureUrlPrefix = tbPictureUrlPrefix.Text
             };
 
-			var lvi = FillListViewItemWithTask(downloadTask);
-            lvDownloadingNovels.Items.Add(lvi);
-
-            _downloadTasks.Add(downloadTask);
-
-            TaskDal.AddTask(downloadTask);
-
+			AddTaskToViewAndMemoryAndDatabase(downloadTask);
             StartTaskInTheList(downloadTask.TaskName);
 		}
 
@@ -212,15 +216,13 @@ namespace DownWebNovel
                 return;
 
             lvDownloadingNovels.Items[item].SubItems[0].Text = "停止";
-
-            
 	    }
 
 	    public void OnTaskStopped(Task task)
 	    {
 	        if (lvDownloadingNovels.InvokeRequired)
 	        {
-	            var d = new TaskStoppedCallback(TaskStopped);
+	            var d = new TaskOperationCallback(TaskStopped);
 	            Invoke(d, new object[] {task});
 	        }
 	        else
@@ -229,7 +231,27 @@ namespace DownWebNovel
 	        }
 	    }
 
-	    private void btSelectDir_Click(object sender, EventArgs e)
+
+		private void SubTaskCreated(Task task)
+		{
+			tbMessage.AppendText(task.TaskName + " 已生成！\r\n");
+			AddTaskToViewAndMemoryAndDatabase(task);
+		}
+
+		public void OnSubTaskCreated(Task task)
+		{
+			if (lvDownloadingNovels.InvokeRequired)
+			{
+				var d = new TaskOperationCallback(SubTaskCreated);
+				Invoke(d, new object[] { task });
+			}
+			else
+			{
+				SubTaskCreated(task);
+			}
+		}
+
+		private void btSelectDir_Click(object sender, EventArgs e)
         {
             var dialog = new FolderBrowserDialog { Description = "请选择文件路径" };
             dialog.SelectedPath = tbDir.Text;
