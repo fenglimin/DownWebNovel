@@ -25,7 +25,8 @@ namespace DownWebNovel
 		private readonly WebNovelPuller _webNovelPuller;
 
 		delegate void FileDownloadedCallback(bool hasError, string novelName, string curPara, string strNextPara);
-	    delegate void TaskOperationCallback(Task task);
+	    delegate void SubTaskCreatedCallback(Task task);
+		delegate void TaskStoppedCallback(Task task, string stopReason);
 
 		public DownWebNovel()
 		{
@@ -47,14 +48,25 @@ namespace DownWebNovel
 			_translateReplace["下章地址"] = "NextParaReplace";
 		}
 
-		private void btDownloadFirstPara_Click(object sender, EventArgs e)
+		private void DownloadOnePara(string url, bool downloadSourceOnly)
 		{
 			string content;
-			var url = tbUrl.Text + tbStartPara.Text;
-
 			tbMessage.Text = "正在从" + url + "下载...\r\n";
-			_webNovelPuller.DownloadStringByUrl(url, out content);
+
+			if (downloadSourceOnly)
+				_webNovelPuller.DownloadStringByUrl(url, out content);
+			else
+			{
+				var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
+				content = _webNovelPuller.DownloadPageForVerify(url, selectedRule);
+			}
+
 			tbMessage.Text += content;
+		}
+
+		private void btDownloadFirstPara_Click(object sender, EventArgs e)
+		{
+			DownloadOnePara(tbUrl.Text + tbStartPara.Text, cbParaStartSource.Checked);
 		}
 
 		private void DownWebNovel_Load(object sender, EventArgs e)
@@ -204,9 +216,9 @@ namespace DownWebNovel
 			}
 		}
 
-	    private void TaskStopped(Task task)
+		private void TaskStopped(Task task, string stopReason)
 	    {
-            tbMessage.AppendText(task.TaskName + " " + "下载已停止！" + "\r\n");
+            tbMessage.AppendText(task.TaskName + " " + "下载停止！ --- " + stopReason +"\r\n");
 
             TaskDal.DeleteTask(task.TaskName);
             TaskDal.AddTask(task);
@@ -218,16 +230,16 @@ namespace DownWebNovel
             lvDownloadingNovels.Items[item].SubItems[0].Text = "停止";
 	    }
 
-	    public void OnTaskStopped(Task task)
+		public void OnTaskStopped(Task task, string stopReason)
 	    {
 	        if (lvDownloadingNovels.InvokeRequired)
 	        {
-	            var d = new TaskOperationCallback(TaskStopped);
-	            Invoke(d, new object[] {task});
+	            var d = new TaskStoppedCallback(TaskStopped);
+				Invoke(d, new object[] { task, stopReason });
 	        }
 	        else
 	        {
-	            TaskStopped(task);
+	            TaskStopped(task, stopReason);
 	        }
 	    }
 
@@ -242,7 +254,7 @@ namespace DownWebNovel
 		{
 			if (lvDownloadingNovels.InvokeRequired)
 			{
-				var d = new TaskOperationCallback(SubTaskCreated);
+				var d = new SubTaskCreatedCallback(SubTaskCreated);
 				Invoke(d, new object[] { task });
 			}
 			else
@@ -589,9 +601,10 @@ namespace DownWebNovel
             tbDir.Text = subItems[3].Text;
             tbUrl.Text = subItems[4].Text;
             tbStartPara.Text = subItems[5].Text;
-            tbEndPara.Text = subItems[6].Text;
-	        cbIsPicture.Checked = subItems[7].Text == "是";
-			tbPictureUrlPrefix.Text = subItems[8].Text;
+			tbParaLastDownloaded.Text = subItems[6].Text;
+            tbEndPara.Text = subItems[7].Text;
+	        cbIsPicture.Checked = subItems[8].Text == "是";
+			tbPictureUrlPrefix.Text = subItems[9].Text;
 
 	        lbWebSite.SelectedItem = subItems[2].Text;
 
@@ -636,11 +649,9 @@ namespace DownWebNovel
             }
         }
 
-		private void btDownloadAndParseFirstPara_Click(object sender, EventArgs e)
+		private void btDownloadLast_Click(object sender, EventArgs e)
 		{
-
+			DownloadOnePara(tbUrl.Text + tbParaLastDownloaded.Text, cbDownloadedSource.Checked);
 		}
-
-
 	}
 }
