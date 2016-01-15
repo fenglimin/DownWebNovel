@@ -68,7 +68,10 @@
 			this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.startMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,13 +80,15 @@
 			this.startAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.cbShowError = new System.Windows.Forms.CheckBox();
+			this.btDownloadAndParseFirstPara = new System.Windows.Forms.Button();
+			this.tbPictureUrlPrefix = new System.Windows.Forms.TextBox();
+			this.cbIsPicture = new System.Windows.Forms.CheckBox();
 			this.btSelectDir = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.tbDir = new System.Windows.Forms.TextBox();
-			this.cbIsPicture = new System.Windows.Forms.CheckBox();
-			this.tbPictureUrlPrefix = new System.Windows.Forms.TextBox();
-			this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.label6 = new System.Windows.Forms.Label();
+			this.tbParaLastDownloaded = new System.Windows.Forms.TextBox();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -93,17 +98,17 @@
 			// 
 			// btDownloadFirstPara
 			// 
-			this.btDownloadFirstPara.Location = new System.Drawing.Point(9, 169);
+			this.btDownloadFirstPara.Location = new System.Drawing.Point(9, 216);
 			this.btDownloadFirstPara.Name = "btDownloadFirstPara";
-			this.btDownloadFirstPara.Size = new System.Drawing.Size(225, 23);
+			this.btDownloadFirstPara.Size = new System.Drawing.Size(104, 30);
 			this.btDownloadFirstPara.TabIndex = 10;
-			this.btDownloadFirstPara.Text = "下载首章网页文本内容";
+			this.btDownloadFirstPara.Text = "下载首章源文件";
 			this.btDownloadFirstPara.UseVisualStyleBackColor = true;
 			this.btDownloadFirstPara.Click += new System.EventHandler(this.btDownloadFirstPara_Click);
 			// 
 			// btDeleteReplacement
 			// 
-			this.btDeleteReplacement.Location = new System.Drawing.Point(213, 160);
+			this.btDeleteReplacement.Location = new System.Drawing.Point(220, 160);
 			this.btDeleteReplacement.Name = "btDeleteReplacement";
 			this.btDeleteReplacement.Size = new System.Drawing.Size(93, 23);
 			this.btDeleteReplacement.TabIndex = 6;
@@ -113,14 +118,14 @@
 			// 
 			// tbReplaceTo
 			// 
-			this.tbReplaceTo.Location = new System.Drawing.Point(213, 131);
+			this.tbReplaceTo.Location = new System.Drawing.Point(220, 131);
 			this.tbReplaceTo.Name = "tbReplaceTo";
 			this.tbReplaceTo.Size = new System.Drawing.Size(93, 20);
 			this.tbReplaceTo.TabIndex = 9;
 			// 
 			// btAddReplacement
 			// 
-			this.btAddReplacement.Location = new System.Drawing.Point(97, 160);
+			this.btAddReplacement.Location = new System.Drawing.Point(104, 160);
 			this.btAddReplacement.Name = "btAddReplacement";
 			this.btAddReplacement.Size = new System.Drawing.Size(93, 23);
 			this.btAddReplacement.TabIndex = 5;
@@ -131,7 +136,7 @@
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(192, 133);
+			this.label5.Location = new System.Drawing.Point(199, 133);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(19, 13);
 			this.label5.TabIndex = 8;
@@ -139,7 +144,7 @@
 			// 
 			// tbReplaceFrom
 			// 
-			this.tbReplaceFrom.Location = new System.Drawing.Point(97, 131);
+			this.tbReplaceFrom.Location = new System.Drawing.Point(104, 131);
 			this.tbReplaceFrom.Name = "tbReplaceFrom";
 			this.tbReplaceFrom.Size = new System.Drawing.Size(93, 20);
 			this.tbReplaceFrom.TabIndex = 5;
@@ -162,7 +167,7 @@
             this.columnHeader2});
 			this.lvReplace.FullRowSelect = true;
 			this.lvReplace.GridLines = true;
-			this.lvReplace.Location = new System.Drawing.Point(97, 23);
+			this.lvReplace.Location = new System.Drawing.Point(104, 23);
 			this.lvReplace.MultiSelect = false;
 			this.lvReplace.Name = "lvReplace";
 			this.lvReplace.Size = new System.Drawing.Size(209, 95);
@@ -180,9 +185,9 @@
 			this.groupBox4.Controls.Add(this.label5);
 			this.groupBox4.Controls.Add(this.tbReplaceFrom);
 			this.groupBox4.Controls.Add(this.lvReplace);
-			this.groupBox4.Location = new System.Drawing.Point(600, 12);
+			this.groupBox4.Location = new System.Drawing.Point(589, 12);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(316, 192);
+			this.groupBox4.Size = new System.Drawing.Size(327, 192);
 			this.groupBox4.TabIndex = 16;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "替换";
@@ -190,7 +195,7 @@
 			// lbContentReplace
 			// 
 			this.lbContentReplace.FormattingEnabled = true;
-			this.lbContentReplace.Location = new System.Drawing.Point(6, 23);
+			this.lbContentReplace.Location = new System.Drawing.Point(13, 23);
 			this.lbContentReplace.Name = "lbContentReplace";
 			this.lbContentReplace.Size = new System.Drawing.Size(82, 160);
 			this.lbContentReplace.Sorted = true;
@@ -251,9 +256,9 @@
 			this.groupBox2.Controls.Add(this.tbTagValue);
 			this.groupBox2.Controls.Add(this.lbTagValue);
 			this.groupBox2.Controls.Add(this.btAddTag);
-			this.groupBox2.Location = new System.Drawing.Point(274, 12);
+			this.groupBox2.Location = new System.Drawing.Point(257, 12);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(313, 192);
+			this.groupBox2.Size = new System.Drawing.Size(320, 192);
 			this.groupBox2.TabIndex = 15;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "标签";
@@ -261,7 +266,7 @@
 			// label4
 			// 
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(6, 108);
+			this.label4.Location = new System.Drawing.Point(6, 133);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(31, 13);
 			this.label4.TabIndex = 6;
@@ -269,7 +274,7 @@
 			// 
 			// tbEndPara
 			// 
-			this.tbEndPara.Location = new System.Drawing.Point(43, 105);
+			this.tbEndPara.Location = new System.Drawing.Point(43, 131);
 			this.tbEndPara.Name = "tbEndPara";
 			this.tbEndPara.Size = new System.Drawing.Size(191, 20);
 			this.tbEndPara.TabIndex = 7;
@@ -277,7 +282,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(6, 82);
+			this.label3.Location = new System.Drawing.Point(6, 78);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(31, 13);
 			this.label3.TabIndex = 4;
@@ -285,7 +290,7 @@
 			// 
 			// tbUrl
 			// 
-			this.tbUrl.Location = new System.Drawing.Point(43, 51);
+			this.tbUrl.Location = new System.Drawing.Point(43, 47);
 			this.tbUrl.Name = "tbUrl";
 			this.tbUrl.Size = new System.Drawing.Size(191, 20);
 			this.tbUrl.TabIndex = 5;
@@ -293,7 +298,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(6, 56);
+			this.label2.Location = new System.Drawing.Point(6, 49);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(31, 13);
 			this.label2.TabIndex = 2;
@@ -301,7 +306,7 @@
 			// 
 			// tbStartPara
 			// 
-			this.tbStartPara.Location = new System.Drawing.Point(43, 78);
+			this.tbStartPara.Location = new System.Drawing.Point(43, 75);
 			this.tbStartPara.Name = "tbStartPara";
 			this.tbStartPara.Size = new System.Drawing.Size(191, 20);
 			this.tbStartPara.TabIndex = 3;
@@ -360,7 +365,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(6, 28);
+			this.label1.Location = new System.Drawing.Point(6, 22);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(31, 13);
 			this.label1.TabIndex = 0;
@@ -368,16 +373,16 @@
 			// 
 			// tbName
 			// 
-			this.tbName.Location = new System.Drawing.Point(43, 24);
+			this.tbName.Location = new System.Drawing.Point(43, 19);
 			this.tbName.Name = "tbName";
 			this.tbName.Size = new System.Drawing.Size(191, 20);
 			this.tbName.TabIndex = 1;
 			// 
 			// btDown
 			// 
-			this.btDown.Location = new System.Drawing.Point(762, 22);
+			this.btDown.Location = new System.Drawing.Point(245, 217);
 			this.btDown.Name = "btDown";
-			this.btDown.Size = new System.Drawing.Size(132, 27);
+			this.btDown.Size = new System.Drawing.Size(546, 29);
 			this.btDown.TabIndex = 17;
 			this.btDown.Text = "开始下载";
 			this.btDown.UseVisualStyleBackColor = true;
@@ -385,11 +390,11 @@
 			// 
 			// tbMessage
 			// 
-			this.tbMessage.Location = new System.Drawing.Point(9, 207);
+			this.tbMessage.Location = new System.Drawing.Point(9, 259);
 			this.tbMessage.Multiline = true;
 			this.tbMessage.Name = "tbMessage";
 			this.tbMessage.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.tbMessage.Size = new System.Drawing.Size(885, 229);
+			this.tbMessage.Size = new System.Drawing.Size(885, 177);
 			this.tbMessage.TabIndex = 18;
 			// 
 			// lvDownloadingNovels
@@ -401,15 +406,16 @@
             this.columnHeader5,
             this.columnHeader7,
             this.columnHeader8,
+            this.columnHeader12,
             this.columnHeader9,
             this.columnHeader10,
             this.columnHeader11});
 			this.lvDownloadingNovels.ContextMenuStrip = this.contextMenuStrip1;
 			this.lvDownloadingNovels.FullRowSelect = true;
 			this.lvDownloadingNovels.GridLines = true;
-			this.lvDownloadingNovels.Location = new System.Drawing.Point(262, 55);
+			this.lvDownloadingNovels.Location = new System.Drawing.Point(245, 19);
 			this.lvDownloadingNovels.Name = "lvDownloadingNovels";
-			this.lvDownloadingNovels.Size = new System.Drawing.Size(632, 137);
+			this.lvDownloadingNovels.Size = new System.Drawing.Size(645, 191);
 			this.lvDownloadingNovels.TabIndex = 10;
 			this.lvDownloadingNovels.UseCompatibleStateImageBehavior = false;
 			this.lvDownloadingNovels.View = System.Windows.Forms.View.Details;
@@ -433,21 +439,34 @@
 			// columnHeader5
 			// 
 			this.columnHeader5.Text = "路径";
-			this.columnHeader5.Width = 61;
+			this.columnHeader5.Width = 51;
 			// 
 			// columnHeader7
 			// 
 			this.columnHeader7.Text = "Url";
-			this.columnHeader7.Width = 155;
+			this.columnHeader7.Width = 176;
 			// 
 			// columnHeader8
 			// 
 			this.columnHeader8.Text = "首章";
-			this.columnHeader8.Width = 141;
+			this.columnHeader8.Width = 90;
+			// 
+			// columnHeader12
+			// 
+			this.columnHeader12.Text = "已下载章节";
+			this.columnHeader12.Width = 82;
 			// 
 			// columnHeader9
 			// 
 			this.columnHeader9.Text = "终章";
+			// 
+			// columnHeader10
+			// 
+			this.columnHeader10.Text = "图像";
+			// 
+			// columnHeader11
+			// 
+			this.columnHeader11.Text = "图像地址前缀";
 			// 
 			// contextMenuStrip1
 			// 
@@ -505,6 +524,10 @@
 			// 
 			// groupBox3
 			// 
+			this.groupBox3.Controls.Add(this.label6);
+			this.groupBox3.Controls.Add(this.tbParaLastDownloaded);
+			this.groupBox3.Controls.Add(this.cbShowError);
+			this.groupBox3.Controls.Add(this.btDownloadAndParseFirstPara);
 			this.groupBox3.Controls.Add(this.tbPictureUrlPrefix);
 			this.groupBox3.Controls.Add(this.cbIsPicture);
 			this.groupBox3.Controls.Add(this.btSelectDir);
@@ -522,18 +545,55 @@
 			this.groupBox3.Controls.Add(this.label2);
 			this.groupBox3.Controls.Add(this.tbName);
 			this.groupBox3.Controls.Add(this.label1);
-			this.groupBox3.Location = new System.Drawing.Point(12, 216);
+			this.groupBox3.Location = new System.Drawing.Point(12, 214);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(904, 447);
 			this.groupBox3.TabIndex = 20;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "下载";
 			// 
+			// cbShowError
+			// 
+			this.cbShowError.AutoSize = true;
+			this.cbShowError.Location = new System.Drawing.Point(797, 225);
+			this.cbShowError.Name = "cbShowError";
+			this.cbShowError.Size = new System.Drawing.Size(98, 17);
+			this.cbShowError.TabIndex = 24;
+			this.cbShowError.Text = "显示错误信息";
+			this.cbShowError.UseVisualStyleBackColor = true;
+			// 
+			// btDownloadAndParseFirstPara
+			// 
+			this.btDownloadAndParseFirstPara.Location = new System.Drawing.Point(128, 216);
+			this.btDownloadAndParseFirstPara.Name = "btDownloadAndParseFirstPara";
+			this.btDownloadAndParseFirstPara.Size = new System.Drawing.Size(106, 30);
+			this.btDownloadAndParseFirstPara.TabIndex = 23;
+			this.btDownloadAndParseFirstPara.Text = "下载首章并解析";
+			this.btDownloadAndParseFirstPara.UseVisualStyleBackColor = true;
+			this.btDownloadAndParseFirstPara.Click += new System.EventHandler(this.btDownloadAndParseFirstPara_Click);
+			// 
+			// tbPictureUrlPrefix
+			// 
+			this.tbPictureUrlPrefix.Location = new System.Drawing.Point(119, 159);
+			this.tbPictureUrlPrefix.Name = "tbPictureUrlPrefix";
+			this.tbPictureUrlPrefix.Size = new System.Drawing.Size(115, 20);
+			this.tbPictureUrlPrefix.TabIndex = 22;
+			// 
+			// cbIsPicture
+			// 
+			this.cbIsPicture.AutoSize = true;
+			this.cbIsPicture.Location = new System.Drawing.Point(9, 161);
+			this.cbIsPicture.Name = "cbIsPicture";
+			this.cbIsPicture.Size = new System.Drawing.Size(104, 17);
+			this.cbIsPicture.TabIndex = 21;
+			this.cbIsPicture.Text = "图像  网址前缀";
+			this.cbIsPicture.UseVisualStyleBackColor = true;
+			// 
 			// btSelectDir
 			// 
-			this.btSelectDir.Location = new System.Drawing.Point(685, 22);
+			this.btSelectDir.Location = new System.Drawing.Point(198, 187);
 			this.btSelectDir.Name = "btSelectDir";
-			this.btSelectDir.Size = new System.Drawing.Size(56, 25);
+			this.btSelectDir.Size = new System.Drawing.Size(36, 20);
 			this.btSelectDir.TabIndex = 20;
 			this.btSelectDir.Text = "...";
 			this.btSelectDir.UseVisualStyleBackColor = true;
@@ -542,7 +602,7 @@
 			// label7
 			// 
 			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(259, 24);
+			this.label7.Location = new System.Drawing.Point(6, 190);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(31, 13);
 			this.label7.TabIndex = 14;
@@ -550,35 +610,26 @@
 			// 
 			// tbDir
 			// 
-			this.tbDir.Location = new System.Drawing.Point(297, 22);
+			this.tbDir.Location = new System.Drawing.Point(43, 187);
 			this.tbDir.Name = "tbDir";
-			this.tbDir.Size = new System.Drawing.Size(350, 20);
+			this.tbDir.Size = new System.Drawing.Size(139, 20);
 			this.tbDir.TabIndex = 15;
 			// 
-			// cbIsPicture
+			// label6
 			// 
-			this.cbIsPicture.AutoSize = true;
-			this.cbIsPicture.Location = new System.Drawing.Point(9, 137);
-			this.cbIsPicture.Name = "cbIsPicture";
-			this.cbIsPicture.Size = new System.Drawing.Size(104, 17);
-			this.cbIsPicture.TabIndex = 21;
-			this.cbIsPicture.Text = "图像  网址前缀";
-			this.cbIsPicture.UseVisualStyleBackColor = true;
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(6, 105);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(31, 13);
+			this.label6.TabIndex = 26;
+			this.label6.Text = "已下";
 			// 
-			// tbPictureUrlPrefix
+			// tbParaLastDownloaded
 			// 
-			this.tbPictureUrlPrefix.Location = new System.Drawing.Point(119, 135);
-			this.tbPictureUrlPrefix.Name = "tbPictureUrlPrefix";
-			this.tbPictureUrlPrefix.Size = new System.Drawing.Size(115, 20);
-			this.tbPictureUrlPrefix.TabIndex = 22;
-			// 
-			// columnHeader10
-			// 
-			this.columnHeader10.Text = "图像";
-			// 
-			// columnHeader11
-			// 
-			this.columnHeader11.Text = "图像地址前缀";
+			this.tbParaLastDownloaded.Location = new System.Drawing.Point(43, 103);
+			this.tbParaLastDownloaded.Name = "tbParaLastDownloaded";
+			this.tbParaLastDownloaded.Size = new System.Drawing.Size(191, 20);
+			this.tbParaLastDownloaded.TabIndex = 25;
 			// 
 			// DownWebNovel
 			// 
@@ -662,6 +713,11 @@
 		private System.Windows.Forms.CheckBox cbIsPicture;
 		private System.Windows.Forms.ColumnHeader columnHeader10;
 		private System.Windows.Forms.ColumnHeader columnHeader11;
+		private System.Windows.Forms.Button btDownloadAndParseFirstPara;
+		private System.Windows.Forms.CheckBox cbShowError;
+		private System.Windows.Forms.ColumnHeader columnHeader12;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.TextBox tbParaLastDownloaded;
 
 	}
 }

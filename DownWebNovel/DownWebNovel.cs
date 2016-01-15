@@ -69,7 +69,6 @@ namespace DownWebNovel
 				lbContentReplace.Items.Add(translate.Key);
 			}
 
-		    tbUrl.Text = "http://mm.xmeise.com/rufang/meixiong/5497.html";
 		    tbDir.Text = @"D:\";
 			LoadRules();
 			LoadTasks();
@@ -94,6 +93,7 @@ namespace DownWebNovel
 			lvi.SubItems.Add(task.TaskDir);
 			lvi.SubItems.Add(task.RootUrl);
 			lvi.SubItems.Add(task.ParaStart);
+			lvi.SubItems.Add(task.ParaLastDownloaded);
 			lvi.SubItems.Add(task.ParaEnd);
 			lvi.SubItems.Add(task.IsPicture ? "是" : "否");
 			lvi.SubItems.Add(task.PictureUrlPrefix);
@@ -187,7 +187,7 @@ namespace DownWebNovel
                 if (item == -1)
                     return;
 
-                lvDownloadingNovels.Items[item].SubItems[5].Text = nextPara;
+                lvDownloadingNovels.Items[item].SubItems[6].Text = nextPara;
             }
 		}
 
@@ -635,6 +635,11 @@ namespace DownWebNovel
                 StopTaskInTheList(item.SubItems[1].Text);
             }
         }
+
+		private void btDownloadAndParseFirstPara_Click(object sender, EventArgs e)
+		{
+
+		}
 
 
 	}
