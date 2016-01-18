@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -156,7 +157,7 @@ namespace DownWebNovel
             };
 
 			AddTaskToViewAndMemoryAndDatabase(downloadTask);
-            StartTaskInTheList(downloadTask.TaskName);
+            RunTask(downloadTask.TaskName, false);
 		}
 
 		private void DownloadNovelThread(object para)
@@ -265,10 +266,9 @@ namespace DownWebNovel
 
 		private void btSelectDir_Click(object sender, EventArgs e)
         {
-            var dialog = new FolderBrowserDialog { Description = "请选择文件路径" };
-            dialog.SelectedPath = tbDir.Text;
+            var dialog = new FolderBrowserDialog {Description = "请选择文件路径", SelectedPath = tbDir.Text};
 
-            if (dialog.ShowDialog() != DialogResult.OK)
+			if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
             tbDir.Text = dialog.SelectedPath; 
@@ -279,33 +279,39 @@ namespace DownWebNovel
 
 		}
 
-	    private void StartTaskInTheList(string taskName)
-	    {
-            var item = FindTaskItemItemInTheList(taskName);
-            if (item == -1)
-                return;
+		private void RunTask(string taskName, bool isRestart)
+		{
+			var item = FindTaskItemItemInTheList(taskName);
+			if (item == -1)
+				return;
 
-	        if (lvDownloadingNovels.Items[item].SubItems[0].Text == "下载中")
-	            return;
+			if (lvDownloadingNovels.Items[item].SubItems[0].Text == "下载中")
+				return;
 
-	        var task = FindTaskInMemory(taskName);
-	        if (task == null)
-	            return;
+			var task = FindTaskInMemory(taskName);
+			if (task == null)
+				return;
 
-            lvDownloadingNovels.Items[item].SubItems[0].Text = "下载中";
-            if (task.WebNovelPuller == null)
-            {
-                task.WebNovelPuller = new WebNovelPuller(this) { Exit = false };
-            }
-            else
-            {
-                task.WebNovelPuller.Exit = false;
-            }
+			lvDownloadingNovels.Items[item].SubItems[0].Text = "下载中";
+			if (task.WebNovelPuller == null)
+			{
+				task.WebNovelPuller = new WebNovelPuller(this) { Exit = false };
+			}
+			else
+			{
+				task.WebNovelPuller.Exit = false;
+			}
 
-            task.Rule = (Rule)_rules[task.RuleName];
-            task.Thread = new Thread(DownloadNovelThread);
-            task.Thread.Start(task);
-	    }
+			if (isRestart)
+			{
+				lvDownloadingNovels.Items[item].SubItems[6].Text = string.Empty;
+				task.ParaLastDownloaded = string.Empty;
+			}
+
+			task.Rule = (Rule)_rules[task.RuleName];
+			task.Thread = new Thread(DownloadNovelThread);
+			task.Thread.Start(task);
+		}
 
 	    private void StopTaskInTheList(string taskName)
 	    {
@@ -349,9 +355,10 @@ namespace DownWebNovel
                 downloading = lvDownloadingNovels.SelectedItems[0].Text == "下载中";
 
             contextMenuStrip1.Items[0].Visible = visible && !downloading;
-            contextMenuStrip1.Items[1].Visible = visible && downloading;
-            contextMenuStrip1.Items[2].Visible = visible && !downloading;
-            contextMenuStrip1.Items[3].Visible = visible;
+			contextMenuStrip1.Items[1].Visible = visible && !downloading;
+            contextMenuStrip1.Items[2].Visible = visible && downloading;
+            contextMenuStrip1.Items[3].Visible = visible && !downloading;
+            contextMenuStrip1.Items[4].Visible = visible;
 		}
 
 		#region WebSite
@@ -618,7 +625,7 @@ namespace DownWebNovel
 	    private void startMenuItem_Click(object sender, EventArgs e)
 	    {
 	        var taskName = GetSelectTaskName();
-            StartTaskInTheList(taskName);
+            RunTask(taskName, false);
 	    }
 
         private void stopMenuItem_Click(object sender, EventArgs e)
@@ -633,11 +640,11 @@ namespace DownWebNovel
             DeleteTaskInTheList(taskName);
         }
 
-        private void startAllMenuItem_Click(object sender, EventArgs e)
+        private void continueAllMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem item in lvDownloadingNovels.Items)
             {
-                StartTaskInTheList(item.SubItems[1].Text);
+                RunTask(item.SubItems[1].Text, false);
             }
         }
 
@@ -652,6 +659,19 @@ namespace DownWebNovel
 		private void btDownloadLast_Click(object sender, EventArgs e)
 		{
 			DownloadOnePara(tbUrl.Text + tbParaLastDownloaded.Text, cbDownloadedSource.Checked);
+		}
+
+		private void restartDownloadMenuItem_Click(object sender, EventArgs e)
+		{
+			var taskName = GetSelectTaskName();
+			var downloadedFile = string.Format("{0}{1}.txt", tbDir.Text, taskName);
+
+			if (MessageBox.Show(string.Format("确定要重新下载 {0} 吗？\r\n如果重新下载，已有文件 {1} 将会被删除！", 
+				taskName, downloadedFile ), "确认", MessageBoxButtons.YesNo) == DialogResult.No)
+				return;
+
+			File.Delete(downloadedFile);
+			RunTask(taskName, true);
 		}
 	}
 }

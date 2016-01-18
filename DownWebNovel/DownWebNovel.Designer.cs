@@ -73,11 +73,11 @@
 			this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.startMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.continueDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.startAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.continueAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.cbShowError = new System.Windows.Forms.CheckBox();
@@ -91,6 +91,7 @@
 			this.cbParaStartSource = new System.Windows.Forms.CheckBox();
 			this.cbDownloadedSource = new System.Windows.Forms.CheckBox();
 			this.btDownloadLast = new System.Windows.Forms.Button();
+			this.restartDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -475,54 +476,55 @@
 			// contextMenuStrip1
 			// 
 			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.startMenuItem,
+            this.continueDownloadMenuItem,
+            this.restartDownloadMenuItem,
             this.stopMenuItem,
             this.deleteMenuItem,
             this.toolStripSeparator1,
-            this.startAllMenuItem,
+            this.continueAllMenuItem,
             this.stopAllMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(127, 120);
+			this.contextMenuStrip1.Size = new System.Drawing.Size(153, 164);
 			this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
 			this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
 			// 
-			// startMenuItem
+			// continueDownloadMenuItem
 			// 
-			this.startMenuItem.Name = "startMenuItem";
-			this.startMenuItem.Size = new System.Drawing.Size(126, 22);
-			this.startMenuItem.Text = "开始";
-			this.startMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
+			this.continueDownloadMenuItem.Name = "continueDownloadMenuItem";
+			this.continueDownloadMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.continueDownloadMenuItem.Text = "继续";
+			this.continueDownloadMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
 			// 
 			// stopMenuItem
 			// 
 			this.stopMenuItem.Name = "stopMenuItem";
-			this.stopMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.stopMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.stopMenuItem.Text = "停止";
 			this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
 			// 
 			// deleteMenuItem
 			// 
 			this.deleteMenuItem.Name = "deleteMenuItem";
-			this.deleteMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.deleteMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.deleteMenuItem.Text = "删除";
 			this.deleteMenuItem.Click += new System.EventHandler(this.deleteMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(123, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
 			// 
-			// startAllMenuItem
+			// continueAllMenuItem
 			// 
-			this.startAllMenuItem.Name = "startAllMenuItem";
-			this.startAllMenuItem.Size = new System.Drawing.Size(126, 22);
-			this.startAllMenuItem.Text = "全部开始";
-			this.startAllMenuItem.Click += new System.EventHandler(this.startAllMenuItem_Click);
+			this.continueAllMenuItem.Name = "continueAllMenuItem";
+			this.continueAllMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.continueAllMenuItem.Text = "全部继续";
+			this.continueAllMenuItem.Click += new System.EventHandler(this.continueAllMenuItem_Click);
 			// 
 			// stopAllMenuItem
 			// 
 			this.stopAllMenuItem.Name = "stopAllMenuItem";
-			this.stopAllMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.stopAllMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.stopAllMenuItem.Text = "全部停止";
 			this.stopAllMenuItem.Click += new System.EventHandler(this.stopAllMenuItem_Click);
 			// 
@@ -657,6 +659,13 @@
 			this.btDownloadLast.UseVisualStyleBackColor = true;
 			this.btDownloadLast.Click += new System.EventHandler(this.btDownloadLast_Click);
 			// 
+			// restartDownloadMenuItem
+			// 
+			this.restartDownloadMenuItem.Name = "restartDownloadMenuItem";
+			this.restartDownloadMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.restartDownloadMenuItem.Text = "重新开始";
+			this.restartDownloadMenuItem.Click += new System.EventHandler(this.restartDownloadMenuItem_Click);
+			// 
 			// DownWebNovel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -733,10 +742,10 @@
 		private System.Windows.Forms.ColumnHeader columnHeader8;
 		private System.Windows.Forms.ColumnHeader columnHeader9;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem startAllMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem continueAllMenuItem;
         private System.Windows.Forms.ToolStripMenuItem stopAllMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem startMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem continueDownloadMenuItem;
         private System.Windows.Forms.ToolStripMenuItem stopMenuItem;
 		private System.Windows.Forms.TextBox tbPictureUrlPrefix;
 		private System.Windows.Forms.CheckBox cbIsPicture;
@@ -749,6 +758,7 @@
 		private System.Windows.Forms.CheckBox cbDownloadedSource;
 		private System.Windows.Forms.Button btDownloadLast;
 		private System.Windows.Forms.CheckBox cbParaStartSource;
+		private System.Windows.Forms.ToolStripMenuItem restartDownloadMenuItem;
 
 	}
 }
