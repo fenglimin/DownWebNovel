@@ -150,6 +150,7 @@ namespace DownWebNovel
                 RootUrl = tbUrl.Text,
                 TaskDir = tbDir.Text,
                 ParaStart = tbStartPara.Text,
+				ParaLastDownloaded = tbParaLastDownloaded.Text,
                 ParaEnd = tbEndPara.Text,
                 RuleName = lbWebSite.SelectedItem.ToString(),
 				IsPicture = cbIsPicture.Checked,
@@ -503,8 +504,8 @@ namespace DownWebNovel
 		private void RefershRepalceButtons()
 		{
 			var contain = lvReplace.Items.Cast<ListViewItem>().Any(item => item.Text == tbReplaceFrom.Text);
-			btAddReplacement.Enabled = !contain && tbReplaceFrom.Text != string.Empty && tbReplaceTo.Text != string.Empty;
-			btDeleteReplacement.Enabled = contain && tbReplaceFrom.Text != string.Empty && tbReplaceTo.Text != string.Empty;
+			btAddReplacement.Enabled = !contain && tbReplaceFrom.Text != string.Empty && cbReplaceTo.Text != string.Empty;
+			btDeleteReplacement.Enabled = contain && tbReplaceFrom.Text != string.Empty && cbReplaceTo.Text != string.Empty;
 		}
 
 		private void OnContentReplaceSelectedIndexChanged()
@@ -529,7 +530,7 @@ namespace DownWebNovel
 			else
 			{
 				tbReplaceFrom.Text = string.Empty;
-				tbReplaceTo.Text = string.Empty;
+				cbReplaceTo.Text = string.Empty;
 				RefershRepalceButtons();
 			}
 		}
@@ -545,7 +546,7 @@ namespace DownWebNovel
 				return;
 
 			tbReplaceFrom.Text = lvReplace.SelectedItems[0].SubItems[0].Text;
-			tbReplaceTo.Text = lvReplace.SelectedItems[0].SubItems[1].Text;
+			cbReplaceTo.Text = lvReplace.SelectedItems[0].SubItems[1].Text;
 
 			RefershRepalceButtons();
 		}
@@ -558,15 +559,15 @@ namespace DownWebNovel
 		private void btAddReplacement_Click(object sender, EventArgs e)
 		{
 			var lvi = new ListViewItem { Text = tbReplaceFrom.Text };
-			lvi.SubItems.Add(tbReplaceTo.Text);
+			lvi.SubItems.Add(cbReplaceTo.Text);
 			lvReplace.Items.Add(lvi);
 			lvi.Selected = true;
 
 			var selectedRule = (Rule)_rules[lbWebSite.SelectedItem];
 			var replaceList = (List<KeyValuePair<string, string>>)selectedRule.ReplaceTag[_translateReplace[lbContentReplace.SelectedItem]];
-			replaceList.Add(new KeyValuePair<string, string>(tbReplaceFrom.Text, tbReplaceTo.Text));
+			replaceList.Add(new KeyValuePair<string, string>(tbReplaceFrom.Text, cbReplaceTo.Text));
 
-			RuleDal.AddRuleItem(tbWebSite.Text, _translateReplace[lbContentReplace.SelectedItem].ToString(), tbReplaceFrom.Text, tbReplaceTo.Text);
+			RuleDal.AddRuleItem(tbWebSite.Text, _translateReplace[lbContentReplace.SelectedItem].ToString(), tbReplaceFrom.Text, cbReplaceTo.Text);
 
 			RefershRepalceButtons();
 		}
@@ -577,7 +578,7 @@ namespace DownWebNovel
 				return;
 
 			var from = tbReplaceFrom.Text;
-			var to = tbReplaceTo.Text;
+			var to = cbReplaceTo.Text;
 
 			lvReplace.Items.Remove(lvReplace.SelectedItems[0]);
 

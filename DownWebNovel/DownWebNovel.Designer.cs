@@ -31,7 +31,6 @@
 			this.components = new System.ComponentModel.Container();
 			this.btDownloadFirstPara = new System.Windows.Forms.Button();
 			this.btDeleteReplacement = new System.Windows.Forms.Button();
-			this.tbReplaceTo = new System.Windows.Forms.TextBox();
 			this.btAddReplacement = new System.Windows.Forms.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.tbReplaceFrom = new System.Windows.Forms.TextBox();
@@ -74,24 +73,25 @@
 			this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.continueDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.restartDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.continueAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.cbDownloadedSource = new System.Windows.Forms.CheckBox();
+			this.btDownloadLast = new System.Windows.Forms.Button();
+			this.cbParaStartSource = new System.Windows.Forms.CheckBox();
+			this.label6 = new System.Windows.Forms.Label();
+			this.tbParaLastDownloaded = new System.Windows.Forms.TextBox();
 			this.cbShowError = new System.Windows.Forms.CheckBox();
 			this.tbPictureUrlPrefix = new System.Windows.Forms.TextBox();
 			this.cbIsPicture = new System.Windows.Forms.CheckBox();
 			this.btSelectDir = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.tbDir = new System.Windows.Forms.TextBox();
-			this.label6 = new System.Windows.Forms.Label();
-			this.tbParaLastDownloaded = new System.Windows.Forms.TextBox();
-			this.cbParaStartSource = new System.Windows.Forms.CheckBox();
-			this.cbDownloadedSource = new System.Windows.Forms.CheckBox();
-			this.btDownloadLast = new System.Windows.Forms.Button();
-			this.restartDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.cbReplaceTo = new System.Windows.Forms.ComboBox();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -118,13 +118,6 @@
 			this.btDeleteReplacement.Text = "删除";
 			this.btDeleteReplacement.UseVisualStyleBackColor = true;
 			this.btDeleteReplacement.Click += new System.EventHandler(this.btDeleteReplacement_Click);
-			// 
-			// tbReplaceTo
-			// 
-			this.tbReplaceTo.Location = new System.Drawing.Point(220, 131);
-			this.tbReplaceTo.Name = "tbReplaceTo";
-			this.tbReplaceTo.Size = new System.Drawing.Size(93, 20);
-			this.tbReplaceTo.TabIndex = 9;
 			// 
 			// btAddReplacement
 			// 
@@ -181,9 +174,9 @@
 			// 
 			// groupBox4
 			// 
+			this.groupBox4.Controls.Add(this.cbReplaceTo);
 			this.groupBox4.Controls.Add(this.lbContentReplace);
 			this.groupBox4.Controls.Add(this.btDeleteReplacement);
-			this.groupBox4.Controls.Add(this.tbReplaceTo);
 			this.groupBox4.Controls.Add(this.btAddReplacement);
 			this.groupBox4.Controls.Add(this.label5);
 			this.groupBox4.Controls.Add(this.tbReplaceFrom);
@@ -484,47 +477,54 @@
             this.continueAllMenuItem,
             this.stopAllMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(153, 164);
+			this.contextMenuStrip1.Size = new System.Drawing.Size(127, 142);
 			this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
 			this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
 			// 
 			// continueDownloadMenuItem
 			// 
 			this.continueDownloadMenuItem.Name = "continueDownloadMenuItem";
-			this.continueDownloadMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.continueDownloadMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.continueDownloadMenuItem.Text = "继续";
 			this.continueDownloadMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
+			// 
+			// restartDownloadMenuItem
+			// 
+			this.restartDownloadMenuItem.Name = "restartDownloadMenuItem";
+			this.restartDownloadMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.restartDownloadMenuItem.Text = "重新开始";
+			this.restartDownloadMenuItem.Click += new System.EventHandler(this.restartDownloadMenuItem_Click);
 			// 
 			// stopMenuItem
 			// 
 			this.stopMenuItem.Name = "stopMenuItem";
-			this.stopMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.stopMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.stopMenuItem.Text = "停止";
 			this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
 			// 
 			// deleteMenuItem
 			// 
 			this.deleteMenuItem.Name = "deleteMenuItem";
-			this.deleteMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.deleteMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.deleteMenuItem.Text = "删除";
 			this.deleteMenuItem.Click += new System.EventHandler(this.deleteMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(123, 6);
 			// 
 			// continueAllMenuItem
 			// 
 			this.continueAllMenuItem.Name = "continueAllMenuItem";
-			this.continueAllMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.continueAllMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.continueAllMenuItem.Text = "全部继续";
 			this.continueAllMenuItem.Click += new System.EventHandler(this.continueAllMenuItem_Click);
 			// 
 			// stopAllMenuItem
 			// 
 			this.stopAllMenuItem.Name = "stopAllMenuItem";
-			this.stopAllMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.stopAllMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.stopAllMenuItem.Text = "全部停止";
 			this.stopAllMenuItem.Click += new System.EventHandler(this.stopAllMenuItem_Click);
 			// 
@@ -557,6 +557,54 @@
 			this.groupBox3.TabIndex = 20;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "任务";
+			// 
+			// cbDownloadedSource
+			// 
+			this.cbDownloadedSource.AutoSize = true;
+			this.cbDownloadedSource.Location = new System.Drawing.Point(136, 106);
+			this.cbDownloadedSource.Name = "cbDownloadedSource";
+			this.cbDownloadedSource.Size = new System.Drawing.Size(50, 17);
+			this.cbDownloadedSource.TabIndex = 29;
+			this.cbDownloadedSource.Text = "源码";
+			this.cbDownloadedSource.UseVisualStyleBackColor = true;
+			// 
+			// btDownloadLast
+			// 
+			this.btDownloadLast.Location = new System.Drawing.Point(189, 103);
+			this.btDownloadLast.Name = "btDownloadLast";
+			this.btDownloadLast.Size = new System.Drawing.Size(45, 22);
+			this.btDownloadLast.TabIndex = 28;
+			this.btDownloadLast.Text = "下载";
+			this.btDownloadLast.UseVisualStyleBackColor = true;
+			this.btDownloadLast.Click += new System.EventHandler(this.btDownloadLast_Click);
+			// 
+			// cbParaStartSource
+			// 
+			this.cbParaStartSource.AutoSize = true;
+			this.cbParaStartSource.Checked = true;
+			this.cbParaStartSource.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cbParaStartSource.Location = new System.Drawing.Point(136, 78);
+			this.cbParaStartSource.Name = "cbParaStartSource";
+			this.cbParaStartSource.Size = new System.Drawing.Size(50, 17);
+			this.cbParaStartSource.TabIndex = 27;
+			this.cbParaStartSource.Text = "源码";
+			this.cbParaStartSource.UseVisualStyleBackColor = true;
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(6, 105);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(31, 13);
+			this.label6.TabIndex = 26;
+			this.label6.Text = "已下";
+			// 
+			// tbParaLastDownloaded
+			// 
+			this.tbParaLastDownloaded.Location = new System.Drawing.Point(43, 103);
+			this.tbParaLastDownloaded.Name = "tbParaLastDownloaded";
+			this.tbParaLastDownloaded.Size = new System.Drawing.Size(88, 20);
+			this.tbParaLastDownloaded.TabIndex = 25;
 			// 
 			// cbShowError
 			// 
@@ -611,60 +659,17 @@
 			this.tbDir.Size = new System.Drawing.Size(139, 20);
 			this.tbDir.TabIndex = 15;
 			// 
-			// label6
+			// cbReplaceTo
 			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(6, 105);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(31, 13);
-			this.label6.TabIndex = 26;
-			this.label6.Text = "已下";
-			// 
-			// tbParaLastDownloaded
-			// 
-			this.tbParaLastDownloaded.Location = new System.Drawing.Point(43, 103);
-			this.tbParaLastDownloaded.Name = "tbParaLastDownloaded";
-			this.tbParaLastDownloaded.Size = new System.Drawing.Size(88, 20);
-			this.tbParaLastDownloaded.TabIndex = 25;
-			// 
-			// cbParaStartSource
-			// 
-			this.cbParaStartSource.AutoSize = true;
-			this.cbParaStartSource.Checked = true;
-			this.cbParaStartSource.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbParaStartSource.Location = new System.Drawing.Point(136, 78);
-			this.cbParaStartSource.Name = "cbParaStartSource";
-			this.cbParaStartSource.Size = new System.Drawing.Size(50, 17);
-			this.cbParaStartSource.TabIndex = 27;
-			this.cbParaStartSource.Text = "源码";
-			this.cbParaStartSource.UseVisualStyleBackColor = true;
-			// 
-			// cbDownloadedSource
-			// 
-			this.cbDownloadedSource.AutoSize = true;
-			this.cbDownloadedSource.Location = new System.Drawing.Point(136, 106);
-			this.cbDownloadedSource.Name = "cbDownloadedSource";
-			this.cbDownloadedSource.Size = new System.Drawing.Size(50, 17);
-			this.cbDownloadedSource.TabIndex = 29;
-			this.cbDownloadedSource.Text = "源码";
-			this.cbDownloadedSource.UseVisualStyleBackColor = true;
-			// 
-			// btDownloadLast
-			// 
-			this.btDownloadLast.Location = new System.Drawing.Point(189, 103);
-			this.btDownloadLast.Name = "btDownloadLast";
-			this.btDownloadLast.Size = new System.Drawing.Size(45, 22);
-			this.btDownloadLast.TabIndex = 28;
-			this.btDownloadLast.Text = "下载";
-			this.btDownloadLast.UseVisualStyleBackColor = true;
-			this.btDownloadLast.Click += new System.EventHandler(this.btDownloadLast_Click);
-			// 
-			// restartDownloadMenuItem
-			// 
-			this.restartDownloadMenuItem.Name = "restartDownloadMenuItem";
-			this.restartDownloadMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.restartDownloadMenuItem.Text = "重新开始";
-			this.restartDownloadMenuItem.Click += new System.EventHandler(this.restartDownloadMenuItem_Click);
+			this.cbReplaceTo.FormattingEnabled = true;
+			this.cbReplaceTo.Items.AddRange(new object[] {
+            "[空格]",
+            "[换行]",
+            "[删除]"});
+			this.cbReplaceTo.Location = new System.Drawing.Point(222, 131);
+			this.cbReplaceTo.Name = "cbReplaceTo";
+			this.cbReplaceTo.Size = new System.Drawing.Size(91, 21);
+			this.cbReplaceTo.TabIndex = 9;
 			// 
 			// DownWebNovel
 			// 
@@ -698,7 +703,6 @@
 
 		private System.Windows.Forms.Button btDownloadFirstPara;
 		private System.Windows.Forms.Button btDeleteReplacement;
-		private System.Windows.Forms.TextBox tbReplaceTo;
 		private System.Windows.Forms.Button btAddReplacement;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox tbReplaceFrom;
@@ -759,6 +763,7 @@
 		private System.Windows.Forms.Button btDownloadLast;
 		private System.Windows.Forms.CheckBox cbParaStartSource;
 		private System.Windows.Forms.ToolStripMenuItem restartDownloadMenuItem;
+		private System.Windows.Forms.ComboBox cbReplaceTo;
 
 	}
 }

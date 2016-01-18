@@ -494,6 +494,7 @@ namespace DownWebNovel
 			var translate = new Hashtable();
 			translate["[空格]"] = " ";
 			translate["[换行]"] = "\r\n";
+			translate["[删除]"] = string.Empty;
 
 			return replacePairs.Aggregate(content, (current, replace) => current.Replace(replace.Key, (string)translate[replace.Value]));
 		}
