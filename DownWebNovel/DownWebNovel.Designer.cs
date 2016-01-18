@@ -92,6 +92,8 @@
 			this.label7 = new System.Windows.Forms.Label();
 			this.tbDir = new System.Windows.Forms.TextBox();
 			this.cbReplaceTo = new System.Windows.Forms.ComboBox();
+			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.label8 = new System.Windows.Forms.Label();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -470,61 +472,62 @@
 			// 
 			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.continueDownloadMenuItem,
-            this.restartDownloadMenuItem,
             this.stopMenuItem,
             this.deleteMenuItem,
             this.toolStripSeparator1,
+            this.restartDownloadMenuItem,
+            this.toolStripSeparator2,
             this.continueAllMenuItem,
             this.stopAllMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(127, 142);
+			this.contextMenuStrip1.Size = new System.Drawing.Size(127, 148);
 			this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
 			this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
 			// 
 			// continueDownloadMenuItem
 			// 
 			this.continueDownloadMenuItem.Name = "continueDownloadMenuItem";
-			this.continueDownloadMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.continueDownloadMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.continueDownloadMenuItem.Text = "继续";
 			this.continueDownloadMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
 			// 
 			// restartDownloadMenuItem
 			// 
 			this.restartDownloadMenuItem.Name = "restartDownloadMenuItem";
-			this.restartDownloadMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.restartDownloadMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.restartDownloadMenuItem.Text = "重新开始";
 			this.restartDownloadMenuItem.Click += new System.EventHandler(this.restartDownloadMenuItem_Click);
 			// 
 			// stopMenuItem
 			// 
 			this.stopMenuItem.Name = "stopMenuItem";
-			this.stopMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.stopMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.stopMenuItem.Text = "停止";
 			this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
 			// 
 			// deleteMenuItem
 			// 
 			this.deleteMenuItem.Name = "deleteMenuItem";
-			this.deleteMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.deleteMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.deleteMenuItem.Text = "删除";
 			this.deleteMenuItem.Click += new System.EventHandler(this.deleteMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(123, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
 			// 
 			// continueAllMenuItem
 			// 
 			this.continueAllMenuItem.Name = "continueAllMenuItem";
-			this.continueAllMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.continueAllMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.continueAllMenuItem.Text = "全部继续";
 			this.continueAllMenuItem.Click += new System.EventHandler(this.continueAllMenuItem_Click);
 			// 
 			// stopAllMenuItem
 			// 
 			this.stopAllMenuItem.Name = "stopAllMenuItem";
-			this.stopAllMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.stopAllMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.stopAllMenuItem.Text = "全部停止";
 			this.stopAllMenuItem.Click += new System.EventHandler(this.stopAllMenuItem_Click);
 			// 
@@ -541,6 +544,7 @@
 			this.groupBox3.Controls.Add(this.btSelectDir);
 			this.groupBox3.Controls.Add(this.label7);
 			this.groupBox3.Controls.Add(this.btDownloadFirstPara);
+			this.groupBox3.Controls.Add(this.label8);
 			this.groupBox3.Controls.Add(this.label4);
 			this.groupBox3.Controls.Add(this.tbDir);
 			this.groupBox3.Controls.Add(this.tbEndPara);
@@ -628,9 +632,9 @@
 			this.cbIsPicture.AutoSize = true;
 			this.cbIsPicture.Location = new System.Drawing.Point(9, 161);
 			this.cbIsPicture.Name = "cbIsPicture";
-			this.cbIsPicture.Size = new System.Drawing.Size(104, 17);
+			this.cbIsPicture.Size = new System.Drawing.Size(50, 17);
 			this.cbIsPicture.TabIndex = 21;
-			this.cbIsPicture.Text = "图像  网址前缀";
+			this.cbIsPicture.Text = "图像";
 			this.cbIsPicture.UseVisualStyleBackColor = true;
 			// 
 			// btSelectDir
@@ -670,6 +674,20 @@
 			this.cbReplaceTo.Name = "cbReplaceTo";
 			this.cbReplaceTo.Size = new System.Drawing.Size(91, 21);
 			this.cbReplaceTo.TabIndex = 9;
+			// 
+			// toolStripSeparator2
+			// 
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Location = new System.Drawing.Point(60, 162);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(55, 13);
+			this.label8.TabIndex = 6;
+			this.label8.Text = "网址前缀";
 			// 
 			// DownWebNovel
 			// 
@@ -764,6 +782,8 @@
 		private System.Windows.Forms.CheckBox cbParaStartSource;
 		private System.Windows.Forms.ToolStripMenuItem restartDownloadMenuItem;
 		private System.Windows.Forms.ComboBox cbReplaceTo;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+		private System.Windows.Forms.Label label8;
 
 	}
 }

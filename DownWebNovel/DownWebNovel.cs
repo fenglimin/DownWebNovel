@@ -189,9 +189,10 @@ namespace DownWebNovel
 
         private void FileDownloaded(bool hasError, string taskName, string curPara, string nextPara)
 		{
-            if (hasError)
+            if (hasError )
             {
-                tbMessage.AppendText(taskName + " " + curPara + "  " + nextPara + "\r\n");
+				if (cbShowError.Checked)
+					tbMessage.AppendText(taskName + " " + curPara + "  " + nextPara + "\r\n");
             }
             else
             {
@@ -342,6 +343,9 @@ namespace DownWebNovel
             if (item == -1)
                 return;
 
+			if (lvDownloadingNovels.Items[item].SubItems[0].Text != "停止")
+				return;
+
 	        _downloadTasks.Remove(task);
             lvDownloadingNovels.Items.RemoveAt(item);
             TaskDal.DeleteTask(taskName);
@@ -349,17 +353,42 @@ namespace DownWebNovel
 
 		private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
 		{
-		    var visible = lvDownloadingNovels.SelectedItems.Count != 0;
-		    var downloading = true;
-		    
-            if (visible)
-                downloading = lvDownloadingNovels.SelectedItems[0].Text == "下载中";
+			var count = lvDownloadingNovels.SelectedItems.Count;
 
-            contextMenuStrip1.Items[0].Visible = visible && !downloading;
-			contextMenuStrip1.Items[1].Visible = visible && !downloading;
-            contextMenuStrip1.Items[2].Visible = visible && downloading;
-            contextMenuStrip1.Items[3].Visible = visible && !downloading;
-            contextMenuStrip1.Items[4].Visible = visible;
+			if (count == 0)
+			{
+				contextMenuStrip1.Items[0].Visible = false;
+				contextMenuStrip1.Items[1].Visible = false;
+				contextMenuStrip1.Items[2].Visible = false;
+				contextMenuStrip1.Items[3].Visible = false;
+				contextMenuStrip1.Items[4].Visible = false;
+				contextMenuStrip1.Items[5].Visible = false;
+				contextMenuStrip1.Items[6].Visible = true;
+				contextMenuStrip1.Items[7].Visible = true;
+			}
+			else if (count == 1)
+			{
+				var stopped = lvDownloadingNovels.SelectedItems[0].Text == "停止";
+				contextMenuStrip1.Items[0].Visible = stopped;
+				contextMenuStrip1.Items[1].Visible = !stopped;
+				contextMenuStrip1.Items[2].Visible = stopped;
+				contextMenuStrip1.Items[3].Visible = stopped;
+				contextMenuStrip1.Items[4].Visible = stopped;
+				contextMenuStrip1.Items[5].Visible = false;
+				contextMenuStrip1.Items[6].Visible = false;
+				contextMenuStrip1.Items[7].Visible = false;
+			}
+			else
+			{
+				contextMenuStrip1.Items[0].Visible = true;
+				contextMenuStrip1.Items[1].Visible = true;
+				contextMenuStrip1.Items[2].Visible = true;
+				contextMenuStrip1.Items[3].Visible = false;
+				contextMenuStrip1.Items[4].Visible = false;
+				contextMenuStrip1.Items[5].Visible = false;
+				contextMenuStrip1.Items[6].Visible = false;
+				contextMenuStrip1.Items[7].Visible = false;	
+			}
 		}
 
 		#region WebSite
@@ -618,27 +647,40 @@ namespace DownWebNovel
 
         }
 
-	    private string GetSelectTaskName()
+	    private IList<string> GetSelectTaskNames()
 	    {
-	        return lvDownloadingNovels.SelectedItems.Count == 0 ? string.Empty : lvDownloadingNovels.SelectedItems[0].SubItems[1].Text;
+		    return (from ListViewItem selectedItem in lvDownloadingNovels.SelectedItems select selectedItem.SubItems[1].Text).ToList();
 	    }
 
-	    private void startMenuItem_Click(object sender, EventArgs e)
+		private void startMenuItem_Click(object sender, EventArgs e)
 	    {
-	        var taskName = GetSelectTaskName();
-            RunTask(taskName, false);
+			foreach (var selectTaskName in GetSelectTaskNames())
+			{
+				RunTask(selectTaskName, false);
+			}
 	    }
 
         private void stopMenuItem_Click(object sender, EventArgs e)
         {
-            var taskName = GetSelectTaskName();
-            StopTaskInTheList(taskName);
+	        foreach (var selectTaskName in GetSelectTaskNames())
+	        {
+		        StopTaskInTheList(selectTaskName);
+	        }
         }
 
         private void deleteMenuItem_Click(object sender, EventArgs e)
         {
-            var taskName = GetSelectTaskName();
-            DeleteTaskInTheList(taskName);
+			var selectTaskNames = GetSelectTaskNames();
+			var message = selectTaskNames.Count > 1? string.Format("确定要删除这些任务吗？") : 
+				string.Format("确定要删除 {0} 吗？", selectTaskNames[0]);
+			if (MessageBox.Show(message, "确认", MessageBoxButtons.YesNo) == DialogResult.No)
+				return;
+
+	        foreach (var selectTaskName in selectTaskNames)
+	        {
+				DeleteTaskInTheList(selectTaskName);
+	        }
+            
         }
 
         private void continueAllMenuItem_Click(object sender, EventArgs e)
@@ -664,14 +706,22 @@ namespace DownWebNovel
 
 		private void restartDownloadMenuItem_Click(object sender, EventArgs e)
 		{
-			var taskName = GetSelectTaskName();
+			var taskName = GetSelectTaskNames()[0];
 			var downloadedFile = string.Format("{0}{1}.txt", tbDir.Text, taskName);
+			var message = string.Format("确定要重新下载 {0} 吗？\r\n如果重新下载，已下载的小说文件 {1} 将会被删除！", taskName, downloadedFile);
 
-			if (MessageBox.Show(string.Format("确定要重新下载 {0} 吗？\r\n如果重新下载，已有文件 {1} 将会被删除！", 
-				taskName, downloadedFile ), "确认", MessageBoxButtons.YesNo) == DialogResult.No)
+			if (cbIsPicture.Checked)
+			{
+				downloadedFile = string.Empty;
+				message =  string.Format("确定要重新下载 {0} 吗？\r\n如果重新下载，已下载的图像将会被覆盖！", taskName);
+			}
+
+			if (MessageBox.Show(message, "确认", MessageBoxButtons.YesNo) == DialogResult.No)
 				return;
 
-			File.Delete(downloadedFile);
+			if (!cbIsPicture.Checked)
+				File.Delete(downloadedFile);
+
 			RunTask(taskName, true);
 		}
 	}

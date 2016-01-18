@@ -209,7 +209,7 @@ namespace DownWebNovel
 				{
 					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "下载错误", downloadedString);
 				}
-				return false;
+				return true;
 			}
 
 			try
@@ -496,7 +496,8 @@ namespace DownWebNovel
 			translate["[换行]"] = "\r\n";
 			translate["[删除]"] = string.Empty;
 
-			return replacePairs.Aggregate(content, (current, replace) => current.Replace(replace.Key, (string)translate[replace.Value]));
+			return replacePairs.Aggregate(content, (current, replace) => current.Replace(replace.Key, 
+				translate.ContainsKey(replace.Value)? (string)translate[replace.Value] : replace.Value));
 		}
 
 		private string DownloadNovelByUrl(string novelName, string rootUrl, string fileName, Rule rule, string taskDir)
