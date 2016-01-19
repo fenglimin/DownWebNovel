@@ -35,12 +35,12 @@ namespace DownWebNovel.DataAccess
 				TaskName = Common.GetSafeString(reader, 1),
 				TaskDir = Common.GetSafeString(reader, 2),
 				RootUrl = Common.GetSafeString(reader, 3),
-				ParaStart = Common.GetSafeString(reader, 4),
-				ParaEnd = Common.GetSafeString(reader, 5),
+				ParaUrlStart = Common.GetSafeString(reader, 4),
+				ParaUrlEnd = Common.GetSafeString(reader, 5),
 				RuleName = Common.GetSafeString(reader, 6),
 				IsPicture = reader.GetBoolean(7),
 				PictureUrlPrefix = Common.GetSafeString(reader, 8),
-				ParaLastDownloaded = Common.GetSafeString(reader, 9)
+				ParaUrlLastDownloaded = Common.GetSafeString(reader, 9)
 			};
 
 			return task;
@@ -64,7 +64,7 @@ namespace DownWebNovel.DataAccess
 	        var strSql =
 	            string.Format(
 					"INSERT INTO Task (TaskName, TaskDir, RootUrl, ParaStart, ParaEnd, RuleName, IsPicture, PictureUrlPrefix, ParaLastDownloaded) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', {6}, '{7}', '{8}')",
-	                task.TaskName, task.TaskDir, task.RootUrl, task.ParaStart, task.ParaEnd, task.RuleName, task.IsPicture, task.PictureUrlPrefix, task.ParaLastDownloaded);
+	                task.TaskName, task.TaskDir, task.RootUrl, task.ParaUrlStart, task.ParaUrlEnd, task.RuleName, task.IsPicture, task.PictureUrlPrefix, task.ParaUrlLastDownloaded);
 
             var comm = new OleDbCommand(strSql, DbManager.OleDbConn);
             comm.ExecuteNonQuery(); 

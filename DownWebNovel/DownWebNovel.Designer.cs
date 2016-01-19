@@ -38,6 +38,7 @@
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.lvReplace = new System.Windows.Forms.ListView();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.cbReplaceTo = new System.Windows.Forms.ComboBox();
 			this.lbContentReplace = new System.Windows.Forms.ListBox();
 			this.btDeleteTag = new System.Windows.Forms.Button();
 			this.btAddTag = new System.Windows.Forms.Button();
@@ -73,10 +74,11 @@
 			this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.continueDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.restartDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.restartDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.continueAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -90,10 +92,8 @@
 			this.cbIsPicture = new System.Windows.Forms.CheckBox();
 			this.btSelectDir = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
-			this.tbDir = new System.Windows.Forms.TextBox();
-			this.cbReplaceTo = new System.Windows.Forms.ComboBox();
-			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.label8 = new System.Windows.Forms.Label();
+			this.tbDir = new System.Windows.Forms.TextBox();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -189,6 +189,18 @@
 			this.groupBox4.TabIndex = 16;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "替换";
+			// 
+			// cbReplaceTo
+			// 
+			this.cbReplaceTo.FormattingEnabled = true;
+			this.cbReplaceTo.Items.AddRange(new object[] {
+            "[空格]",
+            "[换行]",
+            "[删除]"});
+			this.cbReplaceTo.Location = new System.Drawing.Point(222, 131);
+			this.cbReplaceTo.Name = "cbReplaceTo";
+			this.cbReplaceTo.Size = new System.Drawing.Size(91, 21);
+			this.cbReplaceTo.TabIndex = 9;
 			// 
 			// lbContentReplace
 			// 
@@ -487,47 +499,52 @@
 			// continueDownloadMenuItem
 			// 
 			this.continueDownloadMenuItem.Name = "continueDownloadMenuItem";
-			this.continueDownloadMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.continueDownloadMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.continueDownloadMenuItem.Text = "继续";
 			this.continueDownloadMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
-			// 
-			// restartDownloadMenuItem
-			// 
-			this.restartDownloadMenuItem.Name = "restartDownloadMenuItem";
-			this.restartDownloadMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.restartDownloadMenuItem.Text = "重新开始";
-			this.restartDownloadMenuItem.Click += new System.EventHandler(this.restartDownloadMenuItem_Click);
 			// 
 			// stopMenuItem
 			// 
 			this.stopMenuItem.Name = "stopMenuItem";
-			this.stopMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.stopMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.stopMenuItem.Text = "停止";
 			this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
 			// 
 			// deleteMenuItem
 			// 
 			this.deleteMenuItem.Name = "deleteMenuItem";
-			this.deleteMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.deleteMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.deleteMenuItem.Text = "删除";
 			this.deleteMenuItem.Click += new System.EventHandler(this.deleteMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(123, 6);
+			// 
+			// restartDownloadMenuItem
+			// 
+			this.restartDownloadMenuItem.Name = "restartDownloadMenuItem";
+			this.restartDownloadMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.restartDownloadMenuItem.Text = "重新开始";
+			this.restartDownloadMenuItem.Click += new System.EventHandler(this.restartDownloadMenuItem_Click);
+			// 
+			// toolStripSeparator2
+			// 
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.Size = new System.Drawing.Size(123, 6);
 			// 
 			// continueAllMenuItem
 			// 
 			this.continueAllMenuItem.Name = "continueAllMenuItem";
-			this.continueAllMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.continueAllMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.continueAllMenuItem.Text = "全部继续";
 			this.continueAllMenuItem.Click += new System.EventHandler(this.continueAllMenuItem_Click);
 			// 
 			// stopAllMenuItem
 			// 
 			this.stopAllMenuItem.Name = "stopAllMenuItem";
-			this.stopAllMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.stopAllMenuItem.Size = new System.Drawing.Size(126, 22);
 			this.stopAllMenuItem.Text = "全部停止";
 			this.stopAllMenuItem.Click += new System.EventHandler(this.stopAllMenuItem_Click);
 			// 
@@ -617,7 +634,7 @@
 			this.cbShowError.Name = "cbShowError";
 			this.cbShowError.Size = new System.Drawing.Size(98, 17);
 			this.cbShowError.TabIndex = 24;
-			this.cbShowError.Text = "显示错误信息";
+			this.cbShowError.Text = "显示下载错误";
 			this.cbShowError.UseVisualStyleBackColor = true;
 			// 
 			// tbPictureUrlPrefix
@@ -656,30 +673,6 @@
 			this.label7.TabIndex = 14;
 			this.label7.Text = "位置";
 			// 
-			// tbDir
-			// 
-			this.tbDir.Location = new System.Drawing.Point(43, 187);
-			this.tbDir.Name = "tbDir";
-			this.tbDir.Size = new System.Drawing.Size(139, 20);
-			this.tbDir.TabIndex = 15;
-			// 
-			// cbReplaceTo
-			// 
-			this.cbReplaceTo.FormattingEnabled = true;
-			this.cbReplaceTo.Items.AddRange(new object[] {
-            "[空格]",
-            "[换行]",
-            "[删除]"});
-			this.cbReplaceTo.Location = new System.Drawing.Point(222, 131);
-			this.cbReplaceTo.Name = "cbReplaceTo";
-			this.cbReplaceTo.Size = new System.Drawing.Size(91, 21);
-			this.cbReplaceTo.TabIndex = 9;
-			// 
-			// toolStripSeparator2
-			// 
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
-			// 
 			// label8
 			// 
 			this.label8.AutoSize = true;
@@ -688,6 +681,13 @@
 			this.label8.Size = new System.Drawing.Size(55, 13);
 			this.label8.TabIndex = 6;
 			this.label8.Text = "网址前缀";
+			// 
+			// tbDir
+			// 
+			this.tbDir.Location = new System.Drawing.Point(43, 187);
+			this.tbDir.Name = "tbDir";
+			this.tbDir.Size = new System.Drawing.Size(139, 20);
+			this.tbDir.TabIndex = 15;
 			// 
 			// DownWebNovel
 			// 

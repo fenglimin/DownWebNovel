@@ -39,14 +39,15 @@ namespace DownWebNovel
 	{
 		public string TaskName { get; set; }
 		public string RootUrl { get; set; }
-		public string ParaStart { get; set; }
-		public string ParaEnd { get; set; }
+		public string ParaUrlStart { get; set; }
+		public string ParaUrlEnd { get; set; }
 		public string TaskDir { get; set; }
 		public string RuleName { get; set; }
 		public bool IsPicture { get; set; }
 		public string PictureUrlPrefix { get; set; }
-		public string ParaLastDownloaded { get; set; }
-		public string ParaNextToDownload { get; set; }
+		public string ParaUrlLastDownloaded { get; set; }
+		public string ParaTitleLastDownloaded { get; set; }
+		public string ParaUrlNextToDownload { get; set; }
 
 		public Rule Rule { get; set; }
 		public Thread Thread { get; set; }
@@ -85,50 +86,48 @@ namespace DownWebNovel
 
 	public interface IWebNovelPullerUser
 	{
-		void OnFileDownloaded(bool hasError, string novelName, string curPara, string nextPara);
+		void OnFileDownloaded(Task task);
 		void OnTaskStopped(Task task, string stopReason);
 		void OnSubTaskCreated(Task task);
+		void OnShowMessage(Task task, bool isDownloadError, string errorMessage);
 	}
 
 	public class WebNovelPuller
 	{
 		private readonly XWebClient _webClient = new XWebClient();
 		private readonly IWebNovelPullerUser _webNovelPullerUser;
-		public bool Exit { get; set; }
+		public bool ExitRequestedByUser { get; set; }
 
 		public WebNovelPuller(IWebNovelPullerUser webNovelPullerUser)
 		{
 			_webNovelPullerUser = webNovelPullerUser;
 		}
 
-		//public bool DownloadNovel(Task task)
-		//{
-		//	var curFile = task.ParaStart;
-		//	while (curFile != task.ParaEnd && !Exit)
-		//		curFile = DownloadNovelByUrl(task.TaskName, task.RootUrl, curFile, task.Rule, task.TaskDir);
-
-		//	task.ParaStart = curFile;
-		//	if (_webNovelPullerUser != null)
-		//		_webNovelPullerUser.OnTaskStopped(task);
-
-		//	return true;
-		//}
+		private void ShowMessage(Task task, bool isDownloadError, string errorMessage)
+		{
+			if (_webNovelPullerUser != null)
+				_webNovelPullerUser.OnShowMessage(task, isDownloadError, errorMessage);
+		}
 
 		public bool RunTask(Task task)
 		{
-			if (FindNextPara(task))
+			while (!FindNextPara(task) && !ExitRequestedByUser)
 			{
-				while (task.ParaNextToDownload != task.ParaEnd && !Exit)
-				{
-					if (task.RuleName.StartsWith("task_"))
-						CreateTaskFromTask(task);
-					else
-						DownloadCurrentPage(task);
-				}
 			}
 
-			if (_webNovelPullerUser != null)
-				_webNovelPullerUser.OnTaskStopped(task, Exit? "用户终止！" : "已下载到终章！");
+
+			var ok = true;
+			while (task.ParaUrlNextToDownload != task.ParaUrlEnd && !ExitRequestedByUser)
+			{
+				ok = task.RuleName.StartsWith("task_") ? CreateTaskFromTask(task) : DownloadCurrentPage(task);
+				if (!ok)
+					break;
+			}
+
+			if (ok && _webNovelPullerUser != null)
+			{
+				_webNovelPullerUser.OnTaskStopped(task, ExitRequestedByUser ? "用户终止！" : "已下载到终章！");
+			}
 
 			return true;
 		}
@@ -136,13 +135,10 @@ namespace DownWebNovel
 		private bool CreateTaskFromTask(Task task)
 		{
 			string downloadedString;
-			if (!DownloadStringByUrl(task.RootUrl + task.ParaNextToDownload, out downloadedString))
+			if (!DownloadStringByUrl(task.RootUrl + task.ParaUrlNextToDownload, out downloadedString))
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "下载错误", downloadedString);
-				}
-				return false;
+				ShowMessage(task, true, "下载错误， 任务重试！ - " + downloadedString);
+				return true;
 			}
 
 			try
@@ -157,8 +153,8 @@ namespace DownWebNovel
 					{
 						TaskName = task.TaskName + "__" + Guid.NewGuid(),
 						IsPicture = true,
-						ParaEnd = sampleTask.ParaEnd,
-						ParaStart = taskUrl,
+						ParaUrlEnd = sampleTask.ParaUrlEnd,
+						ParaUrlStart = taskUrl,
 						PictureUrlPrefix = sampleTask.PictureUrlPrefix,
 						RootUrl = task.PictureUrlPrefix,
 						RuleName = newTaskRule,
@@ -172,66 +168,51 @@ namespace DownWebNovel
 				}
 
 				var nextUrl = ExtractIntrested(downloadedString, task.Rule, "NextPara");
-				task.ParaLastDownloaded = task.ParaNextToDownload;
-				task.ParaNextToDownload = nextUrl;
+				task.ParaUrlLastDownloaded = task.ParaUrlNextToDownload;
+				task.ParaUrlNextToDownload = nextUrl;
 				return true;
 			}
 			catch (ParseTagException ex)
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "解析错误，任务终止！", ex.Message);
-				}
-				Exit = true;
+				ShowMessage(task, false, "解析错误，任务终止！ - " + ex.Message);
 			}
 			catch (Exception ex)
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "错误，任务重试！", ex.Message);
-				}
+				ShowMessage(task, false, "发生异常，任务终止！ - " + ex.Message);
 			}
 			return false;
 		}
 
 		private bool FindNextPara(Task task)
 		{
-			if (string.IsNullOrEmpty(task.ParaLastDownloaded))
+			if (string.IsNullOrEmpty(task.ParaUrlLastDownloaded))
 			{
-				task.ParaNextToDownload = task.ParaStart;
+				task.ParaUrlNextToDownload = task.ParaUrlStart;
+				ShowMessage(task, false, "下载开始，起始章 - " + task.ParaUrlNextToDownload);
 				return true;
 			}
 
 			string downloadedString;
-			if (!DownloadStringByUrl(task.RootUrl + task.ParaLastDownloaded, out downloadedString))
+			if (!DownloadStringByUrl(task.RootUrl + task.ParaUrlLastDownloaded, out downloadedString))
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "下载错误", downloadedString);
-				}
+				ShowMessage(task, true, "下载错误， 任务重试！ - " + downloadedString);
 				return true;
 			}
 
 			try
 			{
 				var nextUrl = ExtractIntrested(downloadedString, task.Rule, "NextPara");
-				task.ParaNextToDownload = nextUrl;
+				task.ParaUrlNextToDownload = nextUrl;
+				ShowMessage(task, false, "下载开始，起始章 - " + task.ParaUrlNextToDownload);
 				return true;
 			}
 			catch (ParseTagException ex)
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "解析错误，任务终止！", ex.Message);
-				}
-				Exit = true;
+				ShowMessage(task, false, "解析错误，任务终止！ - " + ex.Message);
 			}
 			catch (Exception ex)
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "错误，任务重试！", ex.Message);
-				}
+				ShowMessage(task, false, "发生异常，任务终止！ - " + ex.Message);
 			}
 
 			return false;
@@ -258,7 +239,7 @@ namespace DownWebNovel
 			}
 			catch (Exception ex)
 			{
-				result = "错误！ --- " + ex.Message; 
+				result = "发生异常！ --- " + ex.Message; 
 			}
 
 			return result;
@@ -267,13 +248,10 @@ namespace DownWebNovel
 		private bool DownloadCurrentPage(Task task)
 		{
 			string downloadedString;
-			if (!DownloadStringByUrl(task.RootUrl + task.ParaNextToDownload, out downloadedString))
+			if (!DownloadStringByUrl(task.RootUrl + task.ParaUrlNextToDownload, out downloadedString))
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "下载错误", downloadedString);
-				}
-				return false;
+				ShowMessage(task, true, "下载错误， 任务重试！ - " + downloadedString);
+				return true;
 			}
 
 			try
@@ -298,29 +276,23 @@ namespace DownWebNovel
 					textWriter.Close();
 				}
 
-				task.ParaLastDownloaded = task.ParaNextToDownload;
-				task.ParaNextToDownload = nextUrl;
+				task.ParaTitleLastDownloaded = title;
+				task.ParaUrlLastDownloaded = task.ParaUrlNextToDownload;
+				task.ParaUrlNextToDownload = nextUrl;
 
 				if (_webNovelPullerUser != null)
 				{
-					_webNovelPullerUser.OnFileDownloaded(false, task.TaskName, title, task.ParaLastDownloaded);
+					_webNovelPullerUser.OnFileDownloaded(task);
 				}
 				return true;
 			}
 			catch (ParseTagException ex)
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "解析错误，任务终止！", ex.Message);
-				}
-				Exit = true;
+				ShowMessage(task, false, "解析错误，任务终止！ - " + ex.Message);
 			}
 			catch (Exception ex)
 			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, task.TaskName, "错误，任务重试！", ex.Message);
-				}
+				ShowMessage(task, false, "发生异常，任务终止！ - " + ex.Message);
 			}
 
 			return false;
@@ -395,8 +367,6 @@ namespace DownWebNovel
 
 					content = content.Substring(reallyStartIndex);
 				}
-
-
 			}
 			else
 			{
@@ -447,48 +417,6 @@ namespace DownWebNovel
 			return index;
 		}
 
-		//private static string ExtractIntrested(string content, IEnumerable<string> startTagList, IEnumerable<string> endTagList, IEnumerable<KeyValuePair<string, string>> replacePairs)
-		//{
-		//    var startIndex = -1;
-		//    var startTagLen = 0;
-		//    foreach (var startTag in startTagList)
-		//    {
-		//        //startIndex = content.IndexOf(startTag, StringComparison.Ordinal);
-		//        startIndex = IndexOf(content, startTag);
-		//        if (startIndex != -1)
-		//        {
-		//            //startTagLen = startTag.Length;
-		//            break;
-		//        }
-		//    }
-
-		//    if (startIndex == -1)
-		//        throw new Exception("Error finding start tag " + startTagList.ToString());
-
-		//    content = content.Substring(startIndex + startTagLen);
-
-
-		//    var endIndex = -1;
-		//    foreach (var endTag in endTagList)
-		//    {
-		//        endIndex = content.IndexOf(endTag, StringComparison.Ordinal);
-		//        if (endIndex != -1)
-		//        {
-		//            break;
-		//        }
-		//    }
-
-		//    if (endIndex == -1)
-		//        throw new Exception("Error finding end tag " + endTagList.ToString());
-
-		//    content = content.Substring(0, endIndex);
-
-		//    // Replace
-		//    content = Replace(content, replacePairs);
-
-		//    return content;
-		//}
-
 		private static string Replace(string content, IEnumerable<KeyValuePair<string, string>> replacePairs)
 		{
 			var translate = new Hashtable();
@@ -498,53 +426,6 @@ namespace DownWebNovel
 
 			return replacePairs.Aggregate(content, (current, replace) => current.Replace(replace.Key, 
 				translate.ContainsKey(replace.Value)? (string)translate[replace.Value] : replace.Value));
-		}
-
-		private string DownloadNovelByUrl(string novelName, string rootUrl, string fileName, Rule rule, string taskDir)
-		{
-			string downloadedString;
-			if (!DownloadStringByUrl(rootUrl + fileName, out downloadedString))
-			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, novelName, "下载错误", downloadedString);
-				}
-				return fileName;
-			}
-
-			try
-			{
-				//var title = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["TitleStart"], (List<string>)rule.PositionTag["TitleEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["TitleReplace"]);
-				//var content = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["ContentStart"], (List<string>)rule.PositionTag["ContentEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["ContentReplace"]);
-				//var nextUrl = ExtractIntrested(downloadedString, (List<string>)rule.PositionTag["NextParaStart"], (List<string>)rule.PositionTag["NextParaEnd"], (List<KeyValuePair<string, string>>)rule.ReplaceTag["NextParaReplace"]);
-
-				var title = ExtractIntrested(downloadedString, rule, "Title");
-				var content = ExtractIntrested(downloadedString, rule, "Content");
-				var nextUrl = ExtractIntrested(downloadedString, rule, "NextPara");
-
-
-				var textWriter = File.AppendText(taskDir + novelName + ".txt");
-
-				textWriter.WriteLine(title);
-				textWriter.WriteLine(content);
-
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(false, novelName, title, nextUrl);
-				}
-
-				textWriter.Close();
-				return nextUrl;
-			}
-			catch (Exception ex)
-			{
-				if (_webNovelPullerUser != null)
-				{
-					_webNovelPullerUser.OnFileDownloaded(true, novelName, "解析错误", ex.Message);
-				}
-				return fileName;
-			}
-
 		}
 
 		public bool DownloadStringByUrl(string url, out string content)
@@ -560,63 +441,6 @@ namespace DownWebNovel
 			}
 
 			return true;
-		}
-
-		public bool DownloadPicturesByUrl(string rootUrl, string curImageFile)
-		{
-			var nextImageFile = curImageFile;
-			while (nextImageFile != null)
-				nextImageFile = DownloadPictureByUrl(rootUrl, nextImageFile);
-
-			return true;
-		}
-
-		private string DownloadPictureByUrl(string rootUrl, string curImageFile)
-		{
-			return string.Empty;
-			//try
-			//{
-			//	_webClient.Encoding = System.Text.Encoding.UTF8;
-			//	string text;
-			//	DownloadStringByUrl(rootUrl+curImageFile, out text);
-
-			//	var rule = new Rule
-			//	{
-			//		WebSite = "114",
-			//		TitleStartTagList = new List<string> { "<h1 class=\"h1-title\">" },
-			//		TitleEndTagList = new List<string> { "</h1>" },
-			//		ConetentStartTagList = new List<string> { "<img src=\"" },
-			//		ContentEndTagList = new List<string> { "\"" },
-			//		NextParaStartTagList = new List<string> { "class=\"picbox\"><a href=\"" },
-			//		NextParaEndTagList = new List<string> { "\"" },
-			//		ContentReplaceTagList = new List<KeyValuePair<string, string>>()
-			//	};
-
-
-			//	var title = ExtractIntrested(text, rule.TitleStartTagList, rule.TitleEndTagList);
-			//	var imageUrl = ExtractIntrested(text, rule.ConetentStartTagList, rule.ContentEndTagList);
-			//	var nextUrl = ExtractIntrested(text, rule.NextParaStartTagList, rule.NextParaEndTagList);
-
-			//	var curImageNumStartTagList = new List<string> { "<strong>" };
-			//	var curImageNumEndTagList = new List<string> { "</strong>" };
-			//	var curImageNum = ExtractIntrested(text, curImageNumStartTagList, curImageNumEndTagList);
-
-
-			//	var imageFile = string.Format("{0}{1}{2}.jpg", "D:\\TestOutput3\\", title, curImageNum);
-			//	_webClient.DownloadFile(imageUrl, imageFile);
-
-			//	if (_webNovelPullerUser != null)
-			//	{
-			//		_webNovelPullerUser.OnFileDownloaded(title, imageFile, nextUrl);
-			//	}
-
-			//	return nextUrl;
-
-			//}
-			//catch (Exception ex)
-			//{
-			//	return curImageFile;
-			//} 
 		}
 	}
 }
