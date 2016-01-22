@@ -62,16 +62,16 @@
 			this.btDown = new System.Windows.Forms.Button();
 			this.tbMessage = new System.Windows.Forms.TextBox();
 			this.lvDownloadingNovels = new System.Windows.Forms.ListView();
-			this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.状态 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.任务 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.网站 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.位置 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.网址 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.首章 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.已下章节地址 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.终章 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.图像 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.图像地址前缀 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.continueDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,6 +94,7 @@
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.tbDir = new System.Windows.Forms.TextBox();
+			this.已下章节标题 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -410,16 +411,17 @@
 			// lvDownloadingNovels
 			// 
 			this.lvDownloadingNovels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader6,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader7,
-            this.columnHeader8,
-            this.columnHeader12,
-            this.columnHeader9,
-            this.columnHeader10,
-            this.columnHeader11});
+            this.状态,
+            this.任务,
+            this.网站,
+            this.已下章节标题,
+            this.已下章节地址,
+            this.网址,
+            this.首章,
+            this.终章,
+            this.位置,
+            this.图像,
+            this.图像地址前缀});
 			this.lvDownloadingNovels.ContextMenuStrip = this.contextMenuStrip1;
 			this.lvDownloadingNovels.FullRowSelect = true;
 			this.lvDownloadingNovels.GridLines = true;
@@ -431,54 +433,54 @@
 			this.lvDownloadingNovels.View = System.Windows.Forms.View.Details;
 			this.lvDownloadingNovels.SelectedIndexChanged += new System.EventHandler(this.lvDownloadingNovels_SelectedIndexChanged);
 			// 
-			// columnHeader6
+			// 状态
 			// 
-			this.columnHeader6.Text = "状态";
-			this.columnHeader6.Width = 49;
+			this.状态.Text = "状态";
+			this.状态.Width = 49;
 			// 
-			// columnHeader3
+			// 任务
 			// 
-			this.columnHeader3.Text = "任务";
-			this.columnHeader3.Width = 99;
+			this.任务.Text = "任务";
+			this.任务.Width = 99;
 			// 
-			// columnHeader4
+			// 网站
 			// 
-			this.columnHeader4.Text = "网站";
-			this.columnHeader4.Width = 62;
+			this.网站.Text = "网站";
+			this.网站.Width = 62;
 			// 
-			// columnHeader5
+			// 位置
 			// 
-			this.columnHeader5.Text = "路径";
-			this.columnHeader5.Width = 51;
+			this.位置.Text = "位置";
+			this.位置.Width = 51;
 			// 
-			// columnHeader7
+			// 网址
 			// 
-			this.columnHeader7.Text = "Url";
-			this.columnHeader7.Width = 176;
+			this.网址.Text = "网址";
+			this.网址.Width = 176;
 			// 
-			// columnHeader8
+			// 首章
 			// 
-			this.columnHeader8.Text = "首章";
-			this.columnHeader8.Width = 90;
+			this.首章.Text = "首章";
+			this.首章.Width = 90;
 			// 
-			// columnHeader12
+			// 已下章节地址
 			// 
-			this.columnHeader12.Text = "已下载章节";
-			this.columnHeader12.Width = 82;
+			this.已下章节地址.Text = "已下章节地址";
+			this.已下章节地址.Width = 113;
 			// 
-			// columnHeader9
+			// 终章
 			// 
-			this.columnHeader9.Text = "终章";
+			this.终章.Text = "终章";
 			// 
-			// columnHeader10
+			// 图像
 			// 
-			this.columnHeader10.Text = "图像";
-			this.columnHeader10.Width = 40;
+			this.图像.Text = "图像";
+			this.图像.Width = 40;
 			// 
-			// columnHeader11
+			// 图像地址前缀
 			// 
-			this.columnHeader11.Text = "图像地址前缀";
-			this.columnHeader11.Width = 100;
+			this.图像地址前缀.Text = "图像地址前缀";
+			this.图像地址前缀.Width = 100;
 			// 
 			// contextMenuStrip1
 			// 
@@ -689,6 +691,11 @@
 			this.tbDir.Size = new System.Drawing.Size(139, 20);
 			this.tbDir.TabIndex = 15;
 			// 
+			// 已下章节标题
+			// 
+			this.已下章节标题.Text = "已下章节标题";
+			this.已下章节标题.Width = 141;
+			// 
 			// DownWebNovel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -746,23 +753,23 @@
 		private System.Windows.Forms.Button btDown;
 		private System.Windows.Forms.TextBox tbMessage;
 		private System.Windows.Forms.ListView lvDownloadingNovels;
-		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
+		private System.Windows.Forms.ColumnHeader 任务;
+		private System.Windows.Forms.ColumnHeader 网站;
+        private System.Windows.Forms.ColumnHeader 位置;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbDir;
         private System.Windows.Forms.Button btSelectDir;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-		private System.Windows.Forms.ColumnHeader columnHeader6;
+		private System.Windows.Forms.ColumnHeader 状态;
 		private System.Windows.Forms.ListBox lbContentReplace;
 		private System.Windows.Forms.Button btDeleteWebSite;
 		private System.Windows.Forms.ListBox lbWebSite;
 		private System.Windows.Forms.TextBox tbWebSite;
 		private System.Windows.Forms.Button btAddWebSite;
-		private System.Windows.Forms.ColumnHeader columnHeader7;
-		private System.Windows.Forms.ColumnHeader columnHeader8;
-		private System.Windows.Forms.ColumnHeader columnHeader9;
+		private System.Windows.Forms.ColumnHeader 网址;
+		private System.Windows.Forms.ColumnHeader 首章;
+		private System.Windows.Forms.ColumnHeader 终章;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem continueAllMenuItem;
         private System.Windows.Forms.ToolStripMenuItem stopAllMenuItem;
@@ -771,10 +778,10 @@
         private System.Windows.Forms.ToolStripMenuItem stopMenuItem;
 		private System.Windows.Forms.TextBox tbPictureUrlPrefix;
 		private System.Windows.Forms.CheckBox cbIsPicture;
-		private System.Windows.Forms.ColumnHeader columnHeader10;
-		private System.Windows.Forms.ColumnHeader columnHeader11;
+		private System.Windows.Forms.ColumnHeader 图像;
+		private System.Windows.Forms.ColumnHeader 图像地址前缀;
 		private System.Windows.Forms.CheckBox cbShowError;
-		private System.Windows.Forms.ColumnHeader columnHeader12;
+		private System.Windows.Forms.ColumnHeader 已下章节地址;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox tbParaLastDownloaded;
 		private System.Windows.Forms.CheckBox cbDownloadedSource;
@@ -784,6 +791,7 @@
 		private System.Windows.Forms.ComboBox cbReplaceTo;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 		private System.Windows.Forms.Label label8;
+		private System.Windows.Forms.ColumnHeader 已下章节标题;
 
 	}
 }

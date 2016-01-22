@@ -103,11 +103,12 @@ namespace DownWebNovel
 			var lvi = new ListViewItem { Text = "停止" };
 			lvi.SubItems.Add(task.TaskName);
 			lvi.SubItems.Add(task.RuleName);
-			lvi.SubItems.Add(task.TaskDir);
+			lvi.SubItems.Add(task.ParaTitleLastDownloaded);
+			lvi.SubItems.Add(task.ParaUrlLastDownloaded);
 			lvi.SubItems.Add(task.RootUrl);
 			lvi.SubItems.Add(task.ParaUrlStart);
-			lvi.SubItems.Add(task.ParaUrlLastDownloaded);
 			lvi.SubItems.Add(task.ParaUrlEnd);
+			lvi.SubItems.Add(task.TaskDir);
 			lvi.SubItems.Add(task.IsPicture ? "是" : "否");
 			lvi.SubItems.Add(task.PictureUrlPrefix);
 
@@ -217,7 +218,8 @@ namespace DownWebNovel
             if (item == -1)
                 return;
 
-            lvDownloadingNovels.Items[item].SubItems[6].Text = task.ParaUrlNextToDownload;
+			lvDownloadingNovels.Items[item].SubItems[3].Text = task.ParaTitleLastDownloaded;
+            lvDownloadingNovels.Items[item].SubItems[4].Text = task.ParaUrlLastDownloaded;
 		}
 
         public void OnFileDownloaded(Task task)
@@ -320,7 +322,7 @@ namespace DownWebNovel
 
 			if (isRestart)
 			{
-				lvDownloadingNovels.Items[item].SubItems[6].Text = string.Empty;
+				lvDownloadingNovels.Items[item].SubItems[4].Text = string.Empty;
 				task.ParaUrlLastDownloaded = string.Empty;
 			}
 
@@ -647,18 +649,21 @@ namespace DownWebNovel
             if (lvDownloadingNovels.SelectedItems.Count == 0)
                 return;
 
-            var subItems = lvDownloadingNovels.SelectedItems[0].SubItems;
-            tbName.Text = subItems[1].Text;
-            tbDir.Text = subItems[3].Text;
-            tbUrl.Text = subItems[4].Text;
-            tbStartPara.Text = subItems[5].Text;
-			tbParaLastDownloaded.Text = subItems[6].Text;
-            tbEndPara.Text = subItems[7].Text;
-	        cbIsPicture.Checked = subItems[8].Text == "是";
-			tbPictureUrlPrefix.Text = subItems[9].Text;
+	        var taskName = GetSelectTaskNames()[0];
+	        var task = FindTaskInMemory(taskName);
+	        if (task == null)
+		        return;
 
-	        lbWebSite.SelectedItem = subItems[2].Text;
+	        tbName.Text = task.TaskName;
+	        tbDir.Text = task.TaskDir;
+	        tbUrl.Text = task.RootUrl;
+	        tbStartPara.Text = task.ParaUrlStart;
+	        tbParaLastDownloaded.Text = task.ParaUrlLastDownloaded;
+	        tbEndPara.Text = task.ParaUrlEnd;
+	        cbIsPicture.Checked = task.IsPicture;
+	        tbPictureUrlPrefix.Text = task.PictureUrlPrefix;
 
+	        lbWebSite.SelectedItem = task.RuleName;
         }
 
 	    private IList<string> GetSelectTaskNames()
