@@ -273,7 +273,7 @@ namespace DownWebNovel
 				}
 				else
 				{
-					var textWriter = File.AppendText(task.TaskDir + task.TaskName + ".txt");
+					var textWriter = File.AppendText(Path.Combine(task.TaskDir, task.TaskName + ".txt"));
 					textWriter.WriteLine(title);
 					textWriter.WriteLine(content);
 					textWriter.Close();

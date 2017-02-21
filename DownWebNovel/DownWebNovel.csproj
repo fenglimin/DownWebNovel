@@ -58,6 +58,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShowWatchedNovel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShowWatchedNovel.Designer.cs">
+      <DependentUpon>ShowWatchedNovel.cs</DependentUpon>
+    </Compile>
     <Compile Include="WebNovelPuller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -73,6 +79,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ShowWatchedNovel.resx">
+      <DependentUpon>ShowWatchedNovel.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

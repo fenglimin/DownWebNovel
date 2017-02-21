@@ -99,6 +99,11 @@
 			this.追看 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.cbIsBookCompleted = new System.Windows.Forms.CheckBox();
 			this.cbIsBookWatched = new System.Windows.Forms.CheckBox();
+			this.aToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+			this.WatchMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.showFinishedBookMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.watchAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -505,61 +510,66 @@
             this.restartDownloadMenuItem,
             this.toolStripSeparator2,
             this.continueAllMenuItem,
-            this.stopAllMenuItem});
+            this.stopAllMenuItem,
+            this.aToolStripMenuItem,
+            this.WatchMenuItem,
+            this.watchAllMenuItem,
+            this.toolStripSeparator3,
+            this.showFinishedBookMenuItem});
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(127, 148);
+			this.contextMenuStrip1.Size = new System.Drawing.Size(166, 226);
 			this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
 			this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
 			// 
 			// continueDownloadMenuItem
 			// 
 			this.continueDownloadMenuItem.Name = "continueDownloadMenuItem";
-			this.continueDownloadMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.continueDownloadMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.continueDownloadMenuItem.Text = "继续";
 			this.continueDownloadMenuItem.Click += new System.EventHandler(this.startMenuItem_Click);
 			// 
 			// stopMenuItem
 			// 
 			this.stopMenuItem.Name = "stopMenuItem";
-			this.stopMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.stopMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.stopMenuItem.Text = "停止";
 			this.stopMenuItem.Click += new System.EventHandler(this.stopMenuItem_Click);
 			// 
 			// deleteMenuItem
 			// 
 			this.deleteMenuItem.Name = "deleteMenuItem";
-			this.deleteMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.deleteMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.deleteMenuItem.Text = "删除";
 			this.deleteMenuItem.Click += new System.EventHandler(this.deleteMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(123, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(162, 6);
 			// 
 			// restartDownloadMenuItem
 			// 
 			this.restartDownloadMenuItem.Name = "restartDownloadMenuItem";
-			this.restartDownloadMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.restartDownloadMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.restartDownloadMenuItem.Text = "重新开始";
 			this.restartDownloadMenuItem.Click += new System.EventHandler(this.restartDownloadMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(123, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(162, 6);
 			// 
 			// continueAllMenuItem
 			// 
 			this.continueAllMenuItem.Name = "continueAllMenuItem";
-			this.continueAllMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.continueAllMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.continueAllMenuItem.Text = "全部继续";
 			this.continueAllMenuItem.Click += new System.EventHandler(this.continueAllMenuItem_Click);
 			// 
 			// stopAllMenuItem
 			// 
 			this.stopAllMenuItem.Name = "stopAllMenuItem";
-			this.stopAllMenuItem.Size = new System.Drawing.Size(126, 22);
+			this.stopAllMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.stopAllMenuItem.Text = "全部停止";
 			this.stopAllMenuItem.Click += new System.EventHandler(this.stopAllMenuItem_Click);
 			// 
@@ -734,6 +744,37 @@
 			this.cbIsBookWatched.Text = "追看";
 			this.cbIsBookWatched.UseVisualStyleBackColor = true;
 			// 
+			// aToolStripMenuItem
+			// 
+			this.aToolStripMenuItem.Name = "aToolStripMenuItem";
+			this.aToolStripMenuItem.Size = new System.Drawing.Size(162, 6);
+			// 
+			// WatchMenuItem
+			// 
+			this.WatchMenuItem.Name = "WatchMenuItem";
+			this.WatchMenuItem.Size = new System.Drawing.Size(165, 22);
+			this.WatchMenuItem.Text = "追看";
+			this.WatchMenuItem.Click += new System.EventHandler(this.WatchMenuItem_Click);
+			// 
+			// toolStripSeparator3
+			// 
+			this.toolStripSeparator3.Name = "toolStripSeparator3";
+			this.toolStripSeparator3.Size = new System.Drawing.Size(162, 6);
+			// 
+			// showFinishedBookMenuItem
+			// 
+			this.showFinishedBookMenuItem.Name = "showFinishedBookMenuItem";
+			this.showFinishedBookMenuItem.Size = new System.Drawing.Size(165, 22);
+			this.showFinishedBookMenuItem.Text = "显示已完本小说";
+			this.showFinishedBookMenuItem.Click += new System.EventHandler(this.showFinishedBookMenuItem_Click);
+			// 
+			// watchAllMenuItem
+			// 
+			this.watchAllMenuItem.Name = "watchAllMenuItem";
+			this.watchAllMenuItem.Size = new System.Drawing.Size(165, 22);
+			this.watchAllMenuItem.Text = "全部追看";
+			this.watchAllMenuItem.Click += new System.EventHandler(this.watchAllMenuItem_Click);
+			// 
 			// DownWebNovel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -746,6 +787,7 @@
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.lvDownloadingNovels);
 			this.Name = "DownWebNovel";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "下载网络小说";
 			this.Load += new System.EventHandler(this.DownWebNovel_Load);
 			this.groupBox4.ResumeLayout(false);
@@ -834,6 +876,11 @@
 		private System.Windows.Forms.ColumnHeader 追看;
 		private System.Windows.Forms.CheckBox cbIsBookWatched;
 		private System.Windows.Forms.CheckBox cbIsBookCompleted;
+		private System.Windows.Forms.ToolStripSeparator aToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem WatchMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+		private System.Windows.Forms.ToolStripMenuItem showFinishedBookMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem watchAllMenuItem;
 
 	}
 }
