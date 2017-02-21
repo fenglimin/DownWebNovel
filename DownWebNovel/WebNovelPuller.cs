@@ -47,7 +47,10 @@ namespace DownWebNovel
 		public string PictureUrlPrefix { get; set; }
 		public string ParaUrlLastDownloaded { get; set; }
 		public string ParaTitleLastDownloaded { get; set; }
+		public string ContentLastDownloaded { get; set; }
 		public string ParaUrlNextToDownload { get; set; }
+		public bool IsBookCompleted { get; set; }
+		public bool IsBookWatched { get; set; }
 
 		public Rule Rule { get; set; }
 		public Thread Thread { get; set; }
@@ -278,6 +281,7 @@ namespace DownWebNovel
 
 				task.ParaTitleLastDownloaded = title;
 				task.ParaUrlLastDownloaded = task.ParaUrlNextToDownload;
+				task.ContentLastDownloaded = content;
 				task.ParaUrlNextToDownload = nextUrl;
 
 				if (_webNovelPullerUser != null)

@@ -111,6 +111,8 @@ namespace DownWebNovel
 			lvi.SubItems.Add(task.TaskDir);
 			lvi.SubItems.Add(task.IsPicture ? "是" : "否");
 			lvi.SubItems.Add(task.PictureUrlPrefix);
+			lvi.SubItems.Add(task.IsBookCompleted ? "是" : "否");
+			lvi.SubItems.Add(task.IsBookWatched ? "是" : "否");
 
 			return lvi;
 		}
@@ -139,24 +141,26 @@ namespace DownWebNovel
 
 		private void btDown_Click(object sender, EventArgs e)
 		{
+			var downloadTask = new Task
+			{
+				TaskName = tbName.Text,
+				RootUrl = tbUrl.Text,
+				TaskDir = tbDir.Text,
+				ParaUrlStart = tbStartPara.Text,
+				ParaUrlLastDownloaded = tbParaLastDownloaded.Text,
+				ParaUrlEnd = tbEndPara.Text,
+				RuleName = lbWebSite.SelectedItem.ToString(),
+				IsPicture = cbIsPicture.Checked,
+				PictureUrlPrefix = tbPictureUrlPrefix.Text,
+				IsBookCompleted = cbIsBookCompleted.Checked,
+				IsBookWatched = cbIsBookWatched.Checked
+			};
+
             if (FindTaskInMemory(tbName.Text) != null)
             {
-                MessageBox.Show("任务已存在");
-                return;
+                DeleteTaskInTheList(downloadTask.TaskName);
             }
-
-            var downloadTask = new Task
-            {
-                TaskName = tbName.Text,
-                RootUrl = tbUrl.Text,
-                TaskDir = tbDir.Text,
-                ParaUrlStart = tbStartPara.Text,
-				ParaUrlLastDownloaded = tbParaLastDownloaded.Text,
-                ParaUrlEnd = tbEndPara.Text,
-                RuleName = lbWebSite.SelectedItem.ToString(),
-				IsPicture = cbIsPicture.Checked,
-				PictureUrlPrefix = tbPictureUrlPrefix.Text
-            };
+           
 
 			AddTaskToViewAndMemoryAndDatabase(downloadTask);
             RunTask(downloadTask.TaskName, false);
@@ -662,6 +666,10 @@ namespace DownWebNovel
 	        tbEndPara.Text = task.ParaUrlEnd;
 	        cbIsPicture.Checked = task.IsPicture;
 	        tbPictureUrlPrefix.Text = task.PictureUrlPrefix;
+	        cbIsBookCompleted.Checked = task.IsBookCompleted;
+	        cbIsBookWatched.Checked = task.IsBookWatched;
+
+	        btDown.Text = "更改";
 
 	        lbWebSite.SelectedItem = task.RuleName;
         }
@@ -742,6 +750,26 @@ namespace DownWebNovel
 				File.Delete(downloadedFile);
 
 			RunTask(taskName, true);
+		}
+
+		private void tbName_TextChanged(object sender, EventArgs e)
+		{
+			btDown.Text = (FindTaskInMemory(tbName.Text) != null) ? "更改" : "增加";
+		}
+
+		private void tbStartPara_TextChanged(object sender, EventArgs e)
+		{
+			var textList = tbStartPara.Text.Split('/');
+			if (textList.Length > 1)
+			{
+				tbEndPara.Text = "/" + textList[1] + "/";
+
+				var downloadedTextList = tbParaLastDownloaded.Text.Split('/');
+				if (downloadedTextList.Length == 4)
+				{
+					tbParaLastDownloaded.Text = "/" + textList[1] + "/" + downloadedTextList[2] + "/";
+				}
+			}
 		}
 	}
 }
