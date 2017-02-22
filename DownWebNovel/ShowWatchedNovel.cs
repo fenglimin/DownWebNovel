@@ -90,5 +90,14 @@ namespace DownWebNovel
 			rtbPara.Text = tvWatchedNovel.SelectedNode.Name;
 			rtbPara.ScrollToCaret();
 		}
+
+		private void ShowWatchedNovel_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (e.CloseReason == CloseReason.UserClosing)
+			{
+				e.Cancel = true;
+				Hide();
+			}
+		}
 	}
 }

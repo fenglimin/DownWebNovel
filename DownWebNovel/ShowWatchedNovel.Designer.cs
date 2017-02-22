@@ -42,10 +42,11 @@
 			this.rtbPara.ForeColor = System.Drawing.Color.OliveDrab;
 			this.rtbPara.Location = new System.Drawing.Point(261, 3);
 			this.rtbPara.Name = "rtbPara";
+			this.rtbPara.ReadOnly = true;
 			this.rtbPara.Size = new System.Drawing.Size(820, 698);
 			this.rtbPara.TabIndex = 0;
 			this.rtbPara.Text = "";
-			this.rtbPara.ZoomFactor = 1.3F;
+			this.rtbPara.ZoomFactor = 1.5F;
 			// 
 			// tvWatchedNovel
 			// 
@@ -67,6 +68,7 @@
 			this.Name = "ShowWatchedNovel";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ShowWatchedNovel";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ShowWatchedNovel_FormClosing);
 			this.Load += new System.EventHandler(this.ShowWatchedNovel_Load);
 			this.ResumeLayout(false);
 

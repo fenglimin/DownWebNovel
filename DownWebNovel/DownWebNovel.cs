@@ -19,11 +19,13 @@ namespace DownWebNovel
 {
 	public partial class DownWebNovel : Form, IWebNovelPullerUser
 	{
+		private bool _showCompletedBooks;
 		private List<Task> _downloadTasks; 
 		private Hashtable _rules;
 		private Hashtable _translateTags;
 		private Hashtable _translateReplace;
 		private readonly WebNovelPuller _webNovelPuller;
+		private ShowWatchedNovel _showWatchNovelForm = new ShowWatchedNovel();
 
 		delegate void ShowMessageCallback(Task task, bool isDownloadError, string errorMessage);
 	    delegate void TaskOperationCallback(Task task);
@@ -32,6 +34,8 @@ namespace DownWebNovel
 		public DownWebNovel()
 		{
 			InitializeComponent();
+
+			_showCompletedBooks = false;
 
 			_webNovelPuller = new WebNovelPuller(this);
 
@@ -82,9 +86,14 @@ namespace DownWebNovel
 				lbContentReplace.Items.Add(translate.Key);
 			}
 
-		    tbDir.Text = @"D:\";
+		    tbDir.Text = @"D:\Temp\Novel";
 			LoadRules();
 			LoadTasks();
+
+			if (lvDownloadingNovels.Items.Count > 0)
+			{
+				lvDownloadingNovels.Items[0].Selected = true;
+			}
 		}
 
 		private void LoadRules()
@@ -121,8 +130,11 @@ namespace DownWebNovel
 		{
 			_downloadTasks = TaskDal.LoadAllTasks();
 
-			foreach (var downloadTask in _downloadTasks)
+			foreach (var downloadTask in _downloadTasks.OrderBy(x => x.IsBookCompleted))
 			{
+				if (downloadTask.IsBookCompleted && !_showCompletedBooks)
+					continue;
+
 				var lvi = FillListViewItemWithTask(downloadTask);
 				lvDownloadingNovels.Items.Add(lvi);
 			}
@@ -163,7 +175,7 @@ namespace DownWebNovel
            
 
 			AddTaskToViewAndMemoryAndDatabase(downloadTask);
-            RunTask(downloadTask.TaskName, false);
+            //RunTask(downloadTask.TaskName, false);
 		}
 
 		private void DownloadNovelThread(object para)
@@ -224,6 +236,8 @@ namespace DownWebNovel
 
 			lvDownloadingNovels.Items[item].SubItems[3].Text = task.ParaTitleLastDownloaded;
             lvDownloadingNovels.Items[item].SubItems[4].Text = task.ParaUrlLastDownloaded;
+
+			_showWatchNovelForm.AddPara(task);
 		}
 
         public void OnFileDownloaded(Task task)
@@ -385,6 +399,11 @@ namespace DownWebNovel
 				contextMenuStrip1.Items[5].Visible = false;
 				contextMenuStrip1.Items[6].Visible = true;
 				contextMenuStrip1.Items[7].Visible = true;
+				contextMenuStrip1.Items[8].Visible = true;
+				contextMenuStrip1.Items[9].Visible = false;
+				contextMenuStrip1.Items[10].Visible = true;
+				contextMenuStrip1.Items[11].Visible = true;
+				contextMenuStrip1.Items[12].Visible = true;
 			}
 			else if (count == 1)
 			{
@@ -397,6 +416,11 @@ namespace DownWebNovel
 				contextMenuStrip1.Items[5].Visible = false;
 				contextMenuStrip1.Items[6].Visible = false;
 				contextMenuStrip1.Items[7].Visible = false;
+				contextMenuStrip1.Items[8].Visible = true;
+				contextMenuStrip1.Items[9].Visible = true;
+				contextMenuStrip1.Items[10].Visible = false;
+				contextMenuStrip1.Items[11].Visible = true;
+				contextMenuStrip1.Items[12].Visible = true;
 			}
 			else
 			{
@@ -407,7 +431,12 @@ namespace DownWebNovel
 				contextMenuStrip1.Items[4].Visible = false;
 				contextMenuStrip1.Items[5].Visible = false;
 				contextMenuStrip1.Items[6].Visible = false;
-				contextMenuStrip1.Items[7].Visible = false;	
+				contextMenuStrip1.Items[7].Visible = false;
+				contextMenuStrip1.Items[8].Visible = true;
+				contextMenuStrip1.Items[9].Visible = true;
+				contextMenuStrip1.Items[10].Visible = false;
+				contextMenuStrip1.Items[11].Visible = true;
+				contextMenuStrip1.Items[12].Visible = true;
 			}
 		}
 
@@ -734,7 +763,7 @@ namespace DownWebNovel
 		private void restartDownloadMenuItem_Click(object sender, EventArgs e)
 		{
 			var taskName = GetSelectTaskNames()[0];
-			var downloadedFile = string.Format("{0}{1}.txt", tbDir.Text, taskName);
+			var downloadedFile = Path.Combine(tbDir.Text, taskName+".txt");
 			var message = string.Format("确定要重新下载 {0} 吗？\r\n如果重新下载，已下载的小说文件 {1} 将会被删除！", taskName, downloadedFile);
 
 			if (cbIsPicture.Checked)
@@ -769,6 +798,71 @@ namespace DownWebNovel
 				{
 					tbParaLastDownloaded.Text = "/" + textList[1] + "/" + downloadedTextList[2] + "/";
 				}
+			}
+		}
+
+		private void WatchMenuItem_Click(object sender, EventArgs e)
+		{
+			_showWatchNovelForm.Show();
+			_showWatchNovelForm.BringToFront();
+			foreach (var taskName in GetSelectTaskNames())
+			{
+				var taskIndex = FindTaskItemItemInTheList(taskName);
+				if (taskIndex == -1)
+					continue;
+
+				if (lvDownloadingNovels.Items[taskIndex].SubItems[0].Text == "下载中")
+					continue;
+
+				var task = FindTaskInMemory(taskName);
+				if (task.IsBookCompleted || !task.IsBookWatched)
+					continue;
+
+				RunTask(taskName, false);
+			}
+		}
+
+		private void showFinishedBookMenuItem_Click(object sender, EventArgs e)
+		{
+			_showCompletedBooks = !_showCompletedBooks;
+
+			showFinishedBookMenuItem.Text = _showCompletedBooks ? "隐藏已完本小说" : "显示已完本小说";
+
+			if (_showCompletedBooks)
+			{
+				foreach (var downloadTask in _downloadTasks.Where(x => x.IsBookCompleted))
+				{
+					var lvi = FillListViewItemWithTask(downloadTask);
+					lvDownloadingNovels.Items.Add(lvi);
+				}
+			}
+			else
+			{
+				foreach (var downloadTask in _downloadTasks.Where(x => x.IsBookCompleted))
+				{
+					var item = FindTaskItemItemInTheList(downloadTask.TaskName);
+					if (item == -1)
+						continue;
+					
+					lvDownloadingNovels.Items.RemoveAt(item);
+				}
+			}
+		}
+
+		private void watchAllMenuItem_Click(object sender, EventArgs e)
+		{
+			_showWatchNovelForm.Show();
+			_showWatchNovelForm.BringToFront();
+			foreach (var downloadTask in _downloadTasks.Where(x => x.IsBookWatched && !x.IsBookCompleted))
+			{
+				var task = FindTaskItemItemInTheList(downloadTask.TaskName);
+				if (task == -1)
+					continue;
+
+				if (lvDownloadingNovels.Items[task].SubItems[0].Text == "下载中")
+					continue;
+					
+				RunTask(downloadTask.TaskName, false);
 			}
 		}
 	}
