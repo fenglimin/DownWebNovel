@@ -8,6 +8,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -260,11 +261,19 @@ namespace DownWebNovel
             TaskDal.DeleteTask(task.TaskName);
             TaskDal.AddTask(task);
 
-            var item = FindTaskItemItemInTheList(task.TaskName);
-            if (item == -1)
+            var itemIndex = FindTaskItemItemInTheList(task.TaskName);
+            if (itemIndex == -1)
                 return;
 
-            lvDownloadingNovels.Items[item].SubItems[0].Text = "停止";
+            lvDownloadingNovels.Items[itemIndex].SubItems[0].Text = "停止";
+
+			foreach (ListViewItem item in lvDownloadingNovels.Items)
+			{
+				if (item.SubItems[0].Text != "停止")
+					return;
+			}
+
+		    SetCloseButton(true);
 	    }
 
 		public void OnTaskStopped(Task task, string stopReason)
@@ -347,6 +356,8 @@ namespace DownWebNovel
 			task.Rule = (Rule)_rules[task.RuleName];
 			task.Thread = new Thread(DownloadNovelThread);
 			task.Thread.Start(task);
+
+			SetCloseButton(false);
 		}
 
 	    private void StopTaskInTheList(string taskName)
@@ -865,5 +876,30 @@ namespace DownWebNovel
 				RunTask(downloadTask.TaskName, false);
 			}
 		}
+
+		internal static class NativeMethods
+		{
+			public const int SC_CLOSE = 0xF060;
+			public const int MF_BYCOMMAND = 0;
+			public const int MF_ENABLED = 0;
+			public const int MF_GRAYED = 1;
+
+			[DllImport("user32.dll")]
+			public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool revert);
+
+			[DllImport("user32.dll")]
+			public static extern int EnableMenuItem(IntPtr hMenu, int IDEnableItem, int enable);
+		}
+
+		private void SetCloseButton(bool enable)
+		{
+			IntPtr hMenu = NativeMethods.GetSystemMenu(this.Handle, false);
+			if (hMenu != IntPtr.Zero)
+			{
+				NativeMethods.EnableMenuItem(hMenu,
+											 NativeMethods.SC_CLOSE,
+											 NativeMethods.MF_BYCOMMAND | (enable ? NativeMethods.MF_ENABLED : NativeMethods.MF_GRAYED));
+			}
+		} 
 	}
 }

@@ -127,9 +127,9 @@ namespace DownWebNovel
 					break;
 			}
 
-			if (ok && _webNovelPullerUser != null)
+			if (_webNovelPullerUser != null)
 			{
-				_webNovelPullerUser.OnTaskStopped(task, ExitRequestedByUser ? "用户终止！" : "已下载到终章！");
+				_webNovelPullerUser.OnTaskStopped(task, ExitRequestedByUser ? "用户终止！" : ok? "已下载到终章！" : "出现异常");
 			}
 
 			return true;

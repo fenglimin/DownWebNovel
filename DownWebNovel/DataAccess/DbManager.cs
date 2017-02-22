@@ -24,7 +24,7 @@ namespace DownWebNovel.DataAccess
 		/// <summary>
 		/// 
 		/// </summary>
-		private const string DatabaseConnectionStsring = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=..\\..\\..\\DownWebNovel.mdb";
+		private static string DatabaseConnectionStsring = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=..\\..\\..\\DownWebNovel.mdb";
 
 		/// <summary>
 		/// 
@@ -41,6 +41,9 @@ namespace DownWebNovel.DataAccess
 						{
 							//var connStringSetting = ConfigurationManager.ConnectionStrings[1];
 							//oleDbConn = new OleDbConnection(connStringSetting.ConnectionString);
+							var dbFile = Path.Combine(Directory.GetCurrentDirectory(), "DownWebNovel.mdb");
+							if (File.Exists(dbFile))
+								DatabaseConnectionStsring = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dbFile;
 							oleDbConn = new OleDbConnection(DatabaseConnectionStsring);
 							oleDbConn.Open();
 						}

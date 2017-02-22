@@ -73,6 +73,8 @@
 			this.位置 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.图像 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.图像地址前缀 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.完本 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.追看 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.continueDownloadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,28 +84,26 @@
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.continueAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.aToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+			this.WatchMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.watchAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.showFinishedBookMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.cbIsBookWatched = new System.Windows.Forms.CheckBox();
+			this.cbIsBookCompleted = new System.Windows.Forms.CheckBox();
 			this.cbDownloadedSource = new System.Windows.Forms.CheckBox();
 			this.btDownloadLast = new System.Windows.Forms.Button();
 			this.cbParaStartSource = new System.Windows.Forms.CheckBox();
 			this.label6 = new System.Windows.Forms.Label();
+			this.tbDir = new System.Windows.Forms.TextBox();
+			this.label7 = new System.Windows.Forms.Label();
 			this.tbParaLastDownloaded = new System.Windows.Forms.TextBox();
+			this.btSelectDir = new System.Windows.Forms.Button();
 			this.cbShowError = new System.Windows.Forms.CheckBox();
 			this.tbPictureUrlPrefix = new System.Windows.Forms.TextBox();
 			this.cbIsPicture = new System.Windows.Forms.CheckBox();
-			this.btSelectDir = new System.Windows.Forms.Button();
-			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
-			this.tbDir = new System.Windows.Forms.TextBox();
-			this.完本 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.追看 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.cbIsBookCompleted = new System.Windows.Forms.CheckBox();
-			this.cbIsBookWatched = new System.Windows.Forms.CheckBox();
-			this.aToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
-			this.WatchMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-			this.showFinishedBookMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.watchAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.groupBox4.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -453,7 +453,7 @@
 			// 
 			// 任务
 			// 
-			this.任务.Text = "任务";
+			this.任务.Text = "小说";
 			this.任务.Width = 99;
 			// 
 			// 网站
@@ -464,7 +464,7 @@
 			// 已下章节标题
 			// 
 			this.已下章节标题.Text = "已下章节标题";
-			this.已下章节标题.Width = 141;
+			this.已下章节标题.Width = 200;
 			// 
 			// 已下章节地址
 			// 
@@ -499,6 +499,14 @@
 			// 
 			this.图像地址前缀.Text = "图像地址前缀";
 			this.图像地址前缀.Width = 100;
+			// 
+			// 完本
+			// 
+			this.完本.Text = "完本";
+			// 
+			// 追看
+			// 
+			this.追看.Text = "追看";
 			// 
 			// contextMenuStrip1
 			// 
@@ -573,6 +581,37 @@
 			this.stopAllMenuItem.Text = "全部停止";
 			this.stopAllMenuItem.Click += new System.EventHandler(this.stopAllMenuItem_Click);
 			// 
+			// aToolStripMenuItem
+			// 
+			this.aToolStripMenuItem.Name = "aToolStripMenuItem";
+			this.aToolStripMenuItem.Size = new System.Drawing.Size(162, 6);
+			// 
+			// WatchMenuItem
+			// 
+			this.WatchMenuItem.Name = "WatchMenuItem";
+			this.WatchMenuItem.Size = new System.Drawing.Size(165, 22);
+			this.WatchMenuItem.Text = "追看";
+			this.WatchMenuItem.Click += new System.EventHandler(this.WatchMenuItem_Click);
+			// 
+			// watchAllMenuItem
+			// 
+			this.watchAllMenuItem.Name = "watchAllMenuItem";
+			this.watchAllMenuItem.Size = new System.Drawing.Size(165, 22);
+			this.watchAllMenuItem.Text = "全部追看";
+			this.watchAllMenuItem.Click += new System.EventHandler(this.watchAllMenuItem_Click);
+			// 
+			// toolStripSeparator3
+			// 
+			this.toolStripSeparator3.Name = "toolStripSeparator3";
+			this.toolStripSeparator3.Size = new System.Drawing.Size(162, 6);
+			// 
+			// showFinishedBookMenuItem
+			// 
+			this.showFinishedBookMenuItem.Name = "showFinishedBookMenuItem";
+			this.showFinishedBookMenuItem.Size = new System.Drawing.Size(165, 22);
+			this.showFinishedBookMenuItem.Text = "显示已完本小说";
+			this.showFinishedBookMenuItem.Click += new System.EventHandler(this.showFinishedBookMenuItem_Click);
+			// 
 			// groupBox3
 			// 
 			this.groupBox3.Controls.Add(this.cbIsBookWatched);
@@ -605,6 +644,26 @@
 			this.groupBox3.TabIndex = 20;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "任务";
+			// 
+			// cbIsBookWatched
+			// 
+			this.cbIsBookWatched.AutoSize = true;
+			this.cbIsBookWatched.Location = new System.Drawing.Point(63, 221);
+			this.cbIsBookWatched.Name = "cbIsBookWatched";
+			this.cbIsBookWatched.Size = new System.Drawing.Size(50, 17);
+			this.cbIsBookWatched.TabIndex = 31;
+			this.cbIsBookWatched.Text = "追看";
+			this.cbIsBookWatched.UseVisualStyleBackColor = true;
+			// 
+			// cbIsBookCompleted
+			// 
+			this.cbIsBookCompleted.AutoSize = true;
+			this.cbIsBookCompleted.Location = new System.Drawing.Point(9, 221);
+			this.cbIsBookCompleted.Name = "cbIsBookCompleted";
+			this.cbIsBookCompleted.Size = new System.Drawing.Size(50, 17);
+			this.cbIsBookCompleted.TabIndex = 30;
+			this.cbIsBookCompleted.Text = "完本";
+			this.cbIsBookCompleted.UseVisualStyleBackColor = true;
 			// 
 			// cbDownloadedSource
 			// 
@@ -647,12 +706,38 @@
 			this.label6.TabIndex = 26;
 			this.label6.Text = "已下";
 			// 
+			// tbDir
+			// 
+			this.tbDir.Location = new System.Drawing.Point(43, 189);
+			this.tbDir.Name = "tbDir";
+			this.tbDir.Size = new System.Drawing.Size(227, 20);
+			this.tbDir.TabIndex = 15;
+			// 
+			// label7
+			// 
+			this.label7.AutoSize = true;
+			this.label7.Location = new System.Drawing.Point(6, 192);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(31, 13);
+			this.label7.TabIndex = 14;
+			this.label7.Text = "位置";
+			// 
 			// tbParaLastDownloaded
 			// 
 			this.tbParaLastDownloaded.Location = new System.Drawing.Point(43, 103);
 			this.tbParaLastDownloaded.Name = "tbParaLastDownloaded";
 			this.tbParaLastDownloaded.Size = new System.Drawing.Size(172, 20);
 			this.tbParaLastDownloaded.TabIndex = 25;
+			// 
+			// btSelectDir
+			// 
+			this.btSelectDir.Location = new System.Drawing.Point(276, 189);
+			this.btSelectDir.Name = "btSelectDir";
+			this.btSelectDir.Size = new System.Drawing.Size(36, 20);
+			this.btSelectDir.TabIndex = 20;
+			this.btSelectDir.Text = "...";
+			this.btSelectDir.UseVisualStyleBackColor = true;
+			this.btSelectDir.Click += new System.EventHandler(this.btSelectDir_Click);
 			// 
 			// cbShowError
 			// 
@@ -681,25 +766,6 @@
 			this.cbIsPicture.Text = "图像";
 			this.cbIsPicture.UseVisualStyleBackColor = true;
 			// 
-			// btSelectDir
-			// 
-			this.btSelectDir.Location = new System.Drawing.Point(276, 189);
-			this.btSelectDir.Name = "btSelectDir";
-			this.btSelectDir.Size = new System.Drawing.Size(36, 20);
-			this.btSelectDir.TabIndex = 20;
-			this.btSelectDir.Text = "...";
-			this.btSelectDir.UseVisualStyleBackColor = true;
-			this.btSelectDir.Click += new System.EventHandler(this.btSelectDir_Click);
-			// 
-			// label7
-			// 
-			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(6, 192);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(31, 13);
-			this.label7.TabIndex = 14;
-			this.label7.Text = "位置";
-			// 
 			// label8
 			// 
 			this.label8.AutoSize = true;
@@ -708,72 +774,6 @@
 			this.label8.Size = new System.Drawing.Size(55, 13);
 			this.label8.TabIndex = 6;
 			this.label8.Text = "网址前缀";
-			// 
-			// tbDir
-			// 
-			this.tbDir.Location = new System.Drawing.Point(43, 189);
-			this.tbDir.Name = "tbDir";
-			this.tbDir.Size = new System.Drawing.Size(227, 20);
-			this.tbDir.TabIndex = 15;
-			// 
-			// 完本
-			// 
-			this.完本.Text = "完本";
-			// 
-			// 追看
-			// 
-			this.追看.Text = "追看";
-			// 
-			// cbIsBookCompleted
-			// 
-			this.cbIsBookCompleted.AutoSize = true;
-			this.cbIsBookCompleted.Location = new System.Drawing.Point(9, 221);
-			this.cbIsBookCompleted.Name = "cbIsBookCompleted";
-			this.cbIsBookCompleted.Size = new System.Drawing.Size(50, 17);
-			this.cbIsBookCompleted.TabIndex = 30;
-			this.cbIsBookCompleted.Text = "完本";
-			this.cbIsBookCompleted.UseVisualStyleBackColor = true;
-			// 
-			// cbIsBookWatched
-			// 
-			this.cbIsBookWatched.AutoSize = true;
-			this.cbIsBookWatched.Location = new System.Drawing.Point(63, 221);
-			this.cbIsBookWatched.Name = "cbIsBookWatched";
-			this.cbIsBookWatched.Size = new System.Drawing.Size(50, 17);
-			this.cbIsBookWatched.TabIndex = 31;
-			this.cbIsBookWatched.Text = "追看";
-			this.cbIsBookWatched.UseVisualStyleBackColor = true;
-			// 
-			// aToolStripMenuItem
-			// 
-			this.aToolStripMenuItem.Name = "aToolStripMenuItem";
-			this.aToolStripMenuItem.Size = new System.Drawing.Size(162, 6);
-			// 
-			// WatchMenuItem
-			// 
-			this.WatchMenuItem.Name = "WatchMenuItem";
-			this.WatchMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.WatchMenuItem.Text = "追看";
-			this.WatchMenuItem.Click += new System.EventHandler(this.WatchMenuItem_Click);
-			// 
-			// toolStripSeparator3
-			// 
-			this.toolStripSeparator3.Name = "toolStripSeparator3";
-			this.toolStripSeparator3.Size = new System.Drawing.Size(162, 6);
-			// 
-			// showFinishedBookMenuItem
-			// 
-			this.showFinishedBookMenuItem.Name = "showFinishedBookMenuItem";
-			this.showFinishedBookMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.showFinishedBookMenuItem.Text = "显示已完本小说";
-			this.showFinishedBookMenuItem.Click += new System.EventHandler(this.showFinishedBookMenuItem_Click);
-			// 
-			// watchAllMenuItem
-			// 
-			this.watchAllMenuItem.Name = "watchAllMenuItem";
-			this.watchAllMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.watchAllMenuItem.Text = "全部追看";
-			this.watchAllMenuItem.Click += new System.EventHandler(this.watchAllMenuItem_Click);
 			// 
 			// DownWebNovel
 			// 
@@ -786,6 +786,7 @@
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.lvDownloadingNovels);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Name = "DownWebNovel";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "下载网络小说";
