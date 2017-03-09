@@ -268,7 +268,7 @@ namespace DownWebNovel
 					var pictureUrl = task.PictureUrlPrefix + content;
 					var part = content.Split('/');
 					var fileName = part[part.Count() - 1];
-					fileName = task.TaskDir + title + "_" + fileName;
+					fileName = Path.Combine(task.TaskDir, title + "_" + fileName);
 					_webClient.DownloadFile(pictureUrl, fileName);
 				}
 				else
@@ -403,20 +403,57 @@ namespace DownWebNovel
 		private static int IndexOf(string content, string tagSequence, bool forEnd)
 		{
 			var index = 0;
-			var tags = tagSequence.Split(new string[] { " => " }, StringSplitOptions.RemoveEmptyEntries);
-			foreach (var tag in tags)
-			{
-				index = content.IndexOf(tag, index, StringComparison.Ordinal);
-				if (index == -1)
-					return -1;
 
-				index += tag.Length;
-			}
+            if (tagSequence.Contains(" => "))
+            {
+                var tags = tagSequence.Split(new string[] { " => " }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var tag in tags)
+                {
+                    index = content.IndexOf(tag, index, StringComparison.Ordinal);
+                    if (index == -1)
+                        return -1;
 
-			if (forEnd)
-			{
-				index -= tags[tags.Count() - 1].Length;
-			}
+                    index += tag.Length;
+                }
+
+                if (forEnd)
+                {
+                    index -= tags[tags.Count() - 1].Length;
+                }
+            }
+            else if (tagSequence.Contains(" <= "))
+            {
+                var tags = tagSequence.Split(new string[] { " <= " }, StringSplitOptions.RemoveEmptyEntries);
+                index = content.Length;
+                foreach (var tag in tags)
+                {
+                    index = content.LastIndexOf(tag, index, StringComparison.Ordinal);
+                    if (index == -1)
+                        return -1;
+
+                    index += tag.Length;
+                }
+
+                if (forEnd)
+                {
+                    index -= tags[tags.Count() - 1].Length;
+                }
+            }
+            else
+            {
+                index = content.IndexOf(tagSequence, index, StringComparison.Ordinal);
+                if (index == -1)
+                    return -1;
+
+                index += tagSequence.Length;
+
+                if (forEnd)
+                {
+                    index -= tagSequence.Length;
+                }
+            }
+
+			
 
 			return index;
 		}
