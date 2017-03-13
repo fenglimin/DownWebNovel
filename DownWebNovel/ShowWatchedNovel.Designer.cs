@@ -57,6 +57,7 @@
 			// 
 			this.tvWatchedNovel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+			this.tvWatchedNovel.HideSelection = false;
 			this.tvWatchedNovel.Location = new System.Drawing.Point(12, 3);
 			this.tvWatchedNovel.Name = "tvWatchedNovel";
 			this.tvWatchedNovel.Size = new System.Drawing.Size(233, 698);
@@ -110,7 +111,7 @@
 			this.Controls.Add(this.rtbPara);
 			this.Name = "ShowWatchedNovel";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "ShowWatchedNovel";
+			this.Text = "追看";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ShowWatchedNovel_FormClosing);
 			this.Load += new System.EventHandler(this.ShowWatchedNovel_Load);
 			this.ResumeLayout(false);

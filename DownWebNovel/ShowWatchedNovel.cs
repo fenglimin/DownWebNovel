@@ -128,7 +128,17 @@ namespace DownWebNovel
 			if (e.KeyData == Keys.Space)
 			{
 				e.Handled = true;
-				SendKeys.Send("{PGDN}");
+
+				if (rtbPara.SelectionStart == rtbPara.Text.Length)
+				{
+					if (tvWatchedNovel.SelectedNode.NextNode != null)
+						tvWatchedNovel.SelectedNode = tvWatchedNovel.SelectedNode.NextNode;
+				}
+				else
+				{
+					SendKeys.Send("{PGDN}");	
+				}
+				
 			}
 		}
 
@@ -139,8 +149,9 @@ namespace DownWebNovel
 
 		private void SetButtonStatus()
 		{
-			btPrevPara.Enabled = tvWatchedNovel.SelectedNode.PrevNode != null;
-			btNextPara.Enabled = tvWatchedNovel.SelectedNode.NextNode != null;
+			var selectedNode = tvWatchedNovel.SelectedNode;
+			btPrevPara.Enabled = selectedNode.PrevNode != null && selectedNode.Parent != null;
+			btNextPara.Enabled = selectedNode.NextNode != null && selectedNode.Parent != null;
 		}
 	}
 }
