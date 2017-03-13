@@ -169,8 +169,11 @@ namespace DownWebNovel
 				IsBookWatched = cbIsBookWatched.Checked
 			};
 
-            if (FindTaskInMemory(tbName.Text) != null)
+
+			var task = FindTaskInMemory(tbName.Text);
+            if ( task != null)
             {
+	            downloadTask.ParaTitleLastDownloaded = task.ParaTitleLastDownloaded;
                 DeleteTaskInTheList(downloadTask.TaskName);
             }
            
