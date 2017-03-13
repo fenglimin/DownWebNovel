@@ -66,6 +66,7 @@
 			// btNextPara
 			// 
 			this.btNextPara.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.btNextPara.Enabled = false;
 			this.btNextPara.Location = new System.Drawing.Point(928, 674);
 			this.btNextPara.Name = "btNextPara";
 			this.btNextPara.Size = new System.Drawing.Size(153, 27);
@@ -77,6 +78,7 @@
 			// btPrevPara
 			// 
 			this.btPrevPara.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.btPrevPara.Enabled = false;
 			this.btPrevPara.Location = new System.Drawing.Point(261, 674);
 			this.btPrevPara.Name = "btPrevPara";
 			this.btPrevPara.Size = new System.Drawing.Size(147, 27);

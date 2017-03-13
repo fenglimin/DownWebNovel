@@ -41,6 +41,8 @@ namespace DownWebNovel
 				var node = bookNode.Nodes.Add(task.ContentLastDownloaded, task.ParaTitleLastDownloaded);
 				if (tvWatchedNovel.SelectedNode == null)
 					tvWatchedNovel.SelectedNode = node;
+
+				SetButtonStatus();
 			}
 		}
 
@@ -96,6 +98,8 @@ namespace DownWebNovel
 			btCurPara.Text = (tvWatchedNovel.SelectedNode.Parent != null? tvWatchedNovel.SelectedNode.Parent.Text + " : " : string.Empty) + tvWatchedNovel.SelectedNode.Text;
 			rtbPara.ScrollToCaret();
 			rtbPara.Focus();
+
+			SetButtonStatus();
 		}
 
 		private void ShowWatchedNovel_FormClosing(object sender, FormClosingEventArgs e)
@@ -131,6 +135,12 @@ namespace DownWebNovel
 		private void rtbPara_VScroll(object sender, EventArgs e)
 		{
 
+		}
+
+		private void SetButtonStatus()
+		{
+			btPrevPara.Enabled = tvWatchedNovel.SelectedNode.PrevNode != null;
+			btNextPara.Enabled = tvWatchedNovel.SelectedNode.NextNode != null;
 		}
 	}
 }
