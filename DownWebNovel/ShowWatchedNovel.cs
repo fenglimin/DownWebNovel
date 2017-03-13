@@ -121,7 +121,11 @@ namespace DownWebNovel
 
 		private void rtbPara_KeyDown(object sender, KeyEventArgs e)
 		{
-
+			if (e.KeyData == Keys.Space)
+			{
+				e.Handled = true;
+				SendKeys.Send("{PGDN}");
+			}
 		}
 
 		private void rtbPara_VScroll(object sender, EventArgs e)
