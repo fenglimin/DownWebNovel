@@ -193,7 +193,7 @@ namespace DownWebNovel
 				// This spcecfic logic is for downloading picture
 				var nextUrl = FixNextPara(content);
 				var temp = task.RootUrl.LastIndexOf("/", StringComparison.InvariantCulture);
-				task.RootUrl = task.RootUrl.Substring(0, temp - 1) + nextUrl + "&n=";
+				task.RootUrl = task.RootUrl.Substring(0, temp) + "/" + nextUrl + "&n=";
 				task.ParaUrlNextToDownload = "0";
 			}
 		}
