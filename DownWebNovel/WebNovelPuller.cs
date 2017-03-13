@@ -186,6 +186,24 @@ namespace DownWebNovel
 			return false;
 		}
 
+		private void FixNextPara(string content, Task task)
+		{
+			if (task.ParaUrlNextToDownload == "-1")
+			{
+				// This spcecfic logic is for downloading picture
+				var nextUrl = FixNextPara(content);
+				var temp = task.RootUrl.LastIndexOf("/", StringComparison.InvariantCulture);
+				task.RootUrl = task.RootUrl.Substring(0, temp - 1) + nextUrl + "&n=";
+				task.ParaUrlNextToDownload = "0";
+			}
+		}
+
+		private string FixNextPara(string content)
+		{
+			// This spcecfic logic is for downloading picture
+			return ExtractIntrested(content, "下一篇 => href=\"", "\"");
+		}
+
 		private bool FindNextPara(Task task)
 		{
 			if (string.IsNullOrEmpty(task.ParaUrlLastDownloaded))
@@ -207,6 +225,7 @@ namespace DownWebNovel
 				var nextUrl = ExtractIntrested(downloadedString, task.Rule, "NextPara");
 				task.ParaUrlNextToDownload = nextUrl;
 				ShowMessage(task, false, "下载开始，起始章 - " + task.ParaUrlNextToDownload);
+				FixNextPara(downloadedString, task);
 				return true;
 			}
 			catch (ParseTagException ex)
@@ -233,6 +252,10 @@ namespace DownWebNovel
 				var title = ExtractIntrested(downloadedString, rule, "Title");
 				var content = ExtractIntrested(downloadedString, rule, "Content");
 				var nextUrl = ExtractIntrested(downloadedString, rule, "NextPara");
+				if (nextUrl == "-1")
+				{
+					nextUrl = FixNextPara(downloadedString);
+				}
 
 				result = string.Format("章节名：{0}\r\n\r\n正文：\r\n\r\n{1}\r\n\r\n下一章：{2}\r\n", title, content, nextUrl);
 			}
@@ -283,6 +306,7 @@ namespace DownWebNovel
 				task.ParaUrlLastDownloaded = task.ParaUrlNextToDownload;
 				task.ContentLastDownloaded = content;
 				task.ParaUrlNextToDownload = nextUrl;
+				FixNextPara(downloadedString, task);
 
 				if (_webNovelPullerUser != null)
 				{
@@ -342,6 +366,22 @@ namespace DownWebNovel
 			}
 
 			return intrestedList;
+		}
+
+		private static string ExtractIntrested(string content, string startTag, string endTag)
+		{
+			var startIndex = IndexOf(content, startTag, false);
+			if (startIndex == -1)
+				throw new ParseTagException("Error finding start tag");
+
+			content = content.Substring(startIndex);
+			var endIndex = IndexOf(content, endTag, true);
+			if (endIndex == -1)
+				throw new ParseTagException("Error finding end tag");
+
+			content = content.Substring(0, endIndex);
+
+			return content;
 		}
 
 		private static string ExtractIntrested(string content, Rule rule, string key)
