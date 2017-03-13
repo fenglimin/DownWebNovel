@@ -210,7 +210,7 @@ namespace DownWebNovel
 			if (isDownloadError && !cbShowError.Checked)
 				return;
 
-			tbMessage.AppendText(task.TaskName + "  " + errorMessage + "\r\n");
+			AppendMessage(task.TaskName + "  " + errorMessage);
 		}
 
 
@@ -229,7 +229,7 @@ namespace DownWebNovel
 
         private void FileDownloaded(Task task)
 		{
-            tbMessage.AppendText(task.TaskName + " " + task.ParaTitleLastDownloaded + "， 下一章节 " + task.ParaUrlNextToDownload + "\r\n");
+			AppendMessage(task.TaskName + " " + task.ParaTitleLastDownloaded + "， 下一章节 " + task.ParaUrlNextToDownload);
 
             var item = FindTaskItemItemInTheList(task.TaskName);
             if (item == -1)
@@ -256,7 +256,8 @@ namespace DownWebNovel
 
 		private void TaskStopped(Task task, string stopReason)
 	    {
-            tbMessage.AppendText(task.TaskName + " " + "下载停止！ --- " + stopReason +"\r\n");
+            AppendMessage(task.TaskName + " " + "下载停止！ --- " + stopReason);
+			_showWatchNovelForm.AddPara(task);
 
             TaskDal.DeleteTask(task.TaskName);
             TaskDal.AddTask(task);
@@ -292,7 +293,7 @@ namespace DownWebNovel
 
 		private void SubTaskCreated(Task task)
 		{
-			tbMessage.AppendText(task.TaskName + " 已生成！\r\n");
+			AppendMessage(task.TaskName + " 已生成！");
 			AddTaskToViewAndMemoryAndDatabase(task);
 		}
 
@@ -900,6 +901,11 @@ namespace DownWebNovel
 											 NativeMethods.SC_CLOSE,
 											 NativeMethods.MF_BYCOMMAND | (enable ? NativeMethods.MF_ENABLED : NativeMethods.MF_GRAYED));
 			}
-		} 
+		}
+
+		private void AppendMessage(string message)
+		{
+			tbMessage.AppendText(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "  " + message + "\r\n");
+		}
 	}
 }

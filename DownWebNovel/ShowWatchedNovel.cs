@@ -36,7 +36,12 @@ namespace DownWebNovel
 			var bookNodes = tvWatchedNovel.Nodes.Find(task.TaskName, true);
 			var bookNode = bookNodes.Length == 1 ? bookNodes[0] : tvWatchedNovel.Nodes.Add(task.TaskName, task.TaskName);
 
-			bookNode.Nodes.Add(task.ContentLastDownloaded, task.ParaTitleLastDownloaded);
+			if (!string.IsNullOrEmpty(task.ContentLastDownloaded))
+			{
+				var node = bookNode.Nodes.Add(task.ContentLastDownloaded, task.ParaTitleLastDownloaded);
+				if (tvWatchedNovel.SelectedNode == null)
+					tvWatchedNovel.SelectedNode = node;
+			}
 		}
 
 		private void setLineFormat(byte rule, int space)
@@ -88,7 +93,9 @@ namespace DownWebNovel
 		private void tvWatchedNovel_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			rtbPara.Text = tvWatchedNovel.SelectedNode.Name;
+			btCurPara.Text = (tvWatchedNovel.SelectedNode.Parent != null? tvWatchedNovel.SelectedNode.Parent.Text + " : " : string.Empty) + tvWatchedNovel.SelectedNode.Text;
 			rtbPara.ScrollToCaret();
+			rtbPara.Focus();
 		}
 
 		private void ShowWatchedNovel_FormClosing(object sender, FormClosingEventArgs e)
@@ -98,6 +105,28 @@ namespace DownWebNovel
 				e.Cancel = true;
 				Hide();
 			}
+		}
+
+		private void btPrevPara_Click(object sender, EventArgs e)
+		{
+			if (tvWatchedNovel.SelectedNode.PrevNode != null)
+				tvWatchedNovel.SelectedNode = tvWatchedNovel.SelectedNode.PrevNode;
+		}
+
+		private void btNextPara_Click(object sender, EventArgs e)
+		{
+			if (tvWatchedNovel.SelectedNode.NextNode != null)
+				tvWatchedNovel.SelectedNode = tvWatchedNovel.SelectedNode.NextNode;
+		}
+
+		private void rtbPara_KeyDown(object sender, KeyEventArgs e)
+		{
+
+		}
+
+		private void rtbPara_VScroll(object sender, EventArgs e)
+		{
+
 		}
 	}
 }
