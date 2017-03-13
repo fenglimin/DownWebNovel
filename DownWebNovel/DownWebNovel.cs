@@ -260,7 +260,6 @@ namespace DownWebNovel
 		private void TaskStopped(Task task, string stopReason)
 	    {
             AppendMessage(task.TaskName + " " + "下载停止！ --- " + stopReason);
-			_showWatchNovelForm.AddPara(task);
 
             TaskDal.DeleteTask(task.TaskName);
             TaskDal.AddTask(task);
@@ -270,6 +269,9 @@ namespace DownWebNovel
                 return;
 
             lvDownloadingNovels.Items[itemIndex].SubItems[0].Text = "停止";
+
+		    task.ContentLastDownloaded = string.Empty;
+			_showWatchNovelForm.AddPara(task);
 
 			foreach (ListViewItem item in lvDownloadingNovels.Items)
 			{
