@@ -420,9 +420,27 @@ namespace DownWebNovel
 
 			// Replace
 			content = Replace(content, replacePairs);
+			content = FilterChar(content);
+			
 
 			return content;
 
+		}
+
+		private static string FilterChar(string content)
+		{
+			var temp = string.Empty;
+			var delim = "，。？；：‘’【】（）！“”《》（）";
+			for (var i = 0; i < content.Length; i++)
+			{
+				var ch = content[i];
+				if ((ch >= 0x4e00 && ch <= 0x9bff) || (delim.IndexOf(ch.ToString()) != -1) || ch < 127)
+				{
+					temp += content[i];
+				}
+			}
+
+			return temp;
 		}
 
 		private static int FindIndex(string content, IEnumerable<string> tagSequences, bool forEnd)
